@@ -5,6 +5,7 @@
 
 import { addDays, daysBetween, formatMD } from './dates.js';
 import { josa } from './korean.js';
+import { termsOf } from './terms.js';
 
 const field = (text) => ({ kind: 'field', text });
 const reason = (text) => ({ kind: 'reason', text });
@@ -37,21 +38,22 @@ export function replyBy(left, neededOn) {
   return { soft: by, firm: by };
 }
 
-/** 일정 근거 문장. 필요일 전이면 '시작해야 해서', 지났으면 '늦어지고 있어서' */
-export function scheduleReason(tone, left, neededOn, proc) {
+/** 일정 근거 문장. 필요일 전이면 '시작해야 해서', 지났으면 '늦어지고 있어서'. schedule: '감사 일정' 등 부서별 용어 */
+export function scheduleReason(tone, left, neededOn, proc, schedule = '감사 일정') {
   const late = left < 0;
   const when = late || tone === 'angel' ? longDate(neededOn) : relativeNeed(left, neededOn);
   const ending = { polite: '해서', firm: '하므로', cc: '하는데' }[tone];
   const lateEnding = { polite: '있어서', firm: '있으므로', cc: '있는데' }[tone];
 
+  const lead = `${schedule}상 `;
   if (tone === 'angel') {
     return late
-      ? [reason('감사 일정상 '), field(when), reason(`부터 ${proc}에 사용할 예정이었어서`)]
-      : [reason('감사 일정상 '), field(when), reason(`에 ${proc}를 시작할 예정이라`)];
+      ? [reason(lead), field(when), reason(`부터 ${proc}에 사용할 예정이었어서`)]
+      : [reason(lead), field(when), reason(`에 ${proc}를 시작할 예정이라`)];
   }
   return late
-    ? [reason('감사 일정상 '), field(when), reason(`에 시작했어야 할 ${proc}가 늦어지고 ${lateEnding}`)]
-    : [reason('감사 일정상 '), field(when), reason(` ${proc}를 시작해야 ${ending}`)];
+    ? [reason(lead), field(when), reason(`에 시작했어야 할 ${proc}가 늦어지고 ${lateEnding}`)]
+    : [reason(lead), field(when), reason(` ${proc}를 시작해야 ${ending}`)];
 }
 
 /**
@@ -59,14 +61,15 @@ export function scheduleReason(tone, left, neededOn, proc) {
  */
 export function buildMail({ item, person = {}, client, manager, today, tone }) {
   const left = daysBetween(today, item.neededOn);
-  const proc = `${item.procedure || '관련 감사'} 절차`;
+  const t = termsOf(client.service);
+  const proc = `${item.procedure || t.defaultProcedure} 절차`;
   const by = replyBy(left, item.neededOn);
   const part = item.status === 'part';
-  const prefix = `[${clientShortName(client.name)} 감사]`;
+  const prefix = `[${clientShortName(client.name)} ${t.mailTag}]`;
 
   const hello = [field(`${item.owner}님`)];
   const requested = [field(longDate(item.requestedOn)), plain(' 요청드린 '), field(item.name)];
-  const why = scheduleReason(tone, left, item.neededOn, proc);
+  const why = scheduleReason(tone, left, item.neededOn, proc, t.schedule);
 
   let subject;
   let segments;

@@ -4,6 +4,7 @@
 import { daysBetween, formatMD } from './dates.js';
 import { josa } from './korean.js';
 import { clientShortName } from './mail.js';
+import { termsOf } from './terms.js';
 
 export const FIX_REASONS = [
   { key: 'date', label: '기준일 상이', hint: '다른 기준일 자료가 옴' },
@@ -60,8 +61,9 @@ export function buildFixMail({ item, person = {}, client, today, reason }) {
 
   const left = daysBetween(today, item.neededOn);
   const need = formatMD(item.neededOn);
-  const proc = `${item.procedure || '관련 감사'} 절차`;
-  const prefix = `[${clientShortName(client.name)} 감사] ${item.name}`;
+  const t = termsOf(client.service);
+  const proc = `${item.procedure || t.defaultProcedure} 절차`;
+  const prefix = `[${clientShortName(client.name)} ${t.mailTag}] ${item.name}`;
   const detail = fixDetail(item, reason);
 
   let subject;
@@ -95,8 +97,8 @@ export function buildFixMail({ item, person = {}, client, today, reason }) {
   }
 
   const schedule = left < 0
-    ? [why(`감사 일정상 ${proc}를 `), field(need), why('부터 사용할 예정이었어서'), plain(', 가능한 한 빨리 부탁드립니다.')]
-    : [why(`감사 일정상 ${proc}를 `), field(need), why('에 시작해야 해서'), plain(', '), field(need), plain('까지 필요합니다.')];
+    ? [why(`${t.schedule}상 ${proc}를 `), field(need), why('부터 사용할 예정이었어서'), plain(', 가능한 한 빨리 부탁드립니다.')]
+    : [why(`${t.schedule}상 ${proc}를 `), field(need), why('에 시작해야 해서'), plain(', '), field(need), plain('까지 필요합니다.')];
 
   return {
     subject,

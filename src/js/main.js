@@ -49,7 +49,7 @@ let bundle = null;  // 묶음 독촉 화면 상태: { owner, tone, copied, toast
 let fix = null;     // 보완 요청 화면 상태: { itemId, reason, copied, toast }
 let add = null;     // 자료 추가 화면 상태: { tab, form, errors, pasteText }
 let sheet = null;   // 상태 변경 시트: { itemId, status, reason, basisDate, requiredBasisDate, errors }
-let emptyForm = { clientName: '', engagement: '', errors: {} }; // 첫 실행 화면 입력값
+let emptyForm = { clientName: '', engagement: '', service: 'audit', errors: {} }; // 첫 실행 화면 입력값
 let cal = null;     // 일정 탭 상태: { month, selected, form: { title, errors }, filter }
 let conf = null;    // 외부조회서 작성 상태: { type, setup, touched:Set, pasteText, bankBlank, resetArmed }
 let confResetTimer;
@@ -295,7 +295,7 @@ const actions = {
   // 첫 실행: 클라이언트명·감사명을 넣고 빈 state로 시작 → 자료 추가 화면으로
   'start-blank': (el) => {
     const form = document.getElementById('engagement-form');
-    emptyForm = { clientName: form.clientName.value, engagement: form.engagement.value, errors: {} };
+    emptyForm = { clientName: form.clientName.value, engagement: form.engagement.value, service: form.service?.value || 'audit', errors: {} };
     emptyForm.errors = validateEngagement(emptyForm);
     if (Object.keys(emptyForm.errors).length) {
       render();
@@ -304,7 +304,7 @@ const actions = {
     }
     state = createEmptyState(emptyForm);
     save(state);
-    emptyForm = { clientName: '', engagement: '', errors: {} };
+    emptyForm = { clientName: '', engagement: '', service: 'audit', errors: {} };
     location.hash = el.dataset.target === 'paste' ? '#/add/paste' : '#/add';
     render();
   },

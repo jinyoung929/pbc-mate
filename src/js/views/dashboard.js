@@ -6,15 +6,17 @@ import {
 } from '../lib/priority.js';
 import { isBundleEligible } from '../lib/bundle.js';
 import { esc, ICON, RISK_LABEL, RISK_SHORT, STATUS_LABEL } from './html.js';
+import { termsOf } from '../lib/terms.js';
+import { josa } from '../lib/korean.js';
 
 const MODE_TEXT = {
   need: {
-    hint: '감사 일정에 영향이 큰 자료부터 보여드려요.',
+    hint: (t) => `${t.schedule}에 영향이 큰 자료부터 보여드려요.`,
     group: '가장 급한 자료가 있는 담당자부터',
     top: '가장 급함',
   },
   elapsed: {
-    hint: '요청한 지 오래된 자료부터 보여드려요.',
+    hint: () => '요청한 지 오래된 자료부터 보여드려요.',
     group: '가장 오래 기다린 자료가 있는 담당자부터',
     top: '가장 오래됨',
   },
@@ -25,13 +27,14 @@ export function renderDashboard(state, { today, mode, isDemo }) {
   const sorted = sortItems(all.filter(isOpen), mode);
   const done = all.filter((x) => !isOpen(x));
   const text = MODE_TEXT[mode];
+  const t = termsOf(state.client.service);
 
   return `
     <div class="page dashboard">
       ${topbar(state.client, today, isDemo, 'dashboard')}
       ${sorted.length ? `
-        ${insightSection(insight(sorted[0], mode), summarize(all))}
-        ${modeToggle(mode, text.hint)}
+        ${insightSection(insight(sorted[0], mode, t.schedule), summarize(all), t)}
+        ${modeToggle(mode, text.hint(t), t)}
         ${timeline(sorted, today)}
         ${ownerCards(groupByOwner(sorted), state.people, done, text)}
         ${mobileList(sorted, text.top)}
@@ -43,7 +46,7 @@ export function renderDashboard(state, { today, mode, isDemo }) {
 export function topbar(client, today, isDemo, active) {
   return `
     <header class="topbar">
-      <div class="brand"><span class="brand-mark" aria-hidden="true"></span>PBC Mate</div>
+      <div class="brand">PBC Mate<span class="brand-mark" aria-hidden="true"></span></div>
       <span class="chip">${esc(client.name)} · ${esc(client.engagement)}</span>
       <nav class="tabs">
         <a class="tab ${active === 'dashboard' ? 'is-active' : ''}" href="#">대시보드</a>
@@ -54,13 +57,13 @@ export function topbar(client, today, isDemo, active) {
       </nav>
       ${isDemo ? `<span class="demo-date">시연 기준일 ${today.replaceAll('-', '.')}</span>` : ''}
       <div class="topbar-end">
-        <span class="org-label desktop-only">삼일회계법인</span>
+        <img class="org-logo desktop-only" src="assets/samil-logo.png" alt="삼일회계법인" width="150" height="29">
         <span class="today">${formatKoreanDay(today)}</span>
       </div>
     </header>`;
 }
 
-function insightSection(ins, sum) {
+function insightSection(ins, sum, t) {
   const headline = sum.urgent
     ? `오늘 먼저 챙길 자료가 ${sum.urgent}건 있어요`
     : '오늘 당장 급한 자료는 없어요';
@@ -68,7 +71,7 @@ function insightSection(ins, sum) {
     <section class="hero">
       <div class="hero-text">
         <h1>${headline}</h1>
-        <p class="hero-sub">감사 일정에 맞춰 급한 자료부터 정리했어요.</p>
+        <p class="hero-sub">${t.heroSub}</p>
         <div class="hero-insight"><span class="eyebrow">${ins.eyebrow}</span><b>${esc(ins.title)}</b><span>${ins.sub}</span></div>
       </div>
       <div class="hero-deco" aria-hidden="true"><span></span><span></span></div>
@@ -84,7 +87,7 @@ function insightSection(ins, sum) {
     </dl>`;
 }
 
-function modeToggle(mode, hint) {
+function modeToggle(mode, hint, t) {
   const btn = (value, caption, label) => `
     <button type="button" data-action="set-mode" data-mode="${value}" aria-pressed="${mode === value}">
       <span class="seg-caption">${caption}</span><span class="seg-label">${label}</span>
@@ -93,16 +96,16 @@ function modeToggle(mode, hint) {
     <section class="mode-bar">
       <div class="mode-title">우선순위 기준</div>
       <div class="segmented" role="group" aria-label="우선순위 기준">
-        ${btn('need', '감사 일정 기준', '필요일순')}
+        ${btn('need', `${t.schedule} 기준`, '필요일순')}
         ${btn('elapsed', '요청 경과 기준', '경과일순')}
       </div>
       <div class="mode-hint">${hint}</div>
       <span class="tip">
         <button type="button" class="tip-btn">${ICON.help}필요일이란?</button>
-        <span class="tip-box" role="tooltip"><b>필요일</b> = 해당 자료를 실제 감사 절차에 사용하기 시작하는 날<br>
-          <span class="muted">자료를 추가할 때 감사 절차를 고르면 자동으로 설정돼요.</span></span>
+        <span class="tip-box" role="tooltip"><b>필요일</b> = ${t.needDef}<br>
+          <span class="muted">자료를 추가할 때 ${t.procedure}${josa(t.procedure, '을', '를')} 적어 두면 메일 근거 문장에 들어가요.</span></span>
       </span>
-      <div class="mode-def mobile-only">필요일 = 해당 자료를 실제 감사 절차에 사용하기 시작하는 날</div>
+      <div class="mode-def mobile-only">필요일 = ${t.needDef}</div>
     </section>`;
 }
 

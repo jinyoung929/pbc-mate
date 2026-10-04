@@ -2,7 +2,7 @@
 //
 // state = {
 //   demoDate?: 'YYYY-MM-DD',   // 예시 자료일 때만. 이 날짜를 오늘로 보고 계산한다.
-//   client: { name, engagement },
+//   client: { name, engagement, service? },           // service: audit | tax | deal | advisory (없으면 audit)
 //   team:   { manager: { name, dept } },              // 매니저 참조 메일의 CC
 //   people: { [이름]: { dept, nudges, lastNudgedOn } },
 //   items:  [{ id, name, owner, requestedOn, neededOn, status, reason?,
@@ -64,7 +64,7 @@ export function sampleState() {
   const d = (n) => addDays(DEMO_DATE, n);
   return {
     demoDate: DEMO_DATE,
-    client: { name: '㈜한빛전자', engagement: '2026 기말감사' },
+    client: { name: '㈜한빛전자', engagement: '2026 기말감사', service: 'audit' },
     team: { manager: { name: '이서연 매니저', dept: '감사팀' } },
     people: {
       '박준호 과장': { dept: '재무팀', nudges: 0, lastNudgedOn: null },
@@ -222,9 +222,9 @@ export function addItems(state, values) {
 /**
  * 예시 자료 없이 직접 시작할 때의 빈 state. demoDate가 없어 실제 오늘(또는 ?today=) 기준으로 계산된다.
  */
-export function createEmptyState({ clientName, engagement }) {
+export function createEmptyState({ clientName, engagement, service = 'audit' }) {
   return {
-    client: { name: String(clientName).trim(), engagement: String(engagement).trim() },
+    client: { name: String(clientName).trim(), engagement: String(engagement).trim(), service },
     team: { manager: null },
     people: {},
     items: [],

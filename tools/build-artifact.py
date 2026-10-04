@@ -67,6 +67,13 @@ def main():
         return f'// ---- {rel}\nconst {mod_id(rel)} = (() => {{\n{head}\n{body}\nreturn {{ {", ".join(exported)} }};\n}})();\n'
 
     bundle = '\n'.join(transform(rel, sources[rel]) for rel in order)
+    # 화면 코드가 가리키는 src/assets 이미지는 단일 파일에 data URI로 넣는다 (Artifact는 외부 이미지를 막는다)
+    import base64, mimetypes
+    def inline_asset(m):
+        path = ROOT / 'src' / m.group(1)
+        mime = mimetypes.guess_type(path.name)[0] or 'application/octet-stream'
+        return f'src="data:{mime};base64,{base64.b64encode(path.read_bytes()).decode()}"'
+    bundle = re.sub(r'src="(assets/[^"]+)"', inline_asset, bundle)
     if '</script' in bundle:
         sys.exit('bundle contains </script>')
     css = (ROOT / 'src' / 'styles.css').read_text(encoding='utf-8')

@@ -6,6 +6,7 @@ import { leftText } from '../lib/priority.js';
 import { weekLabel, summaryLines } from '../lib/report.js';
 import { esc, ICON, STATUS_LABEL } from './html.js';
 import { topbar } from './dashboard.js';
+import { termsOf } from '../lib/terms.js';
 import { confirmOverview } from './overview.js';
 import { trackOverview } from '../lib/followup.js';
 
@@ -25,7 +26,7 @@ export function renderReport(state, report, { today, isDemo }) {
       <section class="report-head">
         <div>
           <div class="report-week">${weekLabel(report.week)}</div>
-          <h1>주간 현황 보고 <span>· 받은 것 · 남은 것 · 지연을 감사팀 안에서 공유해요</span></h1>
+          <h1>주간 현황 보고 <span>· 받은 것 · 남은 것 · 지연을 ${termsOf(state.client.service).team} 안에서 공유해요</span></h1>
         </div>
         ${counts.total ? `
           <div class="report-actions">

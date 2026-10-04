@@ -11,6 +11,7 @@ import { mailDates } from '../lib/calendar.js';
 import { mailField, mailDateDock } from './calendar.js';
 import { templateOf } from '../lib/pbcTemplate.js';
 import { esc, ICON, RISK_LABEL, STATUS_LABEL } from './html.js';
+import { termsOf } from '../lib/terms.js';
 
 /**
  * @param state 앱 상태
@@ -50,7 +51,7 @@ export function renderCompose(state, { today, clock, itemId, tone, copied, toast
         </div>
 
         ${timingBanner(timing)}
-        ${facts(item, history, last)}
+        ${facts(item, history, last, state)}
         ${mobileChips(item, history, last)}
         ${toneSlider(tone, recommended, item)}
         ${preview(mail, dates)}
@@ -102,14 +103,14 @@ function followEntry(item) {
 }
 
 // 데스크톱 상단 4칸: 필요일 / 남은 날 / 요청 후 / 독촉 이력
-function facts(item, history, last) {
+function facts(item, history, last, state) {
   const leftValue = item.left === 0 ? '오늘' : item.left > 0 ? `${item.left}일` : `${-item.left}일 지남`;
   return `
     <div class="facts desktop-only">
       <div class="fact">
         <div class="fact-label">필요일</div>
         <div class="fact-value">${formatMDW(item.neededOn)}</div>
-        <div class="fact-sub">${esc(item.procedure || '감사')} 절차 시작</div>
+        <div class="fact-sub">${esc(item.procedure || termsOf(state.client.service).defaultProcedure)} 절차 시작</div>
       </div>
       <div class="fact fact-risk risk-${item.risk}">
         <div class="fact-label">남은 날</div>

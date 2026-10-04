@@ -86,12 +86,13 @@ a { color: inherit; }
   display: flex; align-items: center; gap: 20px; height: 60px;
   margin: 0 -32px 0; padding: 0 32px; border-bottom: 1px solid var(--line); background: #fff;
 }
-.brand { display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 800; color: var(--ink); }
-.brand-mark { position: relative; display: inline-block; width: 18px; height: 18px; }
-.brand-mark::before, .brand-mark::after, .brand-mark span { content: ''; position: absolute; display: block; }
-.brand-mark::before { left: 0; top: 4px; width: 11px; height: 11px; background: var(--orange); }
-.brand-mark::after { left: 6px; top: 0; width: 11px; height: 11px; background: var(--tangerine); opacity: .85; mix-blend-mode: multiply; }
-.org-label { font-size: 12.5px; font-weight: 600; color: var(--ink-3); padding-right: 12px; border-right: 1px solid var(--line); }
+/* 브랜드 마크: 삼일 로고처럼 워드마크 오른쪽 위에 계단형 평행사변형 두 개 */
+.brand { display: inline-flex; align-items: flex-end; gap: 5px; font-size: 18px; font-weight: 800; color: var(--ink); letter-spacing: -0.02em; line-height: 1; }
+.brand-mark { position: relative; display: inline-block; width: 28px; height: 10px; margin-bottom: 10px; flex-shrink: 0; }
+.brand-mark::before, .brand-mark::after { content: ''; position: absolute; width: 13px; height: 4px; background: var(--orange); transform: skewX(-30deg); transform-origin: left bottom; }
+.brand-mark::before { left: 0; bottom: 0; }
+.brand-mark::after { left: 15px; bottom: 4px; }
+.org-logo { height: 24px; width: auto; display: block; margin-right: 4px; }
 .chip {
   height: 24px; padding: 0 8px; border: 1px solid var(--line); border-radius: var(--radius);
   background: #fff; font-size: 12.5px; font-weight: 500; color: var(--ink-2);
@@ -363,6 +364,13 @@ a { color: inherit; }
 .step-title { font-size: 14px; font-weight: 700; color: var(--ink); }
 .step-desc { font-size: 13px; color: var(--ink-3); margin-top: 2px; }
 .empty-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 560px; max-width: 100%; text-align: left; margin-top: 8px; }
+.service-field { grid-column: 1 / -1; }
+.service-opts { display: flex; flex-wrap: wrap; gap: 6px; }
+.service-opt { position: relative; }
+.service-opt input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.service-opt span { display: inline-flex; align-items: center; height: 34px; padding: 0 14px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; font-size: 13.5px; font-weight: 600; color: var(--ink-2); cursor: pointer; }
+.service-opt input:checked + span { background: var(--ink); border-color: var(--ink); color: #fff; }
+.service-opt input:focus-visible + span { outline: 2px solid var(--orange); outline-offset: 1px; }
 
 /* ---------- 대시보드 → 상세 연결 ---------- */
 a.btn { text-decoration: none; }
@@ -925,7 +933,7 @@ a.m-bundle { text-decoration: none; }
   .dashboard .topbar .demo-date, .report .topbar .demo-date, .calendar .topbar .demo-date, .confirm .topbar .demo-date { margin: 6px 0 0; }
   .dashboard .topbar-end, .report .topbar-end, .calendar .topbar-end, .confirm .topbar-end { position: absolute; right: 16px; top: 10px; }
   .dashboard .topbar .today, .report .topbar .today, .calendar .topbar .today, .confirm .topbar .today { font-size: 12.5px; }
-  .org-label { display: none; }
+  .org-logo { display: none; }
   .dashboard .topbar .btn, .report .topbar .btn, .calendar .topbar .btn, .confirm .topbar .btn { width: 40px; height: 40px; padding: 0; }
   .dashboard .topbar .btn svg, .report .topbar .btn svg, .calendar .topbar .btn svg, .confirm .topbar .btn svg { width: 18px; height: 18px; }
 
@@ -1726,7 +1734,7 @@ function leftText(left) {
 }
 
 /** 대시보드 상단의 1순위 안내 문구 */
-function insight(top, mode) {
+function insight(top, mode, schedule = '감사 일정') {
   const quoted = `‘${top.name}’${josa(top.name, '이', '가')}`;
   const sub = `필요일 ${formatMD(top.neededOn)} · ${leftText(top.left)}`;
 
@@ -1745,7 +1753,7 @@ function insight(top, mode) {
   else when = `${top.left}일 뒤 필요한`;
 
   return {
-    eyebrow: '감사 일정 기준 1순위',
+    eyebrow: `${schedule} 기준 1순위`,
     title: `${when} ${quoted} 가장 급해요.`,
     sub,
   };
@@ -1794,10 +1802,90 @@ function recommendBasis({ left, elapsed }) {
 return { TONES, toneIndex, toneName, recommendTone, recommendBasis };
 })();
 
+// ---- lib/terms.js
+const __m_lib_terms = (() => {
+
+// 부서(서비스)별 용어 사전. "요청 → 독촉 → 수령 → 보완" 흐름은 공통이고, 문구만 여기서 바뀐다.
+// client.service 가 없으면 감사(audit) 용어를 쓴다 (기존 데이터·예시 자료 호환).
+
+const SERVICES = [
+  { key: 'audit', label: '감사' },
+  { key: 'tax', label: '세무' },
+  { key: 'deal', label: '딜·실사' },
+  { key: 'advisory', label: '컨설팅·자문' },
+];
+
+const TERMS = {
+  audit: {
+    service: '감사',
+    mailTag: '감사',                 // 메일 제목 접두어: [한빛전자 감사]
+    schedule: '감사 일정',           // "감사 일정상 …", "감사 일정 기준"
+    procedure: '감사 절차',          // 자료를 쓰는 단계의 이름
+    procedureHint: '예: 차입금 실증',
+    defaultProcedure: '관련 감사',   // 절차를 안 적었을 때: "관련 감사 절차"
+    team: '감사팀',
+    engagementExample: '2026 기말감사',
+    needDef: '해당 자료를 실제 감사 절차에 사용하기 시작하는 날',
+    heroSub: '감사 일정에 맞춰 급한 자료부터 정리했어요.',
+    fitQuestion: '감사에 그대로 쓸 수 있나요?',
+  },
+  tax: {
+    service: '세무',
+    mailTag: '세무 신고',
+    schedule: '신고 일정',
+    procedure: '검토 항목',
+    procedureHint: '예: 법인세 세무조정',
+    defaultProcedure: '관련 신고',
+    team: '세무팀',
+    engagementExample: '2026 법인세 신고',
+    needDef: '해당 자료를 신고 검토에 쓰기 시작하는 날',
+    heroSub: '신고 일정에 맞춰 급한 자료부터 정리했어요.',
+    fitQuestion: '신고에 그대로 쓸 수 있나요?',
+  },
+  deal: {
+    service: '딜',
+    mailTag: '실사',
+    schedule: '실사 일정',
+    procedure: '실사 영역',
+    procedureHint: '예: 재무실사 운전자본 분석',
+    defaultProcedure: '관련 실사',
+    team: '딜 팀',
+    engagementExample: 'Project Alpha 재무실사',
+    needDef: '해당 자료를 실사 분석에 쓰기 시작하는 날',
+    heroSub: '실사 일정에 맞춰 급한 자료부터 정리했어요.',
+    fitQuestion: '실사에 그대로 쓸 수 있나요?',
+  },
+  advisory: {
+    service: '자문',
+    mailTag: '자문',
+    schedule: '프로젝트 일정',
+    procedure: '업무 단계',
+    procedureHint: '예: 내부통제 진단',
+    defaultProcedure: '관련 업무',
+    team: '프로젝트팀',
+    engagementExample: '2026 내부회계 자문',
+    needDef: '해당 자료를 업무에 쓰기 시작하는 날',
+    heroSub: '프로젝트 일정에 맞춰 급한 자료부터 정리했어요.',
+    fitQuestion: '업무에 그대로 쓸 수 있나요?',
+  },
+};
+
+function termsOf(service) {
+  return TERMS[service] || TERMS.audit;
+}
+
+function serviceLabel(key) {
+  return SERVICES.find((s) => s.key === key)?.label ?? SERVICES[0].label;
+}
+
+return { SERVICES, termsOf, serviceLabel };
+})();
+
 // ---- lib/mail.js
 const __m_lib_mail = (() => {
 const { addDays, daysBetween, formatMD } = __m_lib_dates;
 const { josa } = __m_lib_korean;
+const { termsOf } = __m_lib_terms;
 // 독촉 메일 문안 생성. 본문은 조각(segment) 배열로 만들어 화면에서 구분해 보여준다.
 //   field  : 자료에서 자동으로 들어간 값 (이름, 날짜, 자료명)
 //   reason : 왜 지금 필요한지 알려주는 일정 근거 문장
@@ -1835,21 +1923,22 @@ function replyBy(left, neededOn) {
   return { soft: by, firm: by };
 }
 
-/** 일정 근거 문장. 필요일 전이면 '시작해야 해서', 지났으면 '늦어지고 있어서' */
-function scheduleReason(tone, left, neededOn, proc) {
+/** 일정 근거 문장. 필요일 전이면 '시작해야 해서', 지났으면 '늦어지고 있어서'. schedule: '감사 일정' 등 부서별 용어 */
+function scheduleReason(tone, left, neededOn, proc, schedule = '감사 일정') {
   const late = left < 0;
   const when = late || tone === 'angel' ? longDate(neededOn) : relativeNeed(left, neededOn);
   const ending = { polite: '해서', firm: '하므로', cc: '하는데' }[tone];
   const lateEnding = { polite: '있어서', firm: '있으므로', cc: '있는데' }[tone];
 
+  const lead = `${schedule}상 `;
   if (tone === 'angel') {
     return late
-      ? [reason('감사 일정상 '), field(when), reason(`부터 ${proc}에 사용할 예정이었어서`)]
-      : [reason('감사 일정상 '), field(when), reason(`에 ${proc}를 시작할 예정이라`)];
+      ? [reason(lead), field(when), reason(`부터 ${proc}에 사용할 예정이었어서`)]
+      : [reason(lead), field(when), reason(`에 ${proc}를 시작할 예정이라`)];
   }
   return late
-    ? [reason('감사 일정상 '), field(when), reason(`에 시작했어야 할 ${proc}가 늦어지고 ${lateEnding}`)]
-    : [reason('감사 일정상 '), field(when), reason(` ${proc}를 시작해야 ${ending}`)];
+    ? [reason(lead), field(when), reason(`에 시작했어야 할 ${proc}가 늦어지고 ${lateEnding}`)]
+    : [reason(lead), field(when), reason(` ${proc}를 시작해야 ${ending}`)];
 }
 
 /**
@@ -1857,14 +1946,15 @@ function scheduleReason(tone, left, neededOn, proc) {
  */
 function buildMail({ item, person = {}, client, manager, today, tone }) {
   const left = daysBetween(today, item.neededOn);
-  const proc = `${item.procedure || '관련 감사'} 절차`;
+  const t = termsOf(client.service);
+  const proc = `${item.procedure || t.defaultProcedure} 절차`;
   const by = replyBy(left, item.neededOn);
   const part = item.status === 'part';
-  const prefix = `[${clientShortName(client.name)} 감사]`;
+  const prefix = `[${clientShortName(client.name)} ${t.mailTag}]`;
 
   const hello = [field(`${item.owner}님`)];
   const requested = [field(longDate(item.requestedOn)), plain(' 요청드린 '), field(item.name)];
-  const why = scheduleReason(tone, left, item.neededOn, proc);
+  const why = scheduleReason(tone, left, item.neededOn, proc, t.schedule);
 
   let subject;
   let segments;
@@ -1928,6 +2018,7 @@ const { formatMD, formatMDW } = __m_lib_dates;
 const { withDays, sortItems } = __m_lib_priority;
 const { recommendTone, toneIndex } = __m_lib_tone;
 const { clientShortName, replyBy, scheduleReason } = __m_lib_mail;
+const { termsOf } = __m_lib_terms;
 // 3. 묶음 독촉: 같은 담당자의 남은 자료를 메일 한 통으로
 
 
@@ -1968,10 +2059,11 @@ const STATUS_IN_MAIL = {
  */
 function buildBundleMail({ sorted, person = {}, client, manager, tone }) {
   const top = sorted[0];
-  const proc = `${top.procedure || '관련 감사'} 절차`;
+  const t = termsOf(client.service);
+  const proc = `${top.procedure || t.defaultProcedure} 절차`;
   const by = replyBy(top.left, top.neededOn);
-  const why = scheduleReason(tone, top.left, top.neededOn, proc);
-  const prefix = `[${clientShortName(client.name)} 감사]`;
+  const why = scheduleReason(tone, top.left, top.neededOn, proc, t.schedule);
+  const prefix = `[${clientShortName(client.name)} ${t.mailTag}]`;
   const count = sorted.length;
 
   const field = (text) => ({ kind: 'field', text });
@@ -2720,12 +2812,12 @@ return { CONF_TYPES, TRACK_LABEL, TYPE_ORDER, BANK_CATEGORIES, defaultSetup, val
 // ---- lib/engagement.js
 const __m_lib_engagement = (() => {
 
-// 첫 실행에서 예시 자료 없이 시작할 때 받는 최소 정보: 클라이언트명 · 감사명
+// 첫 실행에서 예시 자료 없이 시작할 때 받는 최소 정보: 클라이언트명 · 프로젝트명(감사명·신고·실사 등)
 
 function validateEngagement({ clientName, engagement }) {
   const errors = {};
   if (!String(clientName ?? '').trim()) errors.clientName = '클라이언트명을 입력해 주세요.';
-  if (!String(engagement ?? '').trim()) errors.engagement = '감사명을 입력해 주세요.';
+  if (!String(engagement ?? '').trim()) errors.engagement = '프로젝트명을 입력해 주세요.';
   return errors;
 }
 
@@ -2737,6 +2829,7 @@ const __m_lib_fix = (() => {
 const { daysBetween, formatMD } = __m_lib_dates;
 const { josa } = __m_lib_korean;
 const { clientShortName } = __m_lib_mail;
+const { termsOf } = __m_lib_terms;
 // 4. 보완 요청: 받은 자료에 문제가 있을 때, 사유에 맞는 재요청 메일
 // 톤은 항상 정중. 복사해도 상태는 '보완 요청' 그대로 둔다.
 
@@ -2796,8 +2889,9 @@ function buildFixMail({ item, person = {}, client, today, reason }) {
 
   const left = daysBetween(today, item.neededOn);
   const need = formatMD(item.neededOn);
-  const proc = `${item.procedure || '관련 감사'} 절차`;
-  const prefix = `[${clientShortName(client.name)} 감사] ${item.name}`;
+  const t = termsOf(client.service);
+  const proc = `${item.procedure || t.defaultProcedure} 절차`;
+  const prefix = `[${clientShortName(client.name)} ${t.mailTag}] ${item.name}`;
   const detail = fixDetail(item, reason);
 
   let subject;
@@ -2831,8 +2925,8 @@ function buildFixMail({ item, person = {}, client, today, reason }) {
   }
 
   const schedule = left < 0
-    ? [why(`감사 일정상 ${proc}를 `), field(need), why('부터 사용할 예정이었어서'), plain(', 가능한 한 빨리 부탁드립니다.')]
-    : [why(`감사 일정상 ${proc}를 `), field(need), why('에 시작해야 해서'), plain(', '), field(need), plain('까지 필요합니다.')];
+    ? [why(`${t.schedule}상 ${proc}를 `), field(need), why('부터 사용할 예정이었어서'), plain(', 가능한 한 빨리 부탁드립니다.')]
+    : [why(`${t.schedule}상 ${proc}를 `), field(need), why('에 시작해야 해서'), plain(', '), field(need), plain('까지 필요합니다.')];
 
   return {
     subject,
@@ -3663,7 +3757,7 @@ const { transitionItem } = __m_lib_status;
 //
 // state = {
 //   demoDate?: 'YYYY-MM-DD',   // 예시 자료일 때만. 이 날짜를 오늘로 보고 계산한다.
-//   client: { name, engagement },
+//   client: { name, engagement, service? },           // service: audit | tax | deal | advisory (없으면 audit)
 //   team:   { manager: { name, dept } },              // 매니저 참조 메일의 CC
 //   people: { [이름]: { dept, nudges, lastNudgedOn } },
 //   items:  [{ id, name, owner, requestedOn, neededOn, status, reason?,
@@ -3722,7 +3816,7 @@ function sampleState() {
   const d = (n) => addDays(DEMO_DATE, n);
   return {
     demoDate: DEMO_DATE,
-    client: { name: '㈜한빛전자', engagement: '2026 기말감사' },
+    client: { name: '㈜한빛전자', engagement: '2026 기말감사', service: 'audit' },
     team: { manager: { name: '이서연 매니저', dept: '감사팀' } },
     people: {
       '박준호 과장': { dept: '재무팀', nudges: 0, lastNudgedOn: null },
@@ -3880,9 +3974,9 @@ function addItems(state, values) {
 /**
  * 예시 자료 없이 직접 시작할 때의 빈 state. demoDate가 없어 실제 오늘(또는 ?today=) 기준으로 계산된다.
  */
-function createEmptyState({ clientName, engagement }) {
+function createEmptyState({ clientName, engagement, service = 'audit' }) {
   return {
-    client: { name: String(clientName).trim(), engagement: String(engagement).trim() },
+    client: { name: String(clientName).trim(), engagement: String(engagement).trim(), service },
     team: { manager: null },
     people: {},
     items: [],
@@ -3955,17 +4049,19 @@ const { addDays, formatMD, formatKoreanDay } = __m_lib_dates;
 const { withDays, isOpen, sortItems, groupByOwner, summarize, insight, leftText } = __m_lib_priority;
 const { isBundleEligible } = __m_lib_bundle;
 const { esc, ICON, RISK_LABEL, RISK_SHORT, STATUS_LABEL } = __m_views_html;
+const { termsOf } = __m_lib_terms;
+const { josa } = __m_lib_korean;
 // 1. 대시보드 — 레퍼런스 1 / 1-1 / 1-M
 
 
 const MODE_TEXT = {
   need: {
-    hint: '감사 일정에 영향이 큰 자료부터 보여드려요.',
+    hint: (t) => `${t.schedule}에 영향이 큰 자료부터 보여드려요.`,
     group: '가장 급한 자료가 있는 담당자부터',
     top: '가장 급함',
   },
   elapsed: {
-    hint: '요청한 지 오래된 자료부터 보여드려요.',
+    hint: () => '요청한 지 오래된 자료부터 보여드려요.',
     group: '가장 오래 기다린 자료가 있는 담당자부터',
     top: '가장 오래됨',
   },
@@ -3976,13 +4072,14 @@ function renderDashboard(state, { today, mode, isDemo }) {
   const sorted = sortItems(all.filter(isOpen), mode);
   const done = all.filter((x) => !isOpen(x));
   const text = MODE_TEXT[mode];
+  const t = termsOf(state.client.service);
 
   return `
     <div class="page dashboard">
       ${topbar(state.client, today, isDemo, 'dashboard')}
       ${sorted.length ? `
-        ${insightSection(insight(sorted[0], mode), summarize(all))}
-        ${modeToggle(mode, text.hint)}
+        ${insightSection(insight(sorted[0], mode, t.schedule), summarize(all), t)}
+        ${modeToggle(mode, text.hint(t), t)}
         ${timeline(sorted, today)}
         ${ownerCards(groupByOwner(sorted), state.people, done, text)}
         ${mobileList(sorted, text.top)}
@@ -3994,7 +4091,7 @@ function renderDashboard(state, { today, mode, isDemo }) {
 function topbar(client, today, isDemo, active) {
   return `
     <header class="topbar">
-      <div class="brand"><span class="brand-mark" aria-hidden="true"></span>PBC Mate</div>
+      <div class="brand">PBC Mate<span class="brand-mark" aria-hidden="true"></span></div>
       <span class="chip">${esc(client.name)} · ${esc(client.engagement)}</span>
       <nav class="tabs">
         <a class="tab ${active === 'dashboard' ? 'is-active' : ''}" href="#">대시보드</a>
@@ -4005,13 +4102,13 @@ function topbar(client, today, isDemo, active) {
       </nav>
       ${isDemo ? `<span class="demo-date">시연 기준일 ${today.replaceAll('-', '.')}</span>` : ''}
       <div class="topbar-end">
-        <span class="org-label desktop-only">삼일회계법인</span>
+        <img class="org-logo desktop-only" src="data:image/png;base64,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" alt="삼일회계법인" width="150" height="29">
         <span class="today">${formatKoreanDay(today)}</span>
       </div>
     </header>`;
 }
 
-function insightSection(ins, sum) {
+function insightSection(ins, sum, t) {
   const headline = sum.urgent
     ? `오늘 먼저 챙길 자료가 ${sum.urgent}건 있어요`
     : '오늘 당장 급한 자료는 없어요';
@@ -4019,7 +4116,7 @@ function insightSection(ins, sum) {
     <section class="hero">
       <div class="hero-text">
         <h1>${headline}</h1>
-        <p class="hero-sub">감사 일정에 맞춰 급한 자료부터 정리했어요.</p>
+        <p class="hero-sub">${t.heroSub}</p>
         <div class="hero-insight"><span class="eyebrow">${ins.eyebrow}</span><b>${esc(ins.title)}</b><span>${ins.sub}</span></div>
       </div>
       <div class="hero-deco" aria-hidden="true"><span></span><span></span></div>
@@ -4035,7 +4132,7 @@ function insightSection(ins, sum) {
     </dl>`;
 }
 
-function modeToggle(mode, hint) {
+function modeToggle(mode, hint, t) {
   const btn = (value, caption, label) => `
     <button type="button" data-action="set-mode" data-mode="${value}" aria-pressed="${mode === value}">
       <span class="seg-caption">${caption}</span><span class="seg-label">${label}</span>
@@ -4044,16 +4141,16 @@ function modeToggle(mode, hint) {
     <section class="mode-bar">
       <div class="mode-title">우선순위 기준</div>
       <div class="segmented" role="group" aria-label="우선순위 기준">
-        ${btn('need', '감사 일정 기준', '필요일순')}
+        ${btn('need', `${t.schedule} 기준`, '필요일순')}
         ${btn('elapsed', '요청 경과 기준', '경과일순')}
       </div>
       <div class="mode-hint">${hint}</div>
       <span class="tip">
         <button type="button" class="tip-btn">${ICON.help}필요일이란?</button>
-        <span class="tip-box" role="tooltip"><b>필요일</b> = 해당 자료를 실제 감사 절차에 사용하기 시작하는 날<br>
-          <span class="muted">자료를 추가할 때 감사 절차를 고르면 자동으로 설정돼요.</span></span>
+        <span class="tip-box" role="tooltip"><b>필요일</b> = ${t.needDef}<br>
+          <span class="muted">자료를 추가할 때 ${t.procedure}${josa(t.procedure, '을', '를')} 적어 두면 메일 근거 문장에 들어가요.</span></span>
       </span>
-      <div class="mode-def mobile-only">필요일 = 해당 자료를 실제 감사 절차에 사용하기 시작하는 날</div>
+      <div class="mode-def mobile-only">필요일 = ${t.needDef}</div>
     </section>`;
 }
 
@@ -4276,18 +4373,21 @@ return { renderDashboard, topbar };
 // ---- views/empty.js
 const __m_views_empty = (() => {
 const { esc } = __m_views_html;
+const { SERVICES } = __m_lib_terms;
 // 8. 빈 상태 · 첫 실행 — 레퍼런스 8
-// 예시 자료로 시작하거나, 클라이언트명·감사명을 넣고 직접 시작한다.
+// 예시 자료로 시작하거나, 부서·클라이언트명·프로젝트명을 넣고 직접 시작한다.
 
 
 /**
- * @param form { clientName, engagement, errors }
+ * @param form { clientName, engagement, service, errors }
  */
-function renderEmpty({ clientName = '', engagement = '', errors = {} } = {}) {
+function renderEmpty({ clientName = '', engagement = '', service = 'audit', errors = {} } = {}) {
+  const services = SERVICES.map((s) => `
+    <label class="service-opt"><input type="radio" name="service" value="${s.key}" ${s.key === service ? 'checked' : ''}><span>${s.label}</span></label>`).join('');
   return `
     <div class="page empty">
       <header class="topbar">
-        <div class="brand"><span class="brand-mark" aria-hidden="true"></span>PBC Mate</div>
+        <div class="brand">PBC Mate<span class="brand-mark" aria-hidden="true"></span></div>
         <span class="chip">클라이언트 이름을 정해주세요</span>
       </header>
 
@@ -4305,14 +4405,18 @@ function renderEmpty({ clientName = '', engagement = '', errors = {} } = {}) {
         <p>자료마다 필요일을 넣으면 남은 날로 급한 순서를 정하고, 재촉 메일 초안까지 만들어요.</p>
 
         <form class="empty-form" id="engagement-form" novalidate>
+          <div class="f service-field">
+            <span class="f-label">업무 구분 <small>메일 문구와 용어가 바뀌어요</small></span>
+            <div class="service-opts" role="radiogroup" aria-label="업무 구분">${services}</div>
+          </div>
           <label class="f ${errors.clientName ? 'has-error' : ''}">
             <span class="f-label">클라이언트명</span>
             <input type="text" name="clientName" value="${esc(clientName)}" placeholder="예: ㈜한빛전자" autocomplete="organization">
             ${errors.clientName ? `<span class="f-error">${esc(errors.clientName)}</span>` : ''}
           </label>
           <label class="f ${errors.engagement ? 'has-error' : ''}">
-            <span class="f-label">감사명</span>
-            <input type="text" name="engagement" value="${esc(engagement)}" placeholder="예: 2026 기말감사" autocomplete="off">
+            <span class="f-label">프로젝트명</span>
+            <input type="text" name="engagement" value="${esc(engagement)}" placeholder="예: 2026 기말감사 · 법인세 신고 · 재무실사" autocomplete="off">
             ${errors.engagement ? `<span class="f-error">${esc(errors.engagement)}</span>` : ''}
           </label>
         </form>
@@ -4325,7 +4429,7 @@ function renderEmpty({ clientName = '', engagement = '', errors = {} } = {}) {
       </main>
 
       <section class="steps">
-        ${step(1, '자료와 필요일 넣기', '감사 절차를 연결하면 그 시작일이 필요일이 돼요.')}
+        ${step(1, '자료와 필요일 넣기', '자료를 쓰기 시작하는 날이 필요일이 돼요.')}
         ${step(2, '남은 날로 위험도 확인', '2일 이내 · 3~7일 · 8일 이상으로 나눠 보여드려요.')}
         ${step(3, '초안 복사해 아웃룩에', '담당자별로 묶고, 톤을 고른 뒤 복사만 하면 돼요.')}
       </section>
@@ -4553,6 +4657,7 @@ const { mailDates } = __m_lib_calendar;
 const { mailField, mailDateDock } = __m_views_calendar;
 const { templateOf } = __m_lib_pbcTemplate;
 const { esc, ICON, RISK_LABEL, STATUS_LABEL } = __m_views_html;
+const { termsOf } = __m_lib_terms;
 // 2. 단건 독촉 — 레퍼런스 2 / 2-1 / 2-2 / 2-3 / 2-M
 // 데스크톱은 대시보드 위 오른쪽 패널, 모바일(720px 이하)은 전체 화면.
 
@@ -4595,7 +4700,7 @@ function renderCompose(state, { today, clock, itemId, tone, copied, toast }) {
         </div>
 
         ${timingBanner(timing)}
-        ${facts(item, history, last)}
+        ${facts(item, history, last, state)}
         ${mobileChips(item, history, last)}
         ${toneSlider(tone, recommended, item)}
         ${preview(mail, dates)}
@@ -4647,14 +4752,14 @@ function followEntry(item) {
 }
 
 // 데스크톱 상단 4칸: 필요일 / 남은 날 / 요청 후 / 독촉 이력
-function facts(item, history, last) {
+function facts(item, history, last, state) {
   const leftValue = item.left === 0 ? '오늘' : item.left > 0 ? `${item.left}일` : `${-item.left}일 지남`;
   return `
     <div class="facts desktop-only">
       <div class="fact">
         <div class="fact-label">필요일</div>
         <div class="fact-value">${formatMDW(item.neededOn)}</div>
-        <div class="fact-sub">${esc(item.procedure || '감사')} 절차 시작</div>
+        <div class="fact-sub">${esc(item.procedure || termsOf(state.client.service).defaultProcedure)} 절차 시작</div>
       </div>
       <div class="fact fact-risk risk-${item.risk}">
         <div class="fact-label">남은 날</div>
@@ -4897,6 +5002,7 @@ const { formatMD, formatMDW } = __m_lib_dates;
 const { withDays, leftText } = __m_lib_priority;
 const { FIX_REASONS, fixReasonLabel, fixDetail, buildFixMail } = __m_lib_fix;
 const { esc, ICON, STATUS_LABEL } = __m_views_html;
+const { termsOf } = __m_lib_terms;
 const { mailDates } = __m_lib_calendar;
 const { mailField, mailDateDock } = __m_views_calendar;
 // 4. 보완 요청 — 레퍼런스 4 / 4-1
@@ -4952,7 +5058,7 @@ function renderFix(state, { today, itemId, reason, copied, toast }) {
       <div class="drawer-body">
         <div class="compose-head">
           <div class="compose-who">
-            <div class="eyebrow desktop-only">받은 자료 확인 · 감사에 그대로 쓸 수 있나요?</div>
+            <div class="eyebrow desktop-only">받은 자료 확인 · ${termsOf(state.client.service).fitQuestion}</div>
             <h2 id="fix-title">${esc(item.name)}</h2>
             <div class="fix-sub">${esc(item.owner)}${person.dept ? ` · ${esc(person.dept)}` : ''} · ${formatMDW(item.neededOn)} 필요 · ${leftText(item.left)}</div>
           </div>
@@ -5034,6 +5140,8 @@ const { riskOf, leftText } = __m_lib_priority;
 const { parsePaste, markDuplicates, rowErrorText, leftOf, normalizeDate } = __m_lib_add;
 const { PBC_TEMPLATES, TEMPLATE_ORDER, templateForName, defaultBasisDate } = __m_lib_pbcTemplate;
 const { esc, ICON, RISK_LABEL } = __m_views_html;
+const { termsOf } = __m_lib_terms;
+const { josa } = __m_lib_korean;
 // 6. 자료 추가 — 레퍼런스 6 / 6-1
 // 데스크톱은 가운데 모달, 모바일(720px 이하)은 전체 화면.
 
@@ -5094,6 +5202,7 @@ function field(label, name, value, { type = 'text', placeholder = '', error = ''
 }
 
 function singleForm(state, today, form, errors) {
+  const t = termsOf(state.client.service);
   // 자료 요청은 회사 담당자에게 한다. 외부조회의 조회처(은행·거래처 등)는 최근 담당자에서 뺀다.
   const counterparties = new Set(state.items.filter((x) => x.kind === 'confirmation').map((x) => x.owner));
   const owners = Object.keys(state.people).filter((o) => !counterparties.has(o));
@@ -5121,9 +5230,9 @@ function singleForm(state, today, form, errors) {
       </div>
 
       <div class="add-col need-panel">
-        ${field('이 자료를 쓰는 감사 절차', 'procedure', form.procedure, { placeholder: '예: 차입금 실증', hint: '선택 · 독촉 메일의 일정 근거에 들어가요', list: 'procedure-list' })}
+        ${field(`이 자료를 쓰는 ${t.procedure}`, 'procedure', form.procedure, { placeholder: t.procedureHint, hint: '선택 · 독촉 메일의 일정 근거에 들어가요', list: 'procedure-list' })}
         <datalist id="procedure-list">${procedures.map((p) => `<option value="${esc(p)}">`).join('')}</datalist>
-        ${field('필요일', 'neededOn', form.neededOn, { type: 'date', error: errors.neededOn, hint: '감사 절차를 시작하는 날' })}
+        ${field('필요일', 'neededOn', form.neededOn, { type: 'date', error: errors.neededOn, hint: `${t.procedure}${josa(t.procedure, '을', '를')} 시작하는 날` })}
         ${needPreview(form.neededOn, today)}
         <div class="need-note">필요일을 기준으로 남은 날·위험도·우선순위가 대시보드에서 자동으로 계산돼요.</div>
       </div>
@@ -5325,6 +5434,7 @@ const { leftText } = __m_lib_priority;
 const { weekLabel, summaryLines } = __m_lib_report;
 const { esc, ICON, STATUS_LABEL } = __m_views_html;
 const { topbar } = __m_views_dashboard;
+const { termsOf } = __m_lib_terms;
 const { confirmOverview } = __m_views_overview;
 const { trackOverview } = __m_lib_followup;
 // 7. 주간 현황 보고 — 레퍼런스 7
@@ -5347,7 +5457,7 @@ function renderReport(state, report, { today, isDemo }) {
       <section class="report-head">
         <div>
           <div class="report-week">${weekLabel(report.week)}</div>
-          <h1>주간 현황 보고 <span>· 받은 것 · 남은 것 · 지연을 감사팀 안에서 공유해요</span></h1>
+          <h1>주간 현황 보고 <span>· 받은 것 · 남은 것 · 지연을 ${termsOf(state.client.service).team} 안에서 공유해요</span></h1>
         </div>
         ${counts.total ? `
           <div class="report-actions">
@@ -6091,7 +6201,7 @@ let bundle = null;  // 묶음 독촉 화면 상태: { owner, tone, copied, toast
 let fix = null;     // 보완 요청 화면 상태: { itemId, reason, copied, toast }
 let add = null;     // 자료 추가 화면 상태: { tab, form, errors, pasteText }
 let sheet = null;   // 상태 변경 시트: { itemId, status, reason, basisDate, requiredBasisDate, errors }
-let emptyForm = { clientName: '', engagement: '', errors: {} }; // 첫 실행 화면 입력값
+let emptyForm = { clientName: '', engagement: '', service: 'audit', errors: {} }; // 첫 실행 화면 입력값
 let cal = null;     // 일정 탭 상태: { month, selected, form: { title, errors }, filter }
 let conf = null;    // 외부조회서 작성 상태: { type, setup, touched:Set, pasteText, bankBlank, resetArmed }
 let confResetTimer;
@@ -6337,7 +6447,7 @@ const actions = {
   // 첫 실행: 클라이언트명·감사명을 넣고 빈 state로 시작 → 자료 추가 화면으로
   'start-blank': (el) => {
     const form = document.getElementById('engagement-form');
-    emptyForm = { clientName: form.clientName.value, engagement: form.engagement.value, errors: {} };
+    emptyForm = { clientName: form.clientName.value, engagement: form.engagement.value, service: form.service?.value || 'audit', errors: {} };
     emptyForm.errors = validateEngagement(emptyForm);
     if (Object.keys(emptyForm.errors).length) {
       render();
@@ -6346,7 +6456,7 @@ const actions = {
     }
     state = createEmptyState(emptyForm);
     save(state);
-    emptyForm = { clientName: '', engagement: '', errors: {} };
+    emptyForm = { clientName: '', engagement: '', service: 'audit', errors: {} };
     location.hash = el.dataset.target === 'paste' ? '#/add/paste' : '#/add';
     render();
   },

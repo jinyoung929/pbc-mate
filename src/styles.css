@@ -74,12 +74,13 @@ a { color: inherit; }
   display: flex; align-items: center; gap: 20px; height: 60px;
   margin: 0 -32px 0; padding: 0 32px; border-bottom: 1px solid var(--line); background: #fff;
 }
-.brand { display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 800; color: var(--ink); }
-.brand-mark { position: relative; display: inline-block; width: 18px; height: 18px; }
-.brand-mark::before, .brand-mark::after, .brand-mark span { content: ''; position: absolute; display: block; }
-.brand-mark::before { left: 0; top: 4px; width: 11px; height: 11px; background: var(--orange); }
-.brand-mark::after { left: 6px; top: 0; width: 11px; height: 11px; background: var(--tangerine); opacity: .85; mix-blend-mode: multiply; }
-.org-label { font-size: 12.5px; font-weight: 600; color: var(--ink-3); padding-right: 12px; border-right: 1px solid var(--line); }
+/* 브랜드 마크: 삼일 로고처럼 워드마크 오른쪽 위에 계단형 평행사변형 두 개 */
+.brand { display: inline-flex; align-items: flex-end; gap: 5px; font-size: 18px; font-weight: 800; color: var(--ink); letter-spacing: -0.02em; line-height: 1; }
+.brand-mark { position: relative; display: inline-block; width: 28px; height: 10px; margin-bottom: 10px; flex-shrink: 0; }
+.brand-mark::before, .brand-mark::after { content: ''; position: absolute; width: 13px; height: 4px; background: var(--orange); transform: skewX(-30deg); transform-origin: left bottom; }
+.brand-mark::before { left: 0; bottom: 0; }
+.brand-mark::after { left: 15px; bottom: 4px; }
+.org-logo { height: 24px; width: auto; display: block; margin-right: 4px; }
 .chip {
   height: 24px; padding: 0 8px; border: 1px solid var(--line); border-radius: var(--radius);
   background: #fff; font-size: 12.5px; font-weight: 500; color: var(--ink-2);
@@ -351,6 +352,13 @@ a { color: inherit; }
 .step-title { font-size: 14px; font-weight: 700; color: var(--ink); }
 .step-desc { font-size: 13px; color: var(--ink-3); margin-top: 2px; }
 .empty-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 560px; max-width: 100%; text-align: left; margin-top: 8px; }
+.service-field { grid-column: 1 / -1; }
+.service-opts { display: flex; flex-wrap: wrap; gap: 6px; }
+.service-opt { position: relative; }
+.service-opt input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.service-opt span { display: inline-flex; align-items: center; height: 34px; padding: 0 14px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; font-size: 13.5px; font-weight: 600; color: var(--ink-2); cursor: pointer; }
+.service-opt input:checked + span { background: var(--ink); border-color: var(--ink); color: #fff; }
+.service-opt input:focus-visible + span { outline: 2px solid var(--orange); outline-offset: 1px; }
 
 /* ---------- 대시보드 → 상세 연결 ---------- */
 a.btn { text-decoration: none; }
@@ -913,7 +921,7 @@ a.m-bundle { text-decoration: none; }
   .dashboard .topbar .demo-date, .report .topbar .demo-date, .calendar .topbar .demo-date, .confirm .topbar .demo-date { margin: 6px 0 0; }
   .dashboard .topbar-end, .report .topbar-end, .calendar .topbar-end, .confirm .topbar-end { position: absolute; right: 16px; top: 10px; }
   .dashboard .topbar .today, .report .topbar .today, .calendar .topbar .today, .confirm .topbar .today { font-size: 12.5px; }
-  .org-label { display: none; }
+  .org-logo { display: none; }
   .dashboard .topbar .btn, .report .topbar .btn, .calendar .topbar .btn, .confirm .topbar .btn { width: 40px; height: 40px; padding: 0; }
   .dashboard .topbar .btn svg, .report .topbar .btn svg, .calendar .topbar .btn svg, .confirm .topbar .btn svg { width: 18px; height: 18px; }
 

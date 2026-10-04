@@ -6,6 +6,8 @@ import { riskOf, leftText } from '../lib/priority.js';
 import { parsePaste, markDuplicates, rowErrorText, leftOf, normalizeDate } from '../lib/add.js';
 import { PBC_TEMPLATES, TEMPLATE_ORDER, templateForName, defaultBasisDate } from '../lib/pbcTemplate.js';
 import { esc, ICON, RISK_LABEL } from './html.js';
+import { termsOf } from '../lib/terms.js';
+import { josa } from '../lib/korean.js';
 
 export const PASTE_EXAMPLE = [
   '자료명\t담당자\t요청일\t필요일\t감사절차',
@@ -63,6 +65,7 @@ function field(label, name, value, { type = 'text', placeholder = '', error = ''
 }
 
 function singleForm(state, today, form, errors) {
+  const t = termsOf(state.client.service);
   // 자료 요청은 회사 담당자에게 한다. 외부조회의 조회처(은행·거래처 등)는 최근 담당자에서 뺀다.
   const counterparties = new Set(state.items.filter((x) => x.kind === 'confirmation').map((x) => x.owner));
   const owners = Object.keys(state.people).filter((o) => !counterparties.has(o));
@@ -90,9 +93,9 @@ function singleForm(state, today, form, errors) {
       </div>
 
       <div class="add-col need-panel">
-        ${field('이 자료를 쓰는 감사 절차', 'procedure', form.procedure, { placeholder: '예: 차입금 실증', hint: '선택 · 독촉 메일의 일정 근거에 들어가요', list: 'procedure-list' })}
+        ${field(`이 자료를 쓰는 ${t.procedure}`, 'procedure', form.procedure, { placeholder: t.procedureHint, hint: '선택 · 독촉 메일의 일정 근거에 들어가요', list: 'procedure-list' })}
         <datalist id="procedure-list">${procedures.map((p) => `<option value="${esc(p)}">`).join('')}</datalist>
-        ${field('필요일', 'neededOn', form.neededOn, { type: 'date', error: errors.neededOn, hint: '감사 절차를 시작하는 날' })}
+        ${field('필요일', 'neededOn', form.neededOn, { type: 'date', error: errors.neededOn, hint: `${t.procedure}${josa(t.procedure, '을', '를')} 시작하는 날` })}
         ${needPreview(form.neededOn, today)}
         <div class="need-note">필요일을 기준으로 남은 날·위험도·우선순위가 대시보드에서 자동으로 계산돼요.</div>
       </div>
