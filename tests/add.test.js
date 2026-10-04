@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import {
   normalizeDate, ownerName, validateItem, parsePaste, rowErrorText,
 } from '../src/js/lib/add.js';
-import { sampleState, addItems, baseDateOf, DEMO_DATE } from '../src/js/store.js';
+import { addItems, baseDateOf, DEMO_DATE } from '../src/js/store.js';
+import { sampleState } from './fixtures.js';
 import { withDays, isOpen, sortItems, groupByOwner, riskOf } from '../src/js/lib/priority.js';
 import { buildMail } from '../src/js/lib/mail.js';
 
@@ -164,4 +165,24 @@ test('일괄 저장 후 자료 수 증가, 담당자 묶임', () => {
   assert.equal(Object.keys(after.people).length, 3, '기존 담당자 2명에게 묶임');
   const groups = groupByOwner(sortItems(after.items.map((x) => withDays(x, BASE)).filter(isOpen), 'need'));
   assert.equal(groups.find((g) => g.owner === '박준호 과장').items.length, 2);
+});
+
+test('중복 요청: 자료명이 대시보드와 같으면(띄어쓰기·대소문자 무시) 막는다', async () => {
+  const { findExisting, duplicateMessage, markDuplicates } = await import('../src/js/lib/add.js');
+  const items = sampleState().items;
+  assert.equal(findExisting(items, ' 재고실사  결과표 ').id, 'i3');
+  assert.equal(duplicateMessage(items, '재고실사결과표'), '이미 대시보드에 있는 자료예요 (김민지 대리 · 미회신)');
+  assert.equal(duplicateMessage(items, '차입금 약정서 사본'), null);
+  assert.equal(findExisting(items, ''), undefined);
+
+  const text = ['재고실사 결과표\t김민지 대리\t2026-09-30\t2026-10-07',
+    '차입금 약정서\t박준호 과장\t2026-09-30\t2026-10-08',
+    '차입금  약정서\t박준호 과장\t2026-09-30\t2026-10-09'].join('\n');
+  const parsed = markDuplicates(parsePaste(text, BASE), items);
+  assert.equal(parsed.rows[0].value, null);
+  assert.equal(parsed.rows[0].errors.duplicate, '이미 있는 자료');
+  assert.ok(parsed.rows[1].value, '새 자료는 그대로');
+  assert.equal(parsed.rows[2].errors.duplicate, '2행과 중복');
+  assert.equal(parsed.errorCount, 2);
+  assert.equal(rowErrorText(parsed.rows[0].errors), '이미 있는 자료');
 });

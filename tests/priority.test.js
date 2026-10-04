@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import {
   riskOf, withDays, isOpen, sortItems, groupByOwner, summarize, leftText, insight,
 } from '../src/js/lib/priority.js';
-import { sampleState, DEMO_DATE, baseDateOf } from '../src/js/store.js';
+import { DEMO_DATE, baseDateOf } from '../src/js/store.js';
+import { sampleState } from './fixtures.js';
 
 // 예시 자료는 시연 기준일(레퍼런스 화면과 같은 2026-10-01)로 고정돼 있다.
 const TODAY = DEMO_DATE;

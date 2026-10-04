@@ -6,7 +6,7 @@ import { withDays, isOpen, sortItems, groupByOwner, leftText } from './priority.
 import { clientShortName } from './mail.js';
 import { fixReasonLabel } from './fix.js';
 
-const STATUS = { none: '미회신', part: '일부 수령', fix: '보완 요청', done: '완료' };
+const STATUS = { none: '미회신', part: '일부 수령', fix: '보완 요청', follow: '후속 절차', done: '완료' };
 const RISK = { late: '지연', high: '2일 이내', mid: '3~7일', low: '8일 이상' };
 const DOW = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -55,6 +55,7 @@ export function buildReport(state, today) {
     none: count('none'),
     part: count('part'),
     fix: count('fix'),
+    follow: count('follow'), // 외부조회 후속 절차. 칸 합계(완료+미회신+일부 수령+보완 요청+후속 절차)가 전체와 같아지도록
     open: open.length,
     late: open.filter((x) => x.risk === 'late').length,
     urgent: open.filter((x) => x.risk === 'late' || x.risk === 'high').length,
@@ -83,6 +84,10 @@ export function buildReport(state, today) {
     riskLabel: isOpen(x) ? RISK[x.risk] : '',
     lastNudgedOn: lastOf(x.nudges)?.on ?? null,
     fixReason: x.status === 'fix' && x.fix?.reason ? fixReasonLabel(x.fix.reason) : null,
+    // 외부조회 후속 절차를 마친 건: 수행자·검토자 (감사기준서 230)
+    signoff: x.follow?.signoff
+      ? `수행 ${x.follow.signoff.preparer}${x.follow.signoff.reviewer ? ` · 검토 ${x.follow.signoff.reviewer}` : ' · 검토 전'}`
+      : null,
   });
 
   const owners = groupByOwner(open).map(({ owner, items }) => ({

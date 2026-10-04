@@ -9,6 +9,7 @@ import { sendTiming } from '../lib/timing.js';
 import { timingChip, timingBanner } from './timing.js';
 import { mailDates } from '../lib/calendar.js';
 import { mailField, mailDateDock } from './calendar.js';
+import { templateOf } from '../lib/pbcTemplate.js';
 import { esc, ICON, RISK_LABEL, STATUS_LABEL } from './html.js';
 
 /**
@@ -53,6 +54,7 @@ export function renderCompose(state, { today, clock, itemId, tone, copied, toast
         ${mobileChips(item, history, last)}
         ${toneSlider(tone, recommended, item)}
         ${preview(mail, dates)}
+        ${item.kind === 'confirmation' ? followEntry(item) : templateNote(item)}
         ${mailDateDock(dates, state)}
       </div>
 
@@ -71,6 +73,32 @@ export function renderCompose(state, { today, clock, itemId, tone, copied, toast
             <small>독촉 이력에 기록했어요<span class="desktop-only"> · 발송은 아웃룩에서 직접 해주세요</span></small></span>
         </div>` : ''}
     </aside>`;
+}
+
+// 표준 양식으로 요청한 자료: 독촉하면서 양식을 다시 보낼 수 있게
+function templateNote(item) {
+  const t = templateOf(item);
+  if (!t) return '';
+  return `
+    <section class="tpl-note">
+      <div class="section-label">요청 양식 <small class="fu-count">${item.basisDate ? `${formatMD(item.basisDate)} 기준 · ` : ''}${t.columns.length}개 항목${t.sign ? ' · 서명 필요' : ''}</small></div>
+      <div class="tpl-cols">${t.columns.map((c) => `<i>${esc(c)}</i>`).join('')}</div>
+      <button type="button" class="btn btn-sub tpl-copy" data-action="copy-template" data-item="${esc(item.id)}">${ICON.copy}엑셀용 요청 양식 다시 복사</button>
+    </section>`;
+}
+
+// 외부조회 건: 독촉을 마치고도 회신이 없거나, 회신 금액이 다르면 후속 절차로 넘어간다.
+function followEntry(item) {
+  return `
+    <section class="follow-entry">
+      <div class="section-label">회신 결과가 나왔나요?</div>
+      <div class="follow-entry-btns">
+        <button type="button" class="btn btn-sub" data-action="start-follow" data-type="noreply" data-item="${esc(item.id)}">
+          ${ICON.follow}<span><b>미회수로 확정</b><small>대체적 절차 가이드로</small></span></button>
+        <button type="button" class="btn btn-sub" data-action="start-follow" data-type="diff" data-item="${esc(item.id)}">
+          ${ICON.follow}<span><b>회신 받음 · 금액 차이</b><small>차이 조정표로</small></span></button>
+      </div>
+    </section>`;
 }
 
 // 데스크톱 상단 4칸: 필요일 / 남은 날 / 요청 후 / 독촉 이력

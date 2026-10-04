@@ -47,7 +47,8 @@ export function topbar(client, today, isDemo, active) {
       <span class="chip">${esc(client.name)} · ${esc(client.engagement)}</span>
       <nav class="tabs">
         <a class="tab ${active === 'dashboard' ? 'is-active' : ''}" href="#">대시보드</a>
-        <a class="tab" href="#/add">자료 요청</a>
+        <a class="tab" href="#/add">자료 요청</a> <!-- 자료 추가 창은 이 탭으로 연다 (+ 자료 추가 버튼은 같은 기능이라 뺐다) -->
+        <a class="tab ${active === 'confirm' ? 'is-active' : ''}" href="#/confirm">외부조회서</a>
         <a class="tab ${active === 'calendar' ? 'is-active' : ''}" href="#/calendar">일정</a>
         <a class="tab ${active === 'report' ? 'is-active' : ''}" href="#/report">주간 보고</a>
       </nav>
@@ -55,9 +56,6 @@ export function topbar(client, today, isDemo, active) {
       <div class="topbar-end">
         <span class="org-label desktop-only">삼일회계법인</span>
         <span class="today">${formatKoreanDay(today)}</span>
-        <a class="btn btn-sub" href="#/add" aria-label="자료 추가">
-          <span class="desktop-only">+ 자료 추가</span><span class="mobile-only">${ICON.plus}</span>
-        </a>
       </div>
     </header>`;
 }
@@ -175,7 +173,12 @@ function fixHref(item) {
 }
 
 // 자료를 눌렀을 때: 보완 요청 자료는 보완 요청 화면, 나머지는 단건 독촉
+function followHref(item) {
+  return `#/follow/${encodeURIComponent(item.id)}`;
+}
+
 function itemHref(x) {
+  if (x.status === 'follow') return followHref(x);
   return x.status === 'fix' ? fixHref(x) : composeHref(x);
 }
 
@@ -193,7 +196,14 @@ function riskBadge(risk, short = false) {
 
 function itemMeta(x) {
   if (x.status === 'fix') return x.reason || '보완 요청';
+  if (x.status === 'follow') return x.follow?.type === 'diff' ? '회신 금액 차이 · 조정 중' : '미회수 확정 · 대체적 절차 진행 중';
   return `${formatMD(x.neededOn)} 필요 · 요청 ${formatMD(x.requestedOn)} · D+${x.elapsed}`;
+}
+
+function rowActionLabel(x) {
+  if (x.status === 'fix') return '보완 재요청 메일 쓰기';
+  if (x.status === 'follow') return '후속 절차 열기';
+  return '이 자료만 따로 독촉';
 }
 
 function leftBig(left) {
@@ -211,6 +221,10 @@ function ownerCards(groups, people, done, text) {
       ? `마지막 독촉 ${formatMD(person.lastNudgedOn)} · 독촉 ${person.nudges}회`
       : '아직 독촉하지 않았어요';
 
+    // 묶음 독촉 대상이 2건 이상인 카드: 항목마다 따로 보내는 경우를 위한 버튼을 붙인다.
+    const bundlable = g.items.filter(isBundleEligible);
+    const perItem = bundlable.length > 1;
+
     const rows = g.items.map((x) => `
       <div class="row ${x.id === topId ? 'is-top' : ''}">
         <div class="row-main">
@@ -219,6 +233,7 @@ function ownerCards(groups, people, done, text) {
             ${x.id === topId ? `<span class="top-badge">${text.top}</span>` : ''}
           </div>
           <div class="row-meta">${statusBadge(x.status)}<span class="ellipsis">${esc(itemMeta(x))}</span></div>
+          ${perItem ? `<a class="row-action" href="${itemHref(x)}">${ICON.mail}${rowActionLabel(x)}</a>` : ''}
         </div>
         <div class="row-left">
           <div class="left-big">${leftBig(x.left)}</div>
@@ -230,8 +245,7 @@ function ownerCards(groups, people, done, text) {
       ? `<div class="done-line">${ICON.done}완료 ${doneHere.length}건 · ${doneHere.map((x) => esc(x.name)).join(', ')}</div>`
       : '';
 
-    // 버튼 건수는 묶음 독촉 화면과 같은 기준(보완 요청 제외)으로 센다.
-    const bundlable = g.items.filter(isBundleEligible);
+    // 버튼 건수는 묶음 독촉 화면과 같은 기준(보완 요청 제외)으로 센다. (bundlable은 위에서 계산)
     let cta;
     if (bundlable.length > 1) {
       cta = `<a class="btn btn-cta" href="${bundleHref(g.owner)}">
@@ -239,7 +253,9 @@ function ownerCards(groups, people, done, text) {
     } else if (bundlable.length === 1) {
       cta = `<a class="btn btn-sub" href="${composeHref(bundlable[0])}">${esc(bundlable[0].name)} 독촉하기</a>`;
     } else {
-      cta = `<a class="btn btn-sub" href="${fixHref(g.items[0])}">보완 재요청 메일 쓰기</a>`;
+      cta = g.items[0].status === 'follow'
+        ? `<a class="btn btn-sub" href="${followHref(g.items[0])}">후속 절차 열기</a>`
+        : `<a class="btn btn-sub" href="${fixHref(g.items[0])}">보완 재요청 메일 쓰기</a>`;
     }
 
     return `

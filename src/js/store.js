@@ -54,7 +54,12 @@ export function baseDateOf(state, override, realToday) {
   return override || state?.demoDate || realToday;
 }
 
-/** 예시 자료. 시연 기준일(DEMO_DATE) 기준 상대 날짜로 만든다. */
+/**
+ * 예시 자료. 시연 기준일(DEMO_DATE) 기준 상대 날짜로 만든다.
+ * PBC 자료 5건(4건은 표준 양식으로 요청, template·basisDate) + 외부조회 7건(kind: 'confirmation'). 외부조회는 조회처가 담당자(owner)이고,
+ * 미회신·독촉 중·회신 기한 지남·회신 완료·후속 절차(미회수 확정, 금액 차이)가 고루 보이게 넣었다.
+ * confirmSetup은 외부조회서 작성 화면의 공통 정보 기본값이다 (결산일 12/31 기준).
+ */
 export function sampleState() {
   const d = (n) => addDays(DEMO_DATE, n);
   return {
@@ -62,29 +67,78 @@ export function sampleState() {
     client: { name: '㈜한빛전자', engagement: '2026 기말감사' },
     team: { manager: { name: '이서연 매니저', dept: '감사팀' } },
     people: {
-      '박준호 과장': { dept: '재무팀', nudges: 1, lastNudgedOn: d(-1) },
+      '박준호 과장': { dept: '재무팀', nudges: 0, lastNudgedOn: null },
       '김민지 대리': { dept: '재무팀', nudges: 2, lastNudgedOn: d(-2) },
       '최도윤 차장': { dept: '관리팀', nudges: 2, lastNudgedOn: d(-5) },
+      '한빛은행 여의도지점': { dept: '금융기관', nudges: 1, lastNudgedOn: d(-2) },
+      '바다저축은행 본점': { dept: '금융기관', nudges: 0, lastNudgedOn: null },
+      '㈜대한부품': { dept: '거래처', nudges: 1, lastNudgedOn: d(-4) },
+      '세진물산㈜': { dept: '거래처', nudges: 2, lastNudgedOn: d(-2) },
+      '㈜오성테크': { dept: '거래처', nudges: 3, lastNudgedOn: d(-1) },
+      '법무법인 정의': { dept: '법무법인', nudges: 0, lastNudgedOn: null },
+      '㈜한결물류 평택센터': { dept: '보관처', nudges: 0, lastNudgedOn: null },
+    },
+    // 회사 단위 중요성. 예시 회사는 매출 약 500억원을 가정해 전체 중요성 0.5%, 수행중요성은 그 약 75%.
+    materiality: { overall: 250000000, performance: 180000000, basis: '매출 약 500억원 가정 · 전체 중요성 0.5% · 수행중요성 약 75%' },
+    confirmSetup: {
+      companyName: '㈜한빛전자', ceoName: '정한빛', companyAddress: '경기도 성남시 분당구 판교역로 1',
+      auditorName: '삼일회계법인', auditorAddress: '서울특별시 용산구 한강대로 100 아모레퍼시픽빌딩',
+      contactName: '이서연 매니저', contactPhone: '02-0000-0000', contactEmail: '',
+      baseDate: '2026-12-31',
     },
     items: [
-      { id: 'i1', name: '은행조회서 회신', owner: '박준호 과장', requestedOn: d(-3), neededOn: d(1), status: 'none',
-        procedure: '은행 조회', nudges: [{ on: d(-1), tone: 'angel' }] },
       { id: 'i2', name: '유형자산 증감내역', owner: '최도윤 차장', requestedOn: d(-1), neededOn: d(7), status: 'fix', reason: '기준일 상이 · 12/31 기준 재요청 필요',
-        procedure: '유형자산 실증', nudges: [],
+        procedure: '유형자산 실증', nudges: [], template: 'ppe', basisDate: '2026-12-31',
         received: { on: d(-1), basisDate: '2026-06-30' },
         fix: { reason: 'date', requiredBasisDate: '2026-12-31',
                details: { sign: '담당 임원 확인란', missing: '건설중인자산 대체 내역' } },
         fixes: [{ on: d(-1), reason: 'date' }] },
       { id: 'i3', name: '재고실사 결과표', owner: '김민지 대리', requestedOn: d(-5), neededOn: d(5), status: 'none',
-        procedure: '재고 실사 검토', nudges: [{ on: d(-2), tone: 'polite' }] },
+        procedure: '재고 실사 검토', nudges: [{ on: d(-2), tone: 'polite' }], template: 'inventory', basisDate: '2026-12-31' },
       { id: 'i4', name: '특수관계자 거래내역', owner: '김민지 대리', requestedOn: d(-9), neededOn: d(9), status: 'part',
-        procedure: '특수관계자 검토', nudges: [{ on: d(-6), tone: 'angel' }, { on: d(-2), tone: 'polite' }] },
+        procedure: '특수관계자 검토', nudges: [{ on: d(-6), tone: 'angel' }, { on: d(-2), tone: 'polite' }], template: 'related', basisDate: '2026-12-31' },
       { id: 'i5', name: '매출채권 연령분석표', owner: '김민지 대리', requestedOn: d(-11), neededOn: d(19), status: 'none',
-        procedure: '채권 평가', nudges: [{ on: d(-6), tone: 'angel' }, { on: d(-2), tone: 'polite' }] },
+        procedure: '채권 평가', nudges: [{ on: d(-6), tone: 'angel' }, { on: d(-2), tone: 'polite' }], template: 'aging', basisDate: '2026-12-31' },
       { id: 'i6', name: '법인세 신고서 사본', owner: '박준호 과장', requestedOn: d(-6), neededOn: d(3), status: 'done',
         procedure: '법인세 검토', nudges: [] },
+      ...sampleConfirmations(d),
     ],
   };
+}
+
+/** 예시 외부조회 건. 발송일 = 요청일, 회신 기한 = 필요일. */
+function sampleConfirmations(d) {
+  const conf = (id, confType, docNo, counterparty, extra) => {
+    const label = { bank: '은행조회서', arap: '채권채무조회서', legal: '변호사조회서', inventory: '제3자보관재고자산조회서' }[confType];
+    return {
+      id, kind: 'confirmation', confType, docNo, name: `${label} (${counterparty})`, owner: counterparty, counterparty,
+      baseDate: '2026-12-31', procedure: '외부조회', blank: false, nudges: [],
+      track: { bank: 'required', legal: 'general' }[confType] || 'coverage',
+      ...extra,
+    };
+  };
+  return [
+    conf('c1', 'bank', 'BK-001', '한빛은행 여의도지점', {
+      bookAmount: 4250000000, requestedOn: d(-9), neededOn: d(2), status: 'none',
+      nudges: [{ on: d(-2), tone: 'polite' }] }),
+    conf('c2', 'bank', 'BK-002', '바다저축은행 본점', {
+      bookAmount: 500000000, requestedOn: d(-9), neededOn: d(2), status: 'done', received: { on: d(-3) } }),
+    conf('c3', 'arap', 'AR-001', '㈜대한부품', {
+      receivable: 842000000, payable: 0, bookAmount: 842000000, requestedOn: d(-9), neededOn: d(2), status: 'follow',
+      nudges: [{ on: d(-4), tone: 'polite' }], received: { on: d(-1) },
+      follow: { type: 'diff', startedOn: d(-1), requested: [],
+        recon: { book: 842000000, confirmed: 830000000, lines: [{ cause: 'goods', amount: 9000000, note: '12/29 출고 · 1/2 거래처 입고분' }] } } }),
+    conf('c4', 'arap', 'AR-002', '세진물산㈜', {
+      receivable: 315500000, payable: 120000000, bookAmount: 435500000, requestedOn: d(-16), neededOn: d(-2), status: 'none',
+      nudges: [{ on: d(-6), tone: 'polite' }, { on: d(-2), tone: 'firm' }] }),
+    conf('c5', 'arap', 'AR-003', '㈜오성테크', {
+      receivable: 0, payable: 96300000, bookAmount: 96300000, blank: true, requestedOn: d(-16), neededOn: d(-2), status: 'follow',
+      nudges: [{ on: d(-9), tone: 'polite' }, { on: d(-5), tone: 'firm' }, { on: d(-1), tone: 'cc' }],
+      follow: { type: 'noreply', startedOn: d(0), requested: [], steps: { subsequentPay: true }, verified: 60000000 } }),
+    conf('c6', 'legal', 'LG-001', '법무법인 정의', { requestedOn: d(-9), neededOn: d(5), status: 'none' }),
+    conf('c7', 'inventory', 'IV-001', '㈜한결물류 평택센터', {
+      bookAmount: 1913000000, requestedOn: d(-9), neededOn: d(2), status: 'done', received: { on: d(-2) } }),
+  ];
 }
 
 /**

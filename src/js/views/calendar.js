@@ -92,7 +92,7 @@ function dayPanel(state, entries, selected, today, form) {
       ? progressSwitch(e)
       : `<span class="progress-pill is-${e.progress}"><i></i>${progressLabel(e.progress)}</span>`;
     const link = e.kind === 'need' && e.status !== 'done'
-      ? `<a class="link" href="${e.status === 'fix' ? `#/fix/${e.itemId}` : `#/compose/${e.itemId}`}">열기</a>` : '';
+      ? `<a class="link" href="${e.status === 'fix' ? `#/fix/${e.itemId}` : e.status === 'follow' ? `#/follow/${e.itemId}` : `#/compose/${e.itemId}`}">열기</a>` : '';
     const remove = e.kind === 'event'
       ? `<button type="button" class="link cal-remove" data-action="cal-remove-event" data-event="${e.eventId}">삭제</button>` : '';
     return `

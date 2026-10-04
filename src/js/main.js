@@ -1,7 +1,7 @@
 // 진입점: 상태를 불러와 화면을 그리고, data-action 클릭을 처리한다.
 // 화면 주소: (없음) 대시보드 · #/compose/<자료id> 단건 독촉 · #/bundle/<담당자> 묶음 독촉
 //           #/fix/<자료id> 보완 요청 · #/add 자료 추가 (#/add/paste 붙여넣기 탭) · #/report 주간 현황
-//           #/calendar 일정
+//           #/calendar 일정 · #/confirm 외부조회서 작성 · #/follow/<자료id> 외부조회 후속 절차
 
 import { todayISO } from './lib/dates.js';
 import { withDays } from './lib/priority.js';
@@ -10,12 +10,13 @@ import { buildMail, mailToText } from './lib/mail.js';
 import { bundleItems, bundleTone, buildBundleMail, bundleMailToText } from './lib/bundle.js';
 import { canOpenFix, currentFixReason, buildFixMail, fixMailToText } from './lib/fix.js';
 import { parseNow, clockOf } from './lib/timing.js';
-import { validateItem, parsePaste } from './lib/add.js';
+import { validateItem, parsePaste, markDuplicates, duplicateMessage, normalizeDate } from './lib/add.js';
+import { PBC_TEMPLATES, templateForName, templateOf, defaultBasisDate, requestSheetTsv, receiptSuggestion } from './lib/pbcTemplate.js';
 import { josa } from './lib/korean.js';
 import { buildReport, reportToText, reportToCsv, csvFileName } from './lib/report.js';
 import { monthOf, shiftMonth, addEvent, removeEvent, moveEntry, setEventProgress, progressLabel } from './lib/calendar.js';
 import { formatMD } from './lib/dates.js';
-import { validateTransition } from './lib/status.js';
+import { validateTransition, canTransition } from './lib/status.js';
 import { validateEngagement } from './lib/engagement.js';
 import { load, save, clear, sampleState, baseDateOf, copyAndRecord, copyAndRecordFix, addItems, updateItemStatus, createEmptyState } from './store.js';
 import { renderDashboard } from './views/dashboard.js';
@@ -27,6 +28,12 @@ import { renderAdd, pastePreview, pasteSubmit } from './views/add.js';
 import { renderReport } from './views/report.js';
 import { renderStatusSheet } from './views/status.js';
 import { renderCalendar } from './views/calendar.js';
+import { renderConfirm, partiesPreview, outputSection } from './views/confirm.js';
+import { renderFollow } from './views/follow.js';
+import { startFollow, completeFollow, clampVerified, evidenceRequests, validateSignoff, FOLLOW_TYPES } from './lib/followup.js';
+import {
+  CONF_TYPES, defaultSetup, validateSetup, parseConfirmations, buildLetters, toRegistryValues, nextDocNo,
+} from './lib/confirmation.js';
 
 // ?today=2026-10-01 처럼 기준일을 직접 지정해 확인할 수 있다.
 // ?now=2026-10-02T17:20 은 날짜와 시각을 함께 지정한다 (발송 시점 안내 확인용).
@@ -44,6 +51,9 @@ let add = null;     // 자료 추가 화면 상태: { tab, form, errors, pasteTe
 let sheet = null;   // 상태 변경 시트: { itemId, status, reason, basisDate, requiredBasisDate, errors }
 let emptyForm = { clientName: '', engagement: '', errors: {} }; // 첫 실행 화면 입력값
 let cal = null;     // 일정 탭 상태: { month, selected, form: { title, errors }, filter }
+let conf = null;    // 외부조회서 작성 상태: { type, setup, touched:Set, pasteText, bankBlank, resetArmed }
+let confResetTimer;
+let fu = null;      // 외부조회 후속 절차 패널: { itemId, owner, signoff: { preparer, completedOn, reviewer }, signoffErrors }
 
 function currentToday() {
   return baseDateOf(state, todayParam, todayISO());
@@ -77,6 +87,20 @@ function render() {
     compose = bundle = fix = add = sheet = null;
     if (!cal) cal = { month: monthOf(today), selected: today, form: { title: '', errors: {} }, filter: 'all' };
     app.innerHTML = renderCalendar(state, { today, isDemo, ...cal });
+    document.body.classList.remove('has-drawer');
+    return;
+  }
+
+  // 외부조회서 작성: 대시보드 대신 그리는 전체 화면
+  if (location.hash === '#/confirm') {
+    compose = bundle = fix = add = sheet = null;
+    if (!conf) {
+      conf = {
+        type: 'bank', touched: new Set(), pasteText: '', bankBlank: false,
+        setup: { ...defaultSetup(state.client, today), ...(state.confirmSetup || {}), issuedOn: today, replyBy: defaultSetup(state.client, today).replyBy },
+      };
+    }
+    app.innerHTML = renderConfirm(state, { today, isDemo, ...conf, setupErrors: confSetupErrors(today) });
     document.body.classList.remove('has-drawer');
     return;
   }
@@ -124,6 +148,20 @@ function render() {
     fix = null;
   }
 
+  const followId = routeParam('follow');
+  const followItem = followId && state.items.find((x) => x.id === followId);
+  if (followItem?.status === 'follow') {
+    if (fu?.itemId !== followId) {
+      // 수행자·검토자는 마지막으로 입력한 값을 기본으로 (완료일은 오늘)
+      const last = state.lastSignoff || {};
+      fu = { itemId: followId, owner: defaultPbcOwner(), signoffErrors: {},
+        signoff: { preparer: last.preparer || '', completedOn: today, reviewer: last.reviewer || '' } };
+    }
+    html += renderFollow(state, { today, ...fu });
+  } else {
+    fu = null;
+  }
+
   const addRoute = location.hash === '#/add' || location.hash === '#/add/paste';
   if (addRoute) {
     if (!add) add = { tab: location.hash.endsWith('/paste') ? 'paste' : 'single', form: {}, errors: {}, pasteText: '' };
@@ -143,7 +181,7 @@ function render() {
   const focusedTone = document.activeElement?.dataset?.tone;
   const focusedReason = document.activeElement?.dataset?.reason;
   app.innerHTML = html;
-  document.body.classList.toggle('has-drawer', Boolean(item || b || fix || add));
+  document.body.classList.toggle('has-drawer', Boolean(item || b || fix || add || fu));
   // 톤·사유를 바꾼 뒤에도 키보드 포커스가 같은 버튼에 남도록 (데스크톱·모바일 중 보이는 쪽)
   if (focusedTone) {
     [...app.querySelectorAll(`[data-tone="${focusedTone}"]`)].find((b) => b.offsetParent)?.focus();
@@ -205,6 +243,51 @@ async function copyForDrawer(view, { itemIds, text }, record) {
   drawerToastTimer = setTimeout(() => { view.toast = false; render(); }, 2800);
 }
 
+// 외부조회서: 손댄 칸의 오류만 보여준다 (처음 열었을 때 빨간 칸이 가득하지 않게)
+function confSetupErrors(today) {
+  const { errors } = validateSetup(conf.setup, today);
+  return Object.fromEntries(Object.entries(errors).filter(([k]) => conf.touched.has(k)));
+}
+
+function readConfSetup() {
+  const form = document.getElementById('conf-setup');
+  if (!form || !conf) return;
+  for (const el of form.elements) if (el.name) conf.setup[el.name] = el.value;
+}
+
+// 붙여넣기·공통 정보가 바뀌면 미리보기와 조회서 영역만 다시 그린다 (입력 포커스 유지)
+function refreshConfOutput() {
+  const today = currentToday();
+  app.querySelector('.conf-preview').innerHTML = partiesPreview(conf.type, parseConfirmations(conf.type, conf.pasteText));
+  app.querySelector('.conf-output').innerHTML = outputSection(state, { today, ...conf });
+}
+
+// ---------- 외부조회 후속 절차 ----------
+
+// 증빙을 요청할 회사 담당자 기본값: PBC 자료를 가장 많이 맡은 사람
+function defaultPbcOwner() {
+  const counts = new Map();
+  for (const x of state.items) if (x.kind !== 'confirmation') counts.set(x.owner, (counts.get(x.owner) || 0) + 1);
+  return [...counts].sort((a, b) => b[1] - a[1])[0]?.[0] || '';
+}
+
+/** '1,250,000' · '-3,000' · '' → 정수 / null */
+function numOf(value) {
+  const t = String(value ?? '').replace(/[,\s원₩]/g, '');
+  if (!t) return null;
+  const n = Number(t);
+  return Number.isFinite(n) ? Math.round(n) : null;
+}
+
+function setItem(id, fn) {
+  state = { ...state, items: state.items.map((x) => (x.id === id ? fn(x) : x)) };
+  save(state);
+}
+
+function setFollow(fn) {
+  setItem(fu.itemId, (x) => ({ ...x, follow: fn(x.follow, x) }));
+}
+
 const actions = {
   'set-mode': (el) => { mode = el.dataset.mode; render(); },
   'load-sample': () => { state = sampleState(); save(state); render(); },
@@ -228,10 +311,50 @@ const actions = {
 
   // 자료 상태 변경 시트
   'open-status': (el) => {
-    sheet = { itemId: el.dataset.item, status: null, reason: null, basisDate: '', requiredBasisDate: '', errors: {} };
+    sheet = { itemId: el.dataset.item, status: null, reason: null, basisDate: '', requiredBasisDate: '', errors: {},
+      check: { basisOk: null, missing: [], signOk: null } }; // 받은 자료 점검 (표준 양식 자료만 화면에 보임)
     render();
   },
   'close-status': () => { sheet = null; render(); },
+  // 받은 자료 점검 → 점검 결과에 맞춰 상태·보완 사유를 골라 둔다 (지금 상태에서 바꿀 수 있을 때만)
+  'check-basis': (el) => { readSheetDates(); sheet.check.basisOk = el.dataset.ok === '1'; applyReceiptCheck(); },
+  'check-sign': (el) => { readSheetDates(); sheet.check.signOk = el.dataset.ok === '1'; applyReceiptCheck(); },
+  'check-col': (el) => {
+    readSheetDates();
+    const col = el.dataset.col;
+    const m = sheet.check.missing;
+    sheet.check.missing = m.includes(col) ? m.filter((c) => c !== col) : [...m, col];
+    applyReceiptCheck();
+  },
+  // 표준 양식 고르기 (자료 추가)
+  'pick-template': (el) => {
+    const prev = PBC_TEMPLATES[add.form.template] || templateForName(add.form.name);
+    add.form = readAddForm();
+    const t = PBC_TEMPLATES[el.dataset.template];
+    add.form.template = t.key;
+    // 비어 있거나 다른 양식 값이 들어 있으면 이 양식 값으로 바꾼다 (직접 고친 값은 둔다)
+    if (!add.form.name || add.form.name === prev?.name) add.form.name = t.name;
+    if (!add.form.procedure || add.form.procedure === prev?.procedure) add.form.procedure = t.procedure;
+    if (!add.form.basisDate) add.form.basisDate = defaultBasisDate(state, currentToday());
+    add.errors = {};
+    render();
+  },
+  // 엑셀용 요청 양식 복사: 자료 추가 창이면 입력 중인 값, 독촉 패널이면 그 자료 기준
+  'copy-template': async (el) => {
+    let t; let basis;
+    if (el.dataset.item) {
+      const item = state.items.find((x) => x.id === el.dataset.item);
+      t = templateOf(item);
+      basis = item.basisDate || defaultBasisDate(state, currentToday());
+    } else {
+      add.form = readAddForm();
+      t = PBC_TEMPLATES[add.form.template] || templateForName(add.form.name);
+      basis = normalizeDate(add.form.basisDate, currentToday()) || defaultBasisDate(state, currentToday());
+    }
+    if (!t) return;
+    const ok = await copyText(requestSheetTsv(t, basis));
+    toast(ok ? `${t.name} 요청 양식을 복사했어요. 엑셀에 붙여넣으면 기준일과 항목이 들어가요.` : '복사하지 못했어요.');
+  },
   'pick-status': (el) => {
     readSheetDates();
     sheet.status = el.dataset.status;
@@ -248,6 +371,9 @@ const actions = {
     if (Object.keys(sheet.errors).length) { render(); return; }
 
     state = updateItemStatus(state, item.id, change, currentToday());
+    if (change.status === 'fix' && sheet.detail && (change.reason === 'missing' || change.reason === 'sign')) {
+      setItem(item.id, (x) => ({ ...x, fix: { ...x.fix, details: { ...(x.fix?.details || {}), [change.reason]: sheet.detail } } }));
+    }
     save(state);
     sheet = null;
     const name = `‘${item.name}’${josa(item.name, '을', '를')}`;
@@ -267,7 +393,11 @@ const actions = {
 
   'set-tone': (el) => { compose.tone = el.dataset.tone; compose.copied = false; render(); },
   'close-compose': closeDrawer,
-  'close-drawer': closeDrawer,
+  'close-drawer': () => {
+    // 후속 절차에서 연 자료 추가 창을 닫으면 후속 절차 화면으로 돌아간다
+    if (add?.source) { const id = add.source.itemId; add = null; location.hash = `#/follow/${encodeURIComponent(id)}`; render(); return; }
+    closeDrawer();
+  },
   'copy-mail': () => {
     const today = currentToday();
     const item = withDays(state.items.find((x) => x.id === compose.itemId), today);
@@ -334,7 +464,7 @@ const actions = {
   },
   'add-paste': () => {
     const today = currentToday();
-    const parsed = parsePaste(add.pasteText, today);
+    const parsed = markDuplicates(parsePaste(add.pasteText, today), state.items);
     if (!parsed.rows.length || parsed.errorCount) return;
     state = addItems(state, parsed.rows.map((r) => r.value));
     save(state);
@@ -350,6 +480,109 @@ const actions = {
     return copyForDrawer(fix, { text: fixMailToText(mail) },
       (s, on, text, copy) => copyAndRecordFix(s, { itemId: item.id, reason, on, text }, copy));
   },
+  // 외부조회서 작성
+  'conf-type': (el) => { readConfSetup(); conf.type = el.dataset.type; conf.pasteText = ''; render(); },
+  'conf-example': () => { readConfSetup(); conf.pasteText = CONF_TYPES[conf.type].example; render(); },
+  'conf-clear': () => { readConfSetup(); conf.pasteText = ''; render(); },
+  'conf-print': () => window.print(),
+  // 초기화: 첫 클릭은 확인 대기, 4초 안에 한 번 더 누르면 입력값·종류·기억해 둔 회사/감사인 정보까지 지운다.
+  // 이미 조회 목록에 등록한 조회서는 지우지 않는다.
+  'conf-reset': () => {
+    clearTimeout(confResetTimer);
+    if (!conf.resetArmed) {
+      readConfSetup();
+      conf.resetArmed = true;
+      render();
+      confResetTimer = setTimeout(() => { if (conf) { conf.resetArmed = false; render(); } }, 4000);
+      return;
+    }
+    const { confirmSetup, ...rest } = state;
+    state = rest;
+    save(state);
+    conf = null;
+    render();
+    toast('외부조회서 작성 화면을 처음 상태로 되돌렸어요. 등록한 조회서는 그대로예요.');
+  },
+  'conf-register': () => {
+    readConfSetup();
+    const today = currentToday();
+    const { value: setup } = validateSetup(conf.setup, today);
+    const parsed = parseConfirmations(conf.type, conf.pasteText);
+    if (!setup || !parsed.parties.length || parsed.errorCount) return;
+    const letters = buildLetters(conf.type, parsed.parties, setup,
+      { startNo: nextDocNo(state.items, conf.type), bankBlank: conf.bankBlank });
+    state = addItems(state, toRegistryValues(letters, setup));
+    // 다음 작성 때 회사·감사인 정보를 다시 입력하지 않도록 기억한다 (날짜는 매번 새로)
+    const { issuedOn, replyBy, ...keep } = setup;
+    state = { ...state, confirmSetup: keep };
+    save(state);
+    const label = CONF_TYPES[conf.type].label;
+    conf.pasteText = '';
+    location.hash = '';
+    render();
+    toast(`${label} ${letters.length}건을 조회 목록에 등록했어요. 회신 기한 ${formatMD(setup.replyBy)} 기준으로 추적해요.`);
+  },
+  // 외부조회 후속 절차
+  'start-follow': (el) => {
+    const id = el.dataset.item;
+    const type = el.dataset.type;
+    const item = state.items.find((x) => x.id === id);
+    if (item.status === 'follow' && item.follow?.type === type) return;
+    const switching = item.status === 'follow';
+    setItem(id, (x) => startFollow(x, type, currentToday()));
+    location.hash = `#/follow/${encodeURIComponent(id)}`;
+    render();
+    toast(switching
+      ? `‘${FOLLOW_TYPES[type].label}’로 바꿨어요. 앞에서 기록한 내용은 지웠어요.`
+      : type === 'noreply' ? '미회수로 확정했어요. 조회서 종류에 맞는 절차를 정리했어요.' : '금액 차이 조정을 시작했어요. 회신금액부터 입력해 주세요.');
+  },
+  'follow-add-line': () => {
+    setFollow((f) => ({ ...f, recon: { ...f.recon, lines: [...(f.recon.lines || []), { cause: '', amount: null, note: '' }] } }));
+    render();
+    app.querySelector('.fu-line:last-of-type select')?.focus();
+  },
+  'follow-remove-line': (el) => {
+    const i = Number(el.dataset.index);
+    setFollow((f) => ({ ...f, recon: { ...f.recon, lines: f.recon.lines.filter((_, j) => j !== i) } }));
+    render();
+  },
+  // 후속 절차의 증빙 → 기존 자료 추가 창을 미리 채워서 연다 (사용자가 확인·수정 후 저장)
+  'follow-request': (el) => {
+    const item = state.items.find((x) => x.id === fu.itemId);
+    const owner = fu.owner.trim();
+    const [req] = evidenceRequests(item, { stepKeys: [el.dataset.key], owner, dept: state.people[owner]?.dept || '', today: currentToday() });
+    if (!req) return;
+    const v = req.value.item;
+    const [ownerName = '', ...title] = owner.split(' ');
+    add = {
+      tab: 'single', errors: {}, pasteText: '',
+      source: { itemId: item.id, key: req.key, counterparty: item.counterparty },
+      form: {
+        name: v.name, ownerName, ownerTitle: title.join(' '), dept: req.value.person.dept,
+        requestedOn: v.requestedOn, neededOn: v.neededOn, procedure: v.procedure,
+      },
+    };
+    location.hash = '#/add';
+    render();
+    app.querySelector('#add-form [name="name"]')?.focus();
+  },
+  'complete-follow': () => {
+    const item = state.items.find((x) => x.id === fu.itemId);
+    fu.signoffErrors = validateSignoff(fu.signoff);
+    if (Object.keys(fu.signoffErrors).length) {
+      render();
+      app.querySelector('.fu-signoff .has-error input')?.focus();
+      return;
+    }
+    let done;
+    try { done = completeFollow(item, fu.signoff); } catch (err) { toast(err.message); return; }
+    setItem(item.id, () => done);
+    state = { ...state, lastSignoff: { preparer: fu.signoff.preparer.trim(), reviewer: fu.signoff.reviewer.trim() } };
+    save(state);
+    fu = null;
+    closeDrawer();
+    toast(`${item.counterparty} 후속 절차를 완료했어요. ${done.follow.conclusion}`);
+  },
   'copy-bundle': () => {
     const sorted = bundleItems(state.items, bundle.owner, currentToday());
     const mail = buildBundleMail({
@@ -359,6 +592,22 @@ const actions = {
     return copyForDrawer(bundle, { itemIds: sorted.map((x) => x.id), text: bundleMailToText(mail) });
   },
 };
+
+function applyReceiptCheck() {
+  const item = state.items.find((x) => x.id === sheet.itemId);
+  const t = templateOf(item);
+  const s = receiptSuggestion(t, sheet.check, item.basisDate || defaultBasisDate(state, currentToday()));
+  if (s.status && canTransition(item, s.status)) {
+    sheet.status = s.status;
+    sheet.errors = {};
+    if (s.status === 'fix') {
+      sheet.reason = s.reason;
+      if (s.requiredBasisDate) sheet.requiredBasisDate = s.requiredBasisDate;
+    }
+  }
+  sheet.detail = s.status === 'fix' ? s.detail : null;
+  render();
+}
 
 // 시트의 기준일 입력값을 상태에 옮겨 둔다 (다시 그려도 입력이 남도록)
 function readSheetDates() {
@@ -433,12 +682,59 @@ app.addEventListener('drop', (e) => {
 // 일정 패널의 날짜 입력으로 이동 (모바일·키보드)
 app.addEventListener('change', (e) => {
   if (e.target.dataset.actionChange === 'cal-move') moveCalendarEntry(e.target.dataset.entry, e.target.value);
+  if (e.target.dataset.actionChange === 'set-performance') {
+    const value = numOf(e.target.value);
+    state = { ...state, materiality: { ...(state.materiality || {}), performance: value && value > 0 ? value : null } };
+    save(state);
+    render();
+    toast(value > 0 ? `수행중요성을 ${value.toLocaleString('ko-KR')}원으로 정했어요.` : '수행중요성을 지웠어요.');
+    return;
+  }
+  const fuAction = e.target.dataset.actionChange;
+  if (fu && fuAction?.startsWith('follow-')) {
+    const t = e.target;
+    if (fuAction === 'follow-step') {
+      setFollow((f) => ({ ...f, steps: { ...f.steps, [t.dataset.step]: t.checked } }));
+    } else if (fuAction === 'follow-verified') {
+      setFollow((f, x) => ({ ...f, verified: clampVerified(x, t.value) }));
+    } else if (fuAction === 'follow-amount') {
+      setFollow((f) => ({ ...f, recon: { ...f.recon, [t.dataset.field]: numOf(t.value) } }));
+    } else if (fuAction === 'follow-line') {
+      const i = Number(t.dataset.index);
+      const v = t.dataset.field === 'amount' ? numOf(t.value) : t.value;
+      setFollow((f) => ({ ...f, recon: { ...f.recon, lines: f.recon.lines.map((l, j) => (j === i ? { ...l, [t.dataset.field]: v } : l)) } }));
+    }
+    const scroll = app.querySelector('.drawer-body')?.scrollTop;
+    render();
+    const body = app.querySelector('.drawer-body');
+    if (body && scroll) body.scrollTop = scroll;
+    return;
+  }
+  if (e.target.dataset.actionChange === 'conf-bank-blank') {
+    readConfSetup();
+    conf.bankBlank = e.target.checked;
+    refreshConfOutput();
+  }
+  // 공통 정보 칸을 벗어나면 그 칸의 오류를 보여준다
+  if (e.target.form?.id === 'conf-setup' && e.target.name) {
+    // 다시 그리면 Tab으로 넘어간 다음 칸의 포커스가 사라지므로, 오류 표시만 바꾼다.
+    readConfSetup();
+    conf.touched.add(e.target.name);
+    const errors = confSetupErrors(currentToday());
+    for (const label of app.querySelectorAll('#conf-setup .f')) {
+      const name = label.querySelector('input')?.name;
+      if (!conf.touched.has(name)) continue;
+      label.classList.toggle('has-error', Boolean(errors[name]));
+      label.querySelector('.f-error')?.remove();
+      if (errors[name]) label.insertAdjacentHTML('beforeend', `<span class="f-error">${errors[name]}</span>`);
+    }
+  }
 });
 
 function readAddForm() {
   const form = document.getElementById('add-form');
   if (!form) return add?.form || {};
-  return Object.fromEntries(['name', 'ownerName', 'ownerTitle', 'dept', 'requestedOn', 'neededOn', 'procedure']
+  return Object.fromEntries(['name', 'ownerName', 'ownerTitle', 'dept', 'requestedOn', 'neededOn', 'procedure', 'basisDate', 'template']
     .map((k) => [k, form[k]?.value ?? '']));
 }
 
@@ -467,24 +763,59 @@ app.addEventListener('submit', (e) => {
   const today = currentToday();
   add.form = readAddForm();
   const { errors, value } = validateItem(add.form, today);
+  const dup = value && duplicateMessage(state.items, value.item.name);
+  if (dup) errors.name = dup;
   add.errors = errors;
-  if (!value) {
+  if (!value || dup) {
     render();
     app.querySelector('.f.has-error input')?.focus();
     return;
   }
+  const source = add.source;
+  if (source) value.item.sourceId = source.itemId; // 어느 외부조회 건의 증빙인지
+  const tpl = PBC_TEMPLATES[add.form.template] || templateForName(value.item.name);
+  if (tpl) {
+    value.item.template = tpl.key;
+    value.item.basisDate = normalizeDate(add.form.basisDate, today) || defaultBasisDate(state, today);
+  }
   state = addItems(state, [value]);
+  if (source) {
+    setItem(source.itemId, (x) => ({ ...x, follow: { ...x.follow, requested: [...(x.follow?.requested || []), source.key] } }));
+  }
   save(state);
   add = null;
-  closeDrawer();
+  if (source) {
+    location.hash = `#/follow/${encodeURIComponent(source.itemId)}`;
+    render();
+  } else {
+    closeDrawer();
+  }
   toast(`‘${value.item.name}’${josa(value.item.name, '을', '를')} 추가했어요.`);
 });
 
 // 붙여넣기: 입력할 때마다 미리보기와 저장 버튼만 갱신한다 (textarea 포커스 유지).
 app.addEventListener('input', (e) => {
+  if (e.target.dataset.actionInput === 'follow-signoff') {
+    fu.signoff[e.target.dataset.field] = e.target.value;
+    return;
+  }
+  if (e.target.dataset.actionInput === 'follow-owner') {
+    fu.owner = e.target.value;
+    return;
+  }
+  if (e.target.dataset.actionInput === 'conf-paste') {
+    conf.pasteText = e.target.value;
+    refreshConfOutput();
+    return;
+  }
+  if (e.target.form?.id === 'conf-setup') {
+    readConfSetup();
+    refreshConfOutput();
+    return;
+  }
   if (e.target.dataset.actionInput === 'paste') {
     add.pasteText = e.target.value;
-    const parsed = parsePaste(add.pasteText, currentToday());
+    const parsed = markDuplicates(parsePaste(add.pasteText, currentToday()), state.items);
     app.querySelector('.paste-preview').innerHTML = pastePreview(parsed, currentToday());
     app.querySelector('.modal-foot .btn-cta').outerHTML = pasteSubmit(parsed);
   } else if (e.target.name === 'neededOn' && e.target.form?.id === 'add-form') {
@@ -507,10 +838,10 @@ window.addEventListener('popstate', render);
 document.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
   if (sheet) { sheet = null; render(); return; }
-  if (compose || bundle || fix || add) closeDrawer();
+  if (compose || bundle || fix || add || fu) actions['close-drawer']();
 });
 
 // 개발용: 콘솔에서 pbc.reset() 하면 첫 실행 화면으로 돌아간다.
-window.pbc = { reset() { clear(); state = null; compose = bundle = fix = add = sheet = cal = null; render(); } };
+window.pbc = { reset() { clear(); state = null; compose = bundle = fix = add = sheet = cal = conf = fu = null; render(); } };
 
 render();

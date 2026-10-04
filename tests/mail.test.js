@@ -1,7 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { buildMail, mailBody, mailToText, clientShortName } from '../src/js/lib/mail.js';
-import { sampleState, DEMO_DATE } from '../src/js/store.js';
+import { DEMO_DATE } from '../src/js/store.js';
+import { sampleState } from './fixtures.js';
 
 const state = sampleState();
 const bank = state.items.find((x) => x.id === 'i1');

@@ -11,7 +11,7 @@ import { clientShortName, replyBy, scheduleReason } from './mail.js';
  * 정렬은 대시보드 필요일순과 같은 규칙(같은 필요일이면 오래 기다린 순).
  */
 export function isBundleEligible(item) {
-  return item.status !== 'done' && item.status !== 'fix';
+  return item.status !== 'done' && item.status !== 'fix' && item.status !== 'follow';
 }
 
 export function bundleItems(items, owner, today) {

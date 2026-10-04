@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import {
   FIX_REASONS, canOpenFix, currentFixReason, fixSummary, buildFixMail, fixMailToText,
 } from '../src/js/lib/fix.js';
-import { sampleState, DEMO_DATE, recordFix, copyAndRecordFix } from '../src/js/store.js';
+import { DEMO_DATE, recordFix, copyAndRecordFix } from '../src/js/store.js';
+import { sampleState } from './fixtures.js';
 
 const state = sampleState();
 const ppe = state.items.find((x) => x.id === 'i2'); // 유형자산 증감내역 / 최도윤 차장

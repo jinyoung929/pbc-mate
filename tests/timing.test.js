@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { sendTiming, isOffHours, nextBusinessDay, parseNow, clockOf } from '../src/js/lib/timing.js';
 import { bundleItems } from '../src/js/lib/bundle.js';
-import { sampleState } from '../src/js/store.js';
+import { sampleState } from './fixtures.js';
 
 const FRI_1720 = { date: '2026-10-02', time: '17:20' }; // 레퍼런스 5 시나리오
 const FORBIDDEN = /반드시|자동 예약|발송됩니다/;

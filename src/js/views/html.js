@@ -30,9 +30,10 @@ export const ICON = {
   moon: svg('<path d="M13 9.5A5.5 5.5 0 0 1 6.5 3a5.5 5.5 0 1 0 6.5 6.5z"/>', 1.8),
   arrow: svg('<path d="M3 8h10M9.5 4.5L13 8l-3.5 3.5"/>', 1.8),
   download: svg('<path d="M8 2.5v8M4.5 7L8 10.5 11.5 7M3 13h10"/>', 1.8),
+  follow: svg('<path d="M2.5 8h5M7.5 8l3.5-3.5M7.5 8l3.5 3.5M11 4.5h2.5M11 11.5h2.5"/>', 1.8),
   copy: svg('<rect x="5" y="5" width="9" height="9" rx="2"/><path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/>', 1.8),
 };
 
 export const RISK_LABEL = { late: '지연', high: '2일 이내', mid: '3~7일', low: '8일 이상' };
 export const RISK_SHORT = { late: '지연', high: '2일 내', mid: '7일 내', low: '여유' };
-export const STATUS_LABEL = { none: '미회신', part: '일부 수령', fix: '보완 요청', done: '완료' };
+export const STATUS_LABEL = { none: '미회신', part: '일부 수령', fix: '보완 요청', follow: '후속 절차', done: '완료' };

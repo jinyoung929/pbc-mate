@@ -3,6 +3,7 @@
 import { formatMD } from '../lib/dates.js';
 import { allowedStatuses, STATUS_HINT } from '../lib/status.js';
 import { FIX_REASONS } from '../lib/fix.js';
+import { templateOf, receiptSuggestion } from '../lib/pbcTemplate.js';
 import { esc, ICON, STATUS_LABEL } from './html.js';
 
 /**
@@ -10,7 +11,7 @@ import { esc, ICON, STATUS_LABEL } from './html.js';
  * @param sheet { status, reason, basisDate, requiredBasisDate, errors }
  * @param today 기준일 (수령일로 기록될 날짜)
  */
-export function renderStatusSheet(item, { status, reason, basisDate, requiredBasisDate, errors }, today) {
+export function renderStatusSheet(item, { status, reason, basisDate, requiredBasisDate, errors, check }, today) {
   const options = allowedStatuses(item).map((s) => `
     <button type="button" class="status-opt" data-action="pick-status" data-status="${s}" aria-pressed="${status === s}">
       <span class="status status-${s}">${ICON[s]}${STATUS_LABEL[s]}</span>
@@ -37,6 +38,7 @@ export function renderStatusSheet(item, { status, reason, basisDate, requiredBas
       </div>
 
       <div class="sheet-body">
+        ${receiptCheck(item, check, today)}
         <div class="status-opts">${options}</div>
         ${errors.status ? `<div class="f-error">${esc(errors.status)}</div>` : ''}
         ${status === 'fix' ? fixFields(reason, basisDate, requiredBasisDate, errors) : ''}
@@ -48,6 +50,29 @@ export function renderStatusSheet(item, { status, reason, basisDate, requiredBas
         <button type="button" class="btn btn-cta" data-action="save-status" ${status ? '' : 'disabled'}>${saveLabel(status)}</button>
       </footer>
     </div>`;
+}
+
+// 표준 양식으로 요청한 자료: 받은 자료를 양식 기준으로 점검하면 상태와 보완 사유를 추천한다.
+function receiptCheck(item, check, today) {
+  const t = templateOf(item);
+  if (!t || !check) return '';
+  const basis = item.basisDate || `${today.slice(0, 4)}-12-31`;
+  const s = receiptSuggestion(t, check, basis);
+  const yesNo = (action, value, yes, no) => `
+    <span class="rc-yn">
+      <button type="button" data-action="${action}" data-ok="1" aria-pressed="${value === true}">${yes}</button>
+      <button type="button" data-action="${action}" data-ok="0" aria-pressed="${value === false}">${no}</button>
+    </span>`;
+  return `
+    <section class="receipt-check">
+      <div class="f-label">받은 자료 점검 <small>${esc(t.name)} 표준 양식 기준</small></div>
+      <div class="rc-row"><span>기준일이 <b>${basis.replaceAll('-', '.')}</b>인가요?</span>${yesNo('check-basis', check.basisOk, '맞아요', '달라요')}</div>
+      <div class="rc-row rc-cols"><span>빠진 항목을 눌러 표시해 주세요</span>
+        <div class="tpl-cols">${t.columns.map((c) => `<button type="button" data-action="check-col" data-col="${esc(c)}" aria-pressed="${check.missing.includes(c)}">${esc(c)}</button>`).join('')}</div>
+      </div>
+      ${t.sign ? `<div class="rc-row"><span>${esc(t.sign)}에 서명이 있나요?</span>${yesNo('check-sign', check.signOk, '있어요', '없어요')}</div>` : ''}
+      <div class="rc-result ${s.status === 'fix' ? 'is-fix' : s.status === 'done' ? 'is-done' : ''}">${esc(s.summary)}</div>
+    </section>`;
 }
 
 function saveLabel(status) {

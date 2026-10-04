@@ -3,7 +3,8 @@
 
 import { formatMD, formatMDW, daysBetween } from '../lib/dates.js';
 import { riskOf, leftText } from '../lib/priority.js';
-import { parsePaste, rowErrorText, leftOf, normalizeDate } from '../lib/add.js';
+import { parsePaste, markDuplicates, rowErrorText, leftOf, normalizeDate } from '../lib/add.js';
+import { PBC_TEMPLATES, TEMPLATE_ORDER, templateForName, defaultBasisDate } from '../lib/pbcTemplate.js';
 import { esc, ICON, RISK_LABEL } from './html.js';
 
 export const PASTE_EXAMPLE = [
@@ -14,9 +15,11 @@ export const PASTE_EXAMPLE = [
 
 /**
  * @param state 앱 상태
- * @param opts  { today, tab: 'single'|'paste', form, errors, pasteText }
+ * @param opts  { today, tab: 'single'|'paste', form, errors, pasteText, source }
+ *   source: 외부조회 후속 절차에서 연 경우 { itemId, key, counterparty } — 값이 미리 채워져 있다
  */
-export function renderAdd(state, { today, tab, form, errors, pasteText }) {
+export function renderAdd(state, { today, tab, form, errors, pasteText, source }) {
+  const parsed = markDuplicates(parsePaste(pasteText, today), state.items);
   return `
     <div class="drawer-dim" data-action="close-drawer"></div>
     <div class="modal add" role="dialog" aria-modal="true" aria-labelledby="add-title">
@@ -36,14 +39,16 @@ export function renderAdd(state, { today, tab, form, errors, pasteText }) {
           <button type="button" role="tab" data-action="add-tab" data-tab="paste" aria-pressed="${tab === 'paste'}">여러 건 붙여넣기 (엑셀)</button>
         </div>
 
-        ${tab === 'single' ? singleForm(state, today, form, errors) : pasteForm(state, today, pasteText)}
+        ${source ? `<div class="add-source">${ICON.follow}<span><b>외부조회 후속 절차에서 요청하는 증빙이에요</b>
+          <small>${esc(source.counterparty)} · 값이 미리 채워져 있어요. 확인하고 필요한 곳만 고쳐 주세요.</small></span></div>` : ''}
+        ${tab === 'single' ? singleForm(state, today, form, errors) : pasteForm(state, today, pasteText, parsed)}
       </div>
 
       <footer class="modal-foot">
         <button type="button" class="btn btn-sub" data-action="close-drawer">취소</button>
         ${tab === 'single'
           ? `<button type="submit" form="add-form" class="btn btn-cta">추가하기</button>`
-          : pasteSubmit(parsePaste(pasteText, today))}
+          : pasteSubmit(parsed)}
       </footer>
     </div>`;
 }
@@ -58,7 +63,9 @@ function field(label, name, value, { type = 'text', placeholder = '', error = ''
 }
 
 function singleForm(state, today, form, errors) {
-  const owners = Object.keys(state.people);
+  // 자료 요청은 회사 담당자에게 한다. 외부조회의 조회처(은행·거래처 등)는 최근 담당자에서 뺀다.
+  const counterparties = new Set(state.items.filter((x) => x.kind === 'confirmation').map((x) => x.owner));
+  const owners = Object.keys(state.people).filter((o) => !counterparties.has(o));
   const chips = owners.map((o) => `
     <button type="button" class="owner-chip" data-action="pick-owner" data-owner="${esc(o)}" data-dept="${esc(state.people[o].dept || '')}">${esc(o)}</button>`).join('');
   const procedures = [...new Set(state.items.map((x) => x.procedure).filter(Boolean))];
@@ -66,7 +73,9 @@ function singleForm(state, today, form, errors) {
   return `
     <form id="add-form" class="add-single" data-action-submit="add-single" novalidate>
       <div class="add-col">
+        ${templatePicker(form)}
         ${field('자료명', 'name', form.name, { placeholder: '예: 차입금 약정서 사본', error: errors.name })}
+        ${templatePreview(state, today, form, errors)}
         <div class="f-group">
           <span class="f-label">담당자</span>
           <div class="owner-grid">
@@ -90,6 +99,39 @@ function singleForm(state, today, form, errors) {
     </form>`;
 }
 
+// ---------- 표준 양식 ----------
+// 고르면 자료명·감사 절차가 채워지고, 기준일과 필수 컬럼이 박힌 요청 양식을 복사할 수 있다.
+
+function currentTemplate(form) {
+  return PBC_TEMPLATES[form.template] || templateForName(form.name);
+}
+
+function templatePicker(form) {
+  const picked = currentTemplate(form)?.key;
+  return `
+    <div class="tpl-picker">
+      <span class="f-label">표준 양식 <small>선택 · 기준일과 필수 항목을 정해서 요청해요</small></span>
+      <div class="tpl-chips">
+        ${TEMPLATE_ORDER.map((k) => `<button type="button" class="owner-chip" data-action="pick-template" data-template="${k}" aria-pressed="${picked === k}">${PBC_TEMPLATES[k].name}</button>`).join('')}
+      </div>
+      <input type="hidden" name="template" value="${esc(picked || '')}">
+    </div>`;
+}
+
+function templatePreview(state, today, form, errors) {
+  const t = currentTemplate(form);
+  if (!t) return '';
+  const basis = form.basisDate || defaultBasisDate(state, today);
+  return `
+    <div class="tpl-preview">
+      ${field('자료 기준일', 'basisDate', basis, { type: 'date', error: errors.basisDate, hint: '받은 자료를 이 기준일로 점검해요' })}
+      <div class="tpl-cols"><span>필수 항목</span>${t.columns.map((c) => `<i>${esc(c)}</i>`).join('')}</div>
+      ${t.sign ? `<div class="tpl-line"><span>서명</span>${esc(t.sign)}</div>` : ''}
+      <div class="tpl-line"><span>확인 포인트</span>${t.checks.map(esc).join(' · ')}</div>
+      <button type="button" class="btn btn-sub tpl-copy" data-action="copy-template">${ICON.copy}엑셀용 요청 양식 복사</button>
+    </div>`;
+}
+
 // 필요일을 고르면 남은 날과 위험도를 미리 보여준다.
 function needPreview(neededOn, today) {
   const iso = normalizeDate(neededOn, today);
@@ -105,7 +147,7 @@ function needPreview(neededOn, today) {
     </div>`;
 }
 
-function pasteForm(state, today, pasteText) {
+function pasteForm(state, today, pasteText, parsed) {
   return `
     <div class="add-paste">
       <label class="f">
@@ -113,7 +155,7 @@ function pasteForm(state, today, pasteText) {
           <small>열 순서: 자료명 · 담당자 · 요청일 · 필요일 · 감사절차(선택) — 첫 줄이 제목이면 자동으로 빼요</small></span>
         <textarea name="paste" rows="5" data-action-input="paste" placeholder="${esc(PASTE_EXAMPLE)}" spellcheck="false">${esc(pasteText)}</textarea>
       </label>
-      <div class="paste-preview">${pastePreview(parsePaste(pasteText, today), today)}</div>
+      <div class="paste-preview">${pastePreview(parsed, today)}</div>
       <div class="need-note">담당자는 기존 목록과 이름이 같으면 자동으로 묶여요 · 모두 ‘미회신’으로 시작해요</div>
     </div>`;
 }

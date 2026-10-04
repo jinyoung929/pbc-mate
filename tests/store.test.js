@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { sampleState, recordNudge } from '../src/js/store.js';
+import { recordNudge } from '../src/js/store.js';
+import { sampleState } from './fixtures.js';
 
 test('예시 자료에 기존 독촉 이력과 매니저가 들어 있다', () => {
   const s = sampleState();
@@ -31,4 +32,28 @@ test('recordNudge: 이력 필드가 없던 예전 자료도 기록된다', () =>
   const after = recordNudge(s, 'x', 'firm', '2026-10-01');
   assert.deepEqual(after.items[0].nudges, [{ on: '2026-10-01', tone: 'firm' }]);
   assert.equal(after.people['홍길동 대리'].nudges, 1);
+});
+
+test('앱 예시 데이터에는 은행조회서가 PBC 자료로 들어가 있지 않다', async () => {
+  const { sampleState: appSample } = await import('../src/js/store.js');
+  const s = appSample();
+  const pbc = s.items.filter((x) => x.kind !== 'confirmation');
+  assert.equal(pbc.some((x) => x.name.includes('은행조회서')), false, '은행조회서는 PBC 자료가 아님');
+  assert.equal(pbc.length, 5);
+  assert.equal(s.people['박준호 과장'].nudges, 0, '독촉 이력도 함께 정리');
+});
+
+test('앱 예시 데이터: 외부조회 건은 네 종류와 여러 상태가 섞여 있고 조회처가 담당자', async () => {
+  const { sampleState: appSample } = await import('../src/js/store.js');
+  const s = appSample();
+  const conf = s.items.filter((x) => x.kind === 'confirmation');
+  assert.deepEqual([...new Set(conf.map((x) => x.confType))].sort(), ['arap', 'bank', 'inventory', 'legal']);
+  assert.deepEqual([...new Set(conf.map((x) => x.status))].sort(), ['done', 'follow', 'none']);
+  assert.ok(conf.some((x) => x.follow?.type === 'diff') && conf.some((x) => x.follow?.type === 'noreply'));
+  for (const x of conf) {
+    assert.equal(x.owner, x.counterparty);
+    assert.ok(s.people[x.owner], `${x.owner} 담당자 정보`);
+  }
+  assert.equal(new Set(s.items.map((x) => x.id)).size, s.items.length, 'id 중복 없음');
+  assert.equal(s.confirmSetup.companyName, s.client.name);
 });

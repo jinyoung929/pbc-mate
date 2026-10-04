@@ -47,6 +47,7 @@ html, body { font-family: 'Pretendard Variable', Pretendard, 'Noto Sans KR', -ap
   --none-fg: #4A4A4A; --none-bg: #F0F0F0;
   --part-fg: #1F4E79; --part-bg: #E7F0F8;
   --fix-fg: #7A2E5C;  --fix-bg: #F7E8F1;
+  --follow-fg: #5B3A8A; --follow-bg: #EFE9F7;
   --done-fg: #1A7F4B;
 }
 
@@ -106,6 +107,10 @@ a { color: inherit; }
 .tab.is-active { color: var(--ink); font-weight: 700; }
 .tab.is-active::after { content: ''; position: absolute; left: 12px; right: 12px; bottom: -1px; height: 3px; background: var(--orange); }
 .topbar-end { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+/* 탭(외부조회서)이 늘어도 상단바 글자가 두 줄로 꺾이지 않게 */
+.topbar .brand, .topbar .chip, .topbar .tab, .topbar .demo-date, .topbar .today, .topbar .org-label, .topbar .btn { white-space: nowrap; }
+.topbar .tab { padding: 0 10px; }
+.topbar .tab.is-active::after { left: 10px; right: 10px; }
 .today { font-size: 13px; color: var(--ink-3); }
 .demo-date + .topbar-end { margin-left: 12px; }
 .demo-date {
@@ -304,6 +309,7 @@ a { color: inherit; }
 .status-none { color: var(--none-fg); background: var(--none-bg); }
 .status-part { color: var(--part-fg); background: var(--part-bg); }
 .status-fix { color: var(--fix-fg); background: var(--fix-bg); }
+.status-follow { color: var(--follow-fg); background: var(--follow-bg); }
 .status-done { color: var(--done-fg); background: var(--low-bg); }
 .risk { height: 20px; padding: 0 7px; border-radius: 3px; font-size: 11px; font-weight: 700; }
 .risk svg { width: 9px; height: 9px; }
@@ -905,23 +911,23 @@ a.m-bundle { text-decoration: none; }
 
   .page { padding: 0 16px 32px; gap: 16px; }
 
-  .dashboard .topbar, .report .topbar, .calendar .topbar {
-    height: auto; margin: 0 -16px; padding: 10px 16px 8px; flex-wrap: wrap; row-gap: 2px; position: relative; padding-right: 60px;
+  .dashboard .topbar, .report .topbar, .calendar .topbar, .confirm .topbar {
+    height: auto; margin: 0 -16px; padding: 10px 16px 8px; flex-wrap: wrap; row-gap: 2px; position: relative;
   }
-  .dashboard .topbar .brand, .report .topbar .brand, .calendar .topbar .brand { flex-basis: 100%; font-size: 17px; }
-  .dashboard .topbar .chip, .report .topbar .chip, .calendar .topbar .chip { height: auto; padding: 0; border: 0; font-size: 12.5px; font-weight: 500; color: var(--ink-3); flex-basis: 100%; }
+  .dashboard .topbar .brand, .report .topbar .brand, .calendar .topbar .brand, .confirm .topbar .brand { flex-basis: 100%; font-size: 17px; }
+  .dashboard .topbar .chip, .report .topbar .chip, .calendar .topbar .chip, .confirm .topbar .chip { height: auto; padding: 0; border: 0; font-size: 12.5px; font-weight: 500; color: var(--ink-3); flex-basis: 100%; }
   /* 모바일에서도 탭은 보인다: 상단바 아래 줄, 가로 스크롤 가능 */
-  .dashboard .topbar .tabs, .report .topbar .tabs, .calendar .topbar .tabs {
+  .dashboard .topbar .tabs, .report .topbar .tabs, .calendar .topbar .tabs, .confirm .topbar .tabs {
     display: flex; flex-basis: 100%; order: 3; margin: 4px 0 0; height: 36px; gap: 0; overflow-x: auto; scrollbar-width: none;
   }
-  .dashboard .topbar .tab, .report .topbar .tab, .calendar .topbar .tab { height: 36px; padding: 0 10px; font-size: 13px; white-space: nowrap; }
-  .dashboard .topbar .tab.is-active::after, .report .topbar .tab.is-active::after, .calendar .topbar .tab.is-active::after { left: 10px; right: 10px; bottom: 0; }
-  .dashboard .topbar .demo-date, .report .topbar .demo-date, .calendar .topbar .demo-date { margin: 6px 0 0; }
-  .dashboard .topbar-end, .report .topbar-end, .calendar .topbar-end { position: absolute; right: 16px; top: 10px; }
-  .dashboard .topbar .today, .report .topbar .today, .calendar .topbar .today { font-size: 12.5px; }
+  .dashboard .topbar .tab, .report .topbar .tab, .calendar .topbar .tab, .confirm .topbar .tab { height: 36px; padding: 0 10px; font-size: 13px; white-space: nowrap; }
+  .dashboard .topbar .tab.is-active::after, .report .topbar .tab.is-active::after, .calendar .topbar .tab.is-active::after, .confirm .topbar .tab.is-active::after { left: 10px; right: 10px; bottom: 0; }
+  .dashboard .topbar .demo-date, .report .topbar .demo-date, .calendar .topbar .demo-date, .confirm .topbar .demo-date { margin: 6px 0 0; }
+  .dashboard .topbar-end, .report .topbar-end, .calendar .topbar-end, .confirm .topbar-end { position: absolute; right: 16px; top: 10px; }
+  .dashboard .topbar .today, .report .topbar .today, .calendar .topbar .today, .confirm .topbar .today { font-size: 12.5px; }
   .org-label { display: none; }
-  .dashboard .topbar .btn, .report .topbar .btn, .calendar .topbar .btn { width: 40px; height: 40px; padding: 0; }
-  .dashboard .topbar .btn svg, .report .topbar .btn svg, .calendar .topbar .btn svg { width: 18px; height: 18px; }
+  .dashboard .topbar .btn, .report .topbar .btn, .calendar .topbar .btn, .confirm .topbar .btn { width: 40px; height: 40px; padding: 0; }
+  .dashboard .topbar .btn svg, .report .topbar .btn svg, .calendar .topbar .btn svg, .confirm .topbar .btn svg { width: 18px; height: 18px; }
 
   .hero { margin: 0 -16px; padding: 20px 16px 18px; order: 1; }
   .hero h1 { font-size: 24px; }
@@ -1140,6 +1146,280 @@ a.m-bundle { text-decoration: none; }
   .steps { grid-template-columns: 1fr; }
 }
 
+/* ---------- 외부조회서 작성 ---------- */
+.confirm { gap: 24px; }
+.confirm-grid { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 32px; align-items: start; }
+.confirm-side .conf-setup { display: flex; flex-direction: column; gap: 22px; position: sticky; top: 16px; }
+.confirm-main { display: flex; flex-direction: column; gap: 26px; min-width: 0; }
+.conf-setup .report-block h2, .confirm-main .report-block h2 { font-size: 18px; }
+.conf-two { grid-template-columns: 1fr 1fr; }
+.conf-types { width: 100%; display: grid; grid-template-columns: repeat(4, 1fr); }
+.conf-types button { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 10px 14px; border: 0; background: none; text-align: left; }
+.conf-types .seg-label { font-weight: 700; font-size: 14.5px; }
+.conf-types .seg-caption { font-size: 12px; color: var(--ink-3); }
+.conf-check { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--ink); }
+.conf-check small { color: var(--ink-3); }
+.conf-check input { accent-color: var(--orange); width: 16px; height: 16px; }
+.conf-paste-actions { display: flex; gap: 8px; }
+.conf-paste-actions .btn { height: 34px; padding: 0 12px; font-size: 13px; }
+.conf-preview { display: flex; flex-direction: column; gap: 8px; }
+.conf-table .pp-row { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr) minmax(0, 1.3fr) 56px; }
+.conf-addr { font-size: 13px; color: var(--ink-2); display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.conf-content { font-size: 13.5px; color: var(--ink); }
+.conf-content small { display: block; font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.conf-row-errors { display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; background: var(--high-bg); border: 1px solid var(--high-border); border-radius: var(--radius); font-size: 13px; }
+.conf-wait p { font-size: 14px; color: var(--ink-3); padding: 18px; border: 1px dashed var(--line); border-radius: var(--radius); background: var(--fill-2); }
+.conf-out-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+/* 조회서 한 장 (화면에서는 종이처럼, 인쇄하면 A4 한 장) */
+.letters { display: flex; flex-direction: column; gap: 24px; padding: 24px; background: var(--fill); border: 1px solid var(--line); border-radius: var(--radius); }
+.letter {
+  background: #fff; color: #111; width: 100%; max-width: 760px; margin: 0 auto; padding: 44px 52px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .12); font-size: 13.5px; line-height: 1.65; display: flex; flex-direction: column; gap: 12px;
+}
+.lt-meta { display: flex; justify-content: space-between; font-size: 12px; color: #555; }
+.lt-title { text-align: center; font-size: 24px; font-weight: 800; letter-spacing: 0.3em; margin: 6px 0 2px; color: #111; }
+.lt-badge { align-self: center; font-size: 12px; font-weight: 700; padding: 2px 10px; border: 1px solid #111; }
+.lt-addr { margin: 4px 0; display: flex; flex-direction: column; gap: 8px; border-top: 2px solid #111; border-bottom: 1px solid #111; padding: 10px 0; }
+.lt-addr div { display: grid; grid-template-columns: 48px 1fr; }
+.lt-addr dt { font-weight: 700; }
+.lt-addr dd { margin: 0; }
+.lt-addr small { color: #555; font-size: 12.5px; }
+.lt-p { margin: 0; color: #111; text-indent: 0.6em; }
+.lt-caption { font-weight: 700; font-size: 13px; margin-top: 4px; }
+.lt-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.lt-table th, .lt-table td { border: 1px solid #111; padding: 6px 8px; text-align: left; vertical-align: top; }
+.lt-table th { background: #f2f2f2; font-weight: 700; }
+.lt-table .is-amt { text-align: right; min-width: 130px; font-variant-numeric: tabular-nums; }
+.lt-table td.is-amt { height: 30px; }
+.lt-requests, .lt-notes { margin: 0; padding-left: 20px; font-size: 12.5px; color: #222; }
+.lt-notes { list-style: '※ '; }
+.lt-sign { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-weight: 700; margin-top: 6px; }
+.lt-seal { display: inline-block; margin-left: 10px; color: #888; font-weight: 500; }
+.lt-reply-to { display: flex; flex-direction: column; gap: 1px; padding: 10px 12px; background: #f7f7f7; border-left: 3px solid var(--orange); font-size: 12.5px; }
+.lt-reply-to b { font-size: 13px; }
+.lt-cut { text-align: center; font-size: 11.5px; color: #777; border-top: 1px dashed #999; padding-top: 6px; margin-top: 6px; }
+.lt-reply { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border: 1px solid #111; }
+.lt-check { display: flex; align-items: center; gap: 8px; }
+.lt-box { width: 13px; height: 13px; border: 1px solid #111; flex-shrink: 0; }
+.lt-signline { display: flex; justify-content: space-between; border-bottom: 1px solid #999; padding: 10px 0 4px; font-size: 12.5px; color: #333; }
+
+@media (max-width: 1100px) {
+  .confirm-grid { grid-template-columns: minmax(0, 1fr); }
+  .confirm-side .conf-setup { position: static; }
+}
+@media (max-width: 1100px) {
+  .conf-types { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 720px) {
+  .conf-types { grid-template-columns: 1fr; }
+  .conf-table .pp-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .conf-table .pp-head > div:nth-child(n+3), .conf-table .pp-row > .pp-date { display: none; }
+  .conf-table .conf-content { grid-column: 1 / -1; }
+  .letters { padding: 8px; margin: 0 -8px; }
+  .letter { padding: 24px 18px; font-size: 13px; }
+  .lt-title { font-size: 19px; letter-spacing: 0.15em; }
+}
+
+/* 인쇄: 조회서만 A4 한 장씩 */
+@media print {
+  @page { size: A4; margin: 16mm 14mm; }
+  body { border: 0; background: #fff; }
+  body * { visibility: hidden; }
+  .letters, .letters * { visibility: visible; }
+  .letters { position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; gap: 0; background: none; border: 0; }
+  .letter { box-shadow: none; max-width: none; padding: 0; break-after: page; page-break-after: always; }
+  .letter:last-child { break-after: auto; page-break-after: auto; }
+  .toast { display: none; }
+}
+
+.btn-danger { background: var(--high-bg); border-color: var(--high-line); color: var(--high-fg); font-weight: 700; }
+.btn-danger:hover { background: #FBE2DF; }
+.confirm-head .report-actions svg { width: 14px; height: 14px; }
+
+/* ---------- 외부조회 후속 절차 ---------- */
+.follow-entry { display: flex; flex-direction: column; gap: 8px; padding-top: 14px; border-top: 1px solid var(--line-soft); }
+.follow-entry-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.follow-entry-btns .btn { height: auto; padding: 10px 12px; justify-content: flex-start; text-align: left; gap: 10px; }
+.follow-entry-btns .btn svg { width: 16px; height: 16px; color: var(--follow-fg); }
+.follow-entry-btns .btn span { display: flex; flex-direction: column; gap: 1px; }
+.follow-entry-btns .btn small { font-size: 12px; font-weight: 500; color: var(--ink-3); }
+
+.drawer.follow .drawer-body { display: flex; flex-direction: column; gap: 18px; }
+.drawer.follow .fix-alert { background: var(--follow-bg); border-color: #DCD0EE; }
+.drawer.follow .fix-alert b, .drawer.follow .fix-alert small, .drawer.follow .fix-alert-icon { color: var(--follow-fg); }
+.drawer.follow .fix-alert.is-required { background: var(--high-bg); border-color: var(--high-border); }
+.drawer.follow .fix-alert.is-required b, .drawer.follow .fix-alert.is-required small, .drawer.follow .fix-alert.is-required .fix-alert-icon { color: var(--high-fg); }
+.fu-count { font-size: 12.5px; font-weight: 500; color: var(--ink-3); margin-left: 6px; }
+
+.fu-steps { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.fu-step { display: flex; gap: 10px; align-items: flex-start; padding: 11px 14px; cursor: pointer; background: #fff; }
+.fu-step + .fu-step { border-top: 1px solid var(--line-soft); }
+.fu-step input { margin-top: 3px; width: 16px; height: 16px; accent-color: var(--orange); flex-shrink: 0; }
+.fu-step-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.fu-step-text b { font-size: 14px; font-weight: 600; color: var(--ink); display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.fu-step-text small { font-size: 12.5px; color: var(--ink-3); }
+.fu-step.is-done { background: var(--fill-2); }
+.fu-step.is-done .fu-step-text b { color: var(--ink-3); text-decoration: line-through; }
+.fu-role { font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 3px; text-decoration: none; display: inline-block; }
+.fu-role-alt { color: var(--low-fg); background: var(--low-bg); }
+.fu-role-escalate { color: var(--part-fg); background: var(--part-bg); }
+.fu-role-support { color: var(--mid-fg); background: var(--mid-bg); }
+
+.fu-verified { display: flex; flex-direction: column; gap: 6px; }
+.fu-meter { height: 8px; background: var(--fill); border-radius: 4px; overflow: hidden; }
+.fu-meter span { display: block; height: 100%; background: var(--low-line); }
+
+.fu-recon { display: flex; flex-direction: column; gap: 12px; }
+.fu-amounts { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; align-items: end; }
+.fu-amounts input, .fu-line input, .fu-line select { text-align: right; font-variant-numeric: tabular-nums; }
+.fu-diff { display: flex; flex-direction: column; gap: 4px; padding: 8px 12px; background: var(--fill); border-radius: var(--radius); }
+.fu-diff small { font-size: 12px; color: var(--ink-3); }
+.fu-diff b { font-size: 18px; font-weight: 800; color: var(--ink); }
+.fu-lines { display: flex; flex-direction: column; gap: 6px; }
+.fu-line { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1.4fr) 36px; gap: 6px; align-items: center; }
+.fu-line select, .fu-line input { height: 36px; border: 1px solid var(--line); border-radius: var(--radius); padding: 0 8px; font: inherit; font-size: 13px; background: #fff; min-width: 0; }
+.fu-line select, .fu-line input[data-field="note"] { text-align: left; }
+.fu-line .icon-btn { width: 36px; height: 36px; }
+.fu-line-head { font-size: 12px; font-weight: 700; color: var(--ink-3); }
+.fu-add { align-self: flex-start; height: 34px; font-size: 13px; }
+.fu-sum { margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); border-radius: var(--radius); }
+.fu-sum div { padding: 8px 12px; }
+.fu-sum div + div { border-left: 1px solid var(--line); }
+.fu-sum dt { font-size: 12px; color: var(--ink-3); }
+.fu-sum dd { margin: 0; font-weight: 800; font-size: 15px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.fu-sum .is-open dd { color: var(--mid-fg); }
+.fu-sum .is-bad dd { color: var(--high-fg); }
+.fu-result { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-left: 3px solid var(--ink-3); background: var(--fill-2); }
+.fu-result small { font-size: 12px; color: var(--ink-3); }
+.fu-result b { font-size: 14px; color: var(--ink); }
+.fu-result.is-ok { border-color: var(--low-line); background: var(--low-bg); }
+.fu-result.is-bad { border-color: var(--high-line); background: var(--high-bg); }
+.fu-result.is-open { border-color: var(--mid-line); background: var(--mid-bg); }
+
+.fu-evidence { display: flex; flex-direction: column; gap: 8px; padding-top: 14px; border-top: 1px solid var(--line-soft); }
+.fu-owner { max-width: 280px; }
+.fu-ev-list { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--radius); }
+.fu-ev { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 12px; font-size: 13.5px; }
+.fu-ev + .fu-ev { border-top: 1px solid var(--line-soft); }
+.fu-ev .btn { height: 32px; padding: 0 10px; font-size: 12.5px; flex-shrink: 0; }
+
+@media (max-width: 720px) {
+  .follow-entry-btns { grid-template-columns: 1fr; }
+  .fu-amounts { grid-template-columns: 1fr 1fr; }
+  .fu-diff { grid-column: 1 / -1; }
+  .fu-line { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 36px; }
+  .fu-line input[data-field="note"] { grid-column: 1 / 3; grid-row: 2; }
+  .fu-line-head { display: none; }
+  .fu-sum { grid-template-columns: 1fr; }
+  .fu-sum div + div { border-left: 0; border-top: 1px solid var(--line); }
+}
+.compose-foot .btn[disabled] { opacity: .45; cursor: not-allowed; }
+
+.fu-terms { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: -2px 0 4px; padding: 8px 10px; font-size: 12.5px; background: var(--fill-2); border-left: 3px solid var(--low-line); }
+.fu-terms > span { font-weight: 700; color: var(--ink); }
+.fu-terms select { height: 30px; border: 1px solid var(--line); border-radius: var(--radius); padding: 0 6px; font: inherit; background: #fff; }
+.fu-terms small { color: var(--ink-3); }
+.fu-terms.is-pending { background: var(--mid-bg); border-color: var(--mid-line); }
+.fu-terms.is-bad { background: var(--high-bg); border-color: var(--high-line); }
+.fu-signoff { display: flex; flex-direction: column; gap: 8px; padding-top: 14px; border-top: 1px solid var(--line-soft); }
+.fu-signoff-grid { display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 10px; align-items: start; }
+@media (max-width: 720px) { .fu-signoff-grid { grid-template-columns: 1fr 1fr; } .fu-signoff-grid .f:last-child { grid-column: 1 / -1; } }
+
+/* ---------- 대시보드 외부조회 현황 ---------- */
+.confirm-overview { display: flex; flex-direction: column; gap: 10px; padding-top: 12px; position: relative; }
+.confirm-overview::before { content: ''; position: absolute; left: 0; top: 0; width: 28px; height: 3px; background: var(--orange); }
+.co-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.co-head h2 { font-size: 22px; font-weight: 700; }
+.co-head h2 span { font-size: 13px; font-weight: 500; color: var(--ink-3); }
+.co-perf { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.co-perf input { width: 150px; height: 34px; border: 1px solid var(--line); border-radius: var(--radius); padding: 0 10px; font: inherit; text-align: right; font-variant-numeric: tabular-nums; }
+.co-perf input:focus { outline: 2px solid var(--orange); outline-offset: -1px; }
+.co-basis { font-size: 12.5px; color: var(--ink-3); margin-top: -4px; }
+.co-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr); border: 1px solid var(--line); border-radius: var(--radius); }
+.report-main .co-grid { grid-template-columns: 1fr 1fr; }
+.report-main .co-wide { grid-column: 1 / -1; grid-row: 1; border-bottom: 1px solid var(--line); }
+.report-main .co-card + .co-card { border-left: 0; }
+.report-main .co-card:last-child { border-left: 1px solid var(--line); }
+.co-card { display: flex; flex-direction: column; gap: 6px; padding: 16px 20px; min-width: 0; }
+.co-card + .co-card { border-left: 1px solid var(--line); }
+.co-label { font-size: 13px; font-weight: 600; color: var(--ink-3); }
+.co-big { font-size: 30px; font-weight: 800; line-height: 1.1; color: var(--ink); font-variant-numeric: tabular-nums; }
+.co-big small { font-size: 13px; font-weight: 500; color: var(--ink-3); }
+.co-card.is-required .co-big { color: var(--high-fg); }
+.co-card.is-ok .co-big { color: var(--low-fg); }
+.co-sub { font-size: 12.5px; color: var(--ink-3); }
+.co-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-3); }
+.co-chip { padding: 2px 8px; border: 1px solid var(--line); border-radius: 3px; font-weight: 600; color: var(--ink); text-decoration: none; background: #fff; }
+.co-chip:hover { border-color: var(--orange); color: var(--orange-dark); }
+.co-bar { display: flex; height: 10px; background: var(--fill); border-radius: 5px; overflow: hidden; }
+.co-seg.is-confirmed { background: var(--low-line); }
+.co-seg.is-alt { background: var(--mid-line); }
+.co-legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--ink-2); }
+.co-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; background: var(--fill); border: 1px solid var(--line); margin-right: 5px; vertical-align: -1px; }
+.co-legend i.is-confirmed { background: var(--low-line); border-color: var(--low-line); }
+.co-legend i.is-alt { background: var(--mid-line); border-color: var(--mid-line); }
+.co-verdict { display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px; font-size: 13px; border-radius: var(--radius); }
+.co-verdict svg { width: 13px; height: 13px; margin-top: 3px; }
+.co-verdict.is-bad { background: var(--high-bg); color: var(--high-fg); }
+.co-verdict.is-ok { background: var(--low-bg); color: var(--low-fg); }
+.co-verdict.is-open { background: var(--fill-2); color: var(--ink-3); }
+@media (max-width: 1100px) {
+  .co-grid { grid-template-columns: 1fr 1fr; }
+  .co-wide { grid-column: 1 / -1; grid-row: 1; }
+  .co-card + .co-card { border-left: 0; }
+  .co-card:not(.co-wide) { border-top: 1px solid var(--line); }
+  .co-card:last-child { border-left: 1px solid var(--line); }
+}
+@media (max-width: 720px) {
+  .co-head h2 { font-size: 19px; }
+  .co-grid { grid-template-columns: 1fr; }
+  .co-card:last-child { border-left: 0; }
+  .co-perf input { width: 130px; }
+}
+
+/* 주간 보고: 후속 절차 칸이 생기면 지연 칸을 한 줄 전체로 */
+.stat.is-follow .stat-value { color: var(--follow-fg); }
+.stat.stat-span { grid-column: 1 / -1; }
+
+.add-source { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; background: var(--follow-bg); color: var(--follow-fg); border-radius: var(--radius); }
+.add-source svg { width: 16px; height: 16px; margin-top: 2px; }
+.add-source span { display: flex; flex-direction: column; gap: 2px; }
+.add-source b { font-size: 13.5px; }
+.add-source small { font-size: 12.5px; }
+
+/* ---------- PBC 표준 양식 ---------- */
+.tpl-picker { display: flex; flex-direction: column; gap: 6px; }
+.tpl-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.tpl-chips .owner-chip[aria-pressed="true"] { border-color: var(--orange); background: var(--peach-light); color: var(--orange-dark); font-weight: 700; }
+.tpl-preview, .tpl-note { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; background: var(--fill-2); border: 1px solid var(--line); border-radius: var(--radius); }
+.tpl-note { background: none; border: 0; border-top: 1px solid var(--line-soft); border-radius: 0; padding: 14px 0 0; }
+.tpl-cols { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; font-size: 12.5px; }
+.tpl-cols > span { font-weight: 700; color: var(--ink); margin-right: 4px; }
+.tpl-cols i, .tpl-cols button { font-style: normal; padding: 2px 8px; border: 1px solid var(--line); border-radius: 3px; background: #fff; color: var(--ink-2); font-size: 12.5px; }
+.tpl-cols button { cursor: pointer; }
+.tpl-cols button[aria-pressed="true"] { border-color: var(--high-line); background: var(--high-bg); color: var(--high-fg); font-weight: 700; text-decoration: line-through; }
+.tpl-line { font-size: 12.5px; color: var(--ink-3); }
+.tpl-line span { font-weight: 700; color: var(--ink); margin-right: 6px; }
+.tpl-copy { align-self: flex-start; height: 34px; font-size: 13px; }
+.tpl-copy svg { width: 13px; height: 13px; }
+
+.receipt-check { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--fill-2); }
+.rc-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 13px; color: var(--ink-2); }
+.rc-row.rc-cols { flex-direction: column; align-items: flex-start; }
+.rc-yn { display: inline-flex; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: #fff; }
+.rc-yn button { height: 30px; padding: 0 12px; border: 0; background: none; font-size: 12.5px; color: var(--ink-2); }
+.rc-yn button + button { border-left: 1px solid var(--line); }
+.rc-yn button[aria-pressed="true"] { background: var(--ink); color: #fff; font-weight: 700; }
+.rc-result { font-size: 13px; font-weight: 600; padding: 8px 10px; border-radius: var(--radius); background: #fff; color: var(--ink-3); }
+.rc-result.is-fix { background: var(--fix-bg); color: var(--fix-fg); }
+.rc-result.is-done { background: var(--low-bg); color: var(--low-fg); }
+
+/* 묶음 독촉 카드: 항목별로 따로 보내기 */
+.row-action { display: inline-flex; align-items: center; gap: 5px; align-self: flex-start; margin-top: 6px; padding: 3px 9px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; font-size: 12px; font-weight: 600; color: var(--ink-2); text-decoration: none; }
+.row-action svg { width: 12px; height: 12px; }
+.row-action:hover { border-color: var(--orange); color: var(--orange-dark); }
+
 </style>
 <div id="app"></div>
 <div id="toast" class="toast" role="status" hidden></div>
@@ -1300,13 +1580,51 @@ function parsePaste(text, baseDate) {
   return { rows, headerSkipped, errorCount: rows.filter((r) => Object.keys(r.errors).length).length };
 }
 
+// ---------- 중복 요청 막기 ----------
+// 자료명이 대시보드의 자료와 같으면(띄어쓰기·대소문자 무시) 이미 요청한 자료로 보고 추가하지 않는다.
+
+const STATUS_TEXT = { none: '미회신', part: '일부 수령', fix: '보완 요청', follow: '후속 절차', done: '완료' };
+
+const normName = (name) => String(name ?? '').replace(/\s+/g, '').toLowerCase();
+
+/** 대시보드에 같은 자료명이 있으면 그 자료 */
+function findExisting(items, name) {
+  const key = normName(name);
+  return key ? items.find((x) => normName(x.name) === key) : undefined;
+}
+
+/** 이미 있는 자료일 때 보여줄 문구. 없으면 null */
+function duplicateMessage(items, name) {
+  const found = findExisting(items, name);
+  return found ? `이미 대시보드에 있는 자료예요 (${found.owner} · ${STATUS_TEXT[found.status] || found.status})` : null;
+}
+
+/**
+ * 붙여넣기 결과에 중복을 표시한다: 대시보드에 이미 있거나, 붙여넣은 목록 안에서 앞 행과 같은 자료명.
+ * 중복 행은 value를 비워 저장 대상에서 빠지고, errorCount에 더해진다.
+ */
+function markDuplicates(parsed, items) {
+  const seen = new Map();
+  const rows = parsed.rows.map((r) => {
+    if (!r.value) return r;
+    const key = normName(r.value.item.name);
+    let dup = null;
+    if (findExisting(items, r.value.item.name)) dup = '이미 있는 자료';
+    else if (seen.has(key)) dup = `${seen.get(key)}행과 중복`;
+    seen.set(key, seen.get(key) ?? r.line);
+    return dup ? { ...r, value: null, errors: { ...r.errors, duplicate: dup } } : r;
+  });
+  return { ...parsed, rows, errorCount: rows.filter((r) => Object.keys(r.errors).length).length };
+}
+
 /** 행 오류를 한 줄 문구로 */
 function rowErrorText(errors) {
-  const order = ['name', 'ownerName', 'requestedOn', 'neededOn', 'cells'];
+  const order = ['name', 'ownerName', 'requestedOn', 'neededOn', 'cells', 'duplicate'];
   const labels = { name: '자료명 없음', ownerName: '담당자 없음', cells: '열 부족' };
   return order.filter((k) => errors[k]).map((k) => {
     if (k === 'requestedOn') return errors[k].includes('형식') ? '요청일 형식 오류' : '요청일 없음';
     if (k === 'neededOn') return errors[k].includes('형식') ? '필요일 형식 오류' : '필요일 없음';
+    if (k === 'duplicate') return errors[k];
     return labels[k];
   }).join(' · ');
 }
@@ -1316,7 +1634,7 @@ function leftOf(value, baseDate) {
   return daysBetween(baseDate, value.item.neededOn);
 }
 
-return { normalizeDate, ownerName, validateItem, parsePaste, rowErrorText, leftOf };
+return { normalizeDate, ownerName, validateItem, splitCells, parsePaste, findExisting, duplicateMessage, markDuplicates, rowErrorText, leftOf };
 })();
 
 // ---- lib/korean.js
@@ -1326,9 +1644,12 @@ const __m_lib_korean = (() => {
  * 단어 끝 글자의 받침 유무로 조사를 고른다.
  * josa('은행조회서 회신', '이', '가') → '이'
  * 한글로 끝나지 않으면 판단할 수 없어 '이(가)' 형태로 둘 다 쓴다.
+ * 끝에 붙은 괄호(조회처명 등)는 빼고 판단한다.
  */
 function josa(word, withBatchim, withoutBatchim) {
-  const code = word.charCodeAt(word.length - 1) - 0xac00;
+  // '채권채무조회서 (세진물산㈜)'처럼 괄호로 끝나면 괄호 앞 단어로 읽는다 → '조회서' + '가'
+  const base = String(word).replace(/\s*\([^()]*\)$/, '') || String(word);
+  const code = base.charCodeAt(base.length - 1) - 0xac00;
   if (code < 0 || code > 11171) return `${withBatchim}(${withoutBatchim})`;
   return code % 28 === 0 ? withoutBatchim : withBatchim;
 }
@@ -1616,7 +1937,7 @@ const { clientShortName, replyBy, scheduleReason } = __m_lib_mail;
  * 정렬은 대시보드 필요일순과 같은 규칙(같은 필요일이면 오래 기다린 순).
  */
 function isBundleEligible(item) {
-  return item.status !== 'done' && item.status !== 'fix';
+  return item.status !== 'done' && item.status !== 'fix' && item.status !== 'follow';
 }
 
 function bundleItems(items, owner, today) {
@@ -1890,6 +2211,512 @@ function matchMailDate(text, dates) {
 return { PROGRESS, progressLabel, progressOf, monthOf, shiftMonth, monthLabel, monthGrid, calendarEntries, entriesOn, addEvent, setEventProgress, countByProgress, removeEvent, moveEntry, replyByDate, mailDates, matchMailDate };
 })();
 
+// ---- lib/confirmation.js
+const __m_lib_confirmation = (() => {
+const { normalizeDate, splitCells } = __m_lib_add;
+const { addDays, daysBetween } = __m_lib_dates;
+// 외부조회서 작성: 선정된 조회처 목록(엑셀 붙여넣기) → 표준 조회서 문서 데이터 → 조회 목록 등록
+//
+// 조회서는 회사 명의로 작성해 회사가 날인하고, 회신은 감사인에게 직접 오도록 한다.
+// 이 파일은 순수 함수만 둔다. 화면(HTML)은 views/confirm.js가 그린다.
+//
+// 종류
+//   bank  : 은행조회서 (금융거래 조회서) — 금융기관 1곳당 1장, 행을 금융기관+지점으로 묶는다
+//   arap  : 채권채무조회서 — 거래처 1곳당 1장
+//   legal : 변호사조회서 — 법무법인 1곳당 1장, 사건 행을 묶는다
+//   inventory : 제3자보관재고자산조회서 — 보관처(창고)별 1장, 품목 행을 묶는다. 수량을 확인받는다
+//
+// track: 'required'(금액과 무관하게 전수 회수 — 은행, 실무 관행)
+//      | 'coverage'(수행중요성 대비 금액 커버리지로 관리 — 채권채무·재고)
+//      | 'general'(금액 없이 회신 여부로 관리 — 변호사)
+
+
+const CONF_TYPES = {
+  bank: {
+    key: 'bank', label: '은행조회서', title: '금융거래 조회서', prefix: 'BK', track: 'required',
+    unit: '금융기관',
+    columns: ['금융기관', '지점(선택)', '주소', '구분', '계좌번호·내역', '장부금액(선택)'],
+    example: [
+      '금융기관\t지점\t주소\t구분\t계좌번호·내역\t장부금액',
+      '한빛은행\t여의도지점\t서울특별시 영등포구 국제금융로 10\t보통예금\t110-234-567890\t1,250,000,000',
+      '한빛은행\t여의도지점\t서울특별시 영등포구 국제금융로 10\t단기차입금\t운전자금대출 2026-03\t3,000,000,000',
+      '한빛은행\t여의도지점\t서울특별시 영등포구 국제금융로 10\t약정\t당좌차월 한도 50억\t',
+      '바다저축은행\t본점\t부산광역시 해운대구 센텀중앙로 55\t정기예금\t2026-001-778\t500,000,000',
+    ].join('\n'),
+  },
+  arap: {
+    key: 'arap', label: '채권채무조회서', title: '채권·채무 조회서', prefix: 'AR', track: 'coverage',
+    unit: '거래처',
+    columns: ['거래처명', '주소', '채권(당사 매출채권 등)', '채무(당사 매입채무 등)', '형식(기재/공란, 선택)'],
+    example: [
+      '거래처명\t주소\t채권\t채무\t형식',
+      '㈜대한부품\t경기도 수원시 영통구 광교로 100\t842,000,000\t0\t기재',
+      '세진물산㈜\t인천광역시 연수구 송도과학로 32\t315,500,000\t120,000,000\t기재',
+      '㈜오성테크\t충청남도 아산시 탕정면 삼성로 181\t0\t96,300,000\t공란',
+    ].join('\n'),
+  },
+  legal: {
+    key: 'legal', label: '변호사조회서', title: '법률 조회서', prefix: 'LG', track: 'general',
+    unit: '법무법인',
+    columns: ['법무법인', '담당 변호사(선택)', '주소', '사건명(선택)'],
+    example: [
+      '법무법인\t담당 변호사\t주소\t사건명',
+      '법무법인 정의\t김정의 변호사\t서울특별시 서초구 서초대로 219\t물품대금 청구 소송 (서울중앙지법 2026가합1234)',
+      '법무법인 정의\t김정의 변호사\t서울특별시 서초구 서초대로 219\t특허권 침해 금지 가처분',
+      '법무법인 바른길\t\t서울특별시 강남구 테헤란로 92\t',
+    ].join('\n'),
+  },
+  inventory: {
+    key: 'inventory', label: '제3자보관재고자산조회서', title: '제3자 보관 재고자산 조회서', prefix: 'IV', track: 'coverage',
+    unit: '보관처',
+    columns: ['보관처', '창고(선택)', '주소', '품목', '수량', '단위(선택)', '장부금액(선택)'],
+    example: [
+      '보관처\t창고\t주소\t품목\t수량\t단위\t장부금액',
+      '㈜한결물류\t평택센터\t경기도 평택시 포승읍 평택항로 156\tOLED 패널 A-15\t12,400\tEA\t1,488,000,000',
+      '㈜한결물류\t평택센터\t경기도 평택시 포승읍 평택항로 156\t구동칩 DX-7\t85,000\tEA\t425,000,000',
+      '대성냉장㈜\t부산 감천창고\t부산광역시 사하구 원양로 177\t접착 소재 B-2\t3,200\tkg\t96,000,000',
+    ].join('\n'),
+  },
+};
+
+const TRACK_LABEL = { required: '필수 회수', coverage: '커버리지 관리', general: '일반 조회' };
+
+const TYPE_ORDER = ['bank', 'arap', 'legal', 'inventory'];
+
+/** 은행조회서 '구분'으로 받는 항목. 이 단어가 들어가면 인정한다 (보통예금 → 예금). */
+const BANK_CATEGORIES = ['예금', '적금', '차입금', '대출', '보증', '담보', '약정', '파생', '기타'];
+
+const HEADER_WORDS = ['금융기관', '은행', '거래처', '거래처명', '법무법인', '구분', '주소', '채권', '채무', '사건명', '보관처', '품목', '수량'];
+
+// ---------- 공통 정보 ----------
+
+/** 조회서 공통 정보 기본값. 회사명은 앱의 클라이언트명으로 채운다. */
+function defaultSetup(client = {}, today) {
+  const year = Number(today.slice(0, 4));
+  return {
+    companyName: client.name || '',
+    ceoName: '',
+    companyAddress: '',
+    auditorName: '삼일회계법인',
+    auditorAddress: '서울특별시 용산구 한강대로 100 아모레퍼시픽빌딩',
+    contactName: '',
+    contactPhone: '',
+    contactEmail: '',
+    baseDate: `${year - (today.slice(5) < '04-01' ? 1 : 0)}-12-31`,
+    issuedOn: today,
+    replyBy: addDays(today, 14),
+  };
+}
+
+const SETUP_REQUIRED = {
+  companyName: '회사명을 입력해 주세요.',
+  ceoName: '대표이사 성명을 입력해 주세요.',
+  companyAddress: '회사 주소를 입력해 주세요.',
+  auditorName: '감사인을 입력해 주세요.',
+  auditorAddress: '회신받을 감사인 주소를 입력해 주세요.',
+  contactName: '감사인 담당자를 입력해 주세요.',
+};
+
+/**
+ * 공통 정보 검증 + 날짜 정규화.
+ * @returns {{ errors: Record<string,string>, value: object | null }}
+ */
+function validateSetup(setup, today) {
+  const errors = {};
+  const value = {};
+  for (const [key, message] of Object.entries(SETUP_REQUIRED)) {
+    value[key] = String(setup[key] ?? '').trim();
+    if (!value[key]) errors[key] = message;
+  }
+  value.contactPhone = String(setup.contactPhone ?? '').trim();
+  value.contactEmail = String(setup.contactEmail ?? '').trim();
+  if (!value.contactPhone && !value.contactEmail) errors.contactPhone = '회신 문의용 전화나 이메일 중 하나는 필요해요.';
+  if (value.contactEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.contactEmail)) errors.contactEmail = '이메일 형식을 확인해 주세요.';
+
+  for (const [key, label] of [['baseDate', '조회 기준일'], ['issuedOn', '발송일'], ['replyBy', '회신 기한']]) {
+    const raw = String(setup[key] ?? '').trim();
+    value[key] = normalizeDate(raw, today);
+    if (!raw) errors[key] = `${label}을 입력해 주세요.`;
+    else if (!value[key]) errors[key] = '날짜 형식을 확인해 주세요. 예: 2026-12-31';
+  }
+  if (value.issuedOn && value.replyBy && daysBetween(value.issuedOn, value.replyBy) <= 0) {
+    errors.replyBy = '회신 기한은 발송일 뒤여야 해요.';
+  }
+  return { errors, value: Object.keys(errors).length ? null : value };
+}
+
+// ---------- 붙여넣기 파싱 ----------
+
+/** '1,250,000,000' · '1250000000원' · '' → 숫자 / null(빈칸) / NaN(잘못된 값) */
+function parseAmount(input) {
+  const s = String(input ?? '').replace(/[,\s원₩]/g, '');
+  if (!s || s === '-') return null;
+  if (!/^\d+$/.test(s)) return NaN;
+  return Number(s);
+}
+
+/** 1250000000 → '1,250,000,000' */
+function formatAmount(n) {
+  return Number(n).toLocaleString('ko-KR');
+}
+
+function lines(text) {
+  return String(text ?? '').split(/\r?\n/).filter((l) => l.trim());
+}
+
+function isHeader(cells) {
+  return cells.some((c) => HEADER_WORDS.includes(c.replace(/\s+|\(.*\)/g, '')));
+}
+
+/** 공통: 줄 → 셀, 첫 줄이 제목이면 뺀다 */
+function readRows(text) {
+  const ls = lines(text);
+  let headerSkipped = false;
+  if (ls.length && isHeader(splitCells(ls[0]))) {
+    ls.shift();
+    headerSkipped = true;
+  }
+  return { rows: ls.map((line, i) => ({ line: i + 1, cells: splitCells(line) })), headerSkipped };
+}
+
+function parseBankRow(cells) {
+  const [name = '', branch = '', address = '', category = '', desc = '', amount = ''] = cells;
+  const errors = {};
+  if (!name) errors.name = '금융기관명 없음';
+  if (!category) errors.category = '구분 없음';
+  else if (!BANK_CATEGORIES.some((w) => category.includes(w))) errors.category = '구분 확인 (예금·차입금·보증·담보·약정 등)';
+  const bookAmount = parseAmount(amount);
+  if (Number.isNaN(bookAmount)) errors.amount = '금액 형식 오류';
+  return { errors, value: { name, branch, address, category, desc, bookAmount } };
+}
+
+function parseArapRow(cells) {
+  const [name = '', address = '', recv = '', pay = '', form = ''] = cells;
+  const errors = {};
+  if (!name) errors.name = '거래처명 없음';
+  if (!address) errors.address = '주소 없음';
+  const receivable = parseAmount(recv);
+  const payable = parseAmount(pay);
+  if (Number.isNaN(receivable) || Number.isNaN(payable)) errors.amount = '금액 형식 오류';
+  else if (receivable === null && payable === null) errors.amount = '채권·채무 금액 없음';
+  const f = form.replace(/\s+/g, '');
+  let blank = false;
+  if (!f || f === '기재' || f.includes('기재')) blank = false;
+  else if (f.includes('공란')) blank = true;
+  else errors.form = '형식은 기재 또는 공란';
+  return { errors, value: { name, address, receivable: receivable ?? 0, payable: payable ?? 0, blank } };
+}
+
+function parseLegalRow(cells) {
+  const [name = '', lawyer = '', address = '', matter = ''] = cells;
+  const errors = {};
+  if (!name) errors.name = '법무법인명 없음';
+  return { errors, value: { name, lawyer, address, matter } };
+}
+
+function parseInventoryRow(cells) {
+  const [name = '', branch = '', address = '', item = '', qty = '', unit = '', amount = ''] = cells;
+  const errors = {};
+  if (!name) errors.name = '보관처명 없음';
+  if (!item) errors.category = '품목 없음';
+  const quantity = parseAmount(qty);
+  if (quantity === null) errors.amount = '수량 없음';
+  else if (Number.isNaN(quantity)) errors.amount = '수량 형식 오류';
+  const bookAmount = parseAmount(amount);
+  if (Number.isNaN(bookAmount)) errors.amount = '금액 형식 오류';
+  return { errors, value: { name, branch, address, item, quantity, unit, bookAmount } };
+}
+
+const ROW_PARSERS = { bank: parseBankRow, arap: parseArapRow, legal: parseLegalRow, inventory: parseInventoryRow };
+
+/**
+ * 붙여넣은 목록을 조회처 단위로 묶는다.
+ * @returns {{
+ *   rows: { line, cells, value, errors }[],
+ *   parties: { key, name, branch?, lawyer?, address, lines: number[], ...type별 값, errors }[],
+ *   headerSkipped, errorCount
+ * }}
+ * errorCount는 행 오류 + 조회처 오류(주소 없음·주소 불일치·중복 거래처) 합계. 0이어야 조회서를 만든다.
+ */
+function parseConfirmations(type, text) {
+  const { rows: raw, headerSkipped } = readRows(text);
+  const rows = raw.map((r) => ({ ...r, ...ROW_PARSERS[type](r.cells) }));
+  const parties = type === 'arap' ? arapParties(rows) : groupedParties(type, rows);
+  const rowErrors = rows.filter((r) => Object.keys(r.errors).length).length;
+  const partyErrors = parties.filter((p) => Object.keys(p.errors).length).length;
+  return { rows, parties, headerSkipped, errorCount: rowErrors + partyErrors };
+}
+
+function arapParties(rows) {
+  const seen = new Map();
+  return rows.filter((r) => r.value.name).map((r) => {
+    const key = r.value.name.replace(/\s+/g, '');
+    const errors = {};
+    if (seen.has(key)) errors.duplicate = `${seen.get(key)}행과 거래처 중복`;
+    else seen.set(key, r.line);
+    return { key, ...r.value, lines: [r.line], errors };
+  });
+}
+
+/** 은행(금융기관+지점)·재고(보관처+창고)·변호사(법무법인)는 여러 행을 한 조회처로 묶는다. */
+function groupedParties(type, rows) {
+  const groups = new Map();
+  for (const r of rows) {
+    if (!r.value.name) continue;
+    const key = type === 'legal' ? r.value.name : `${r.value.name}|${r.value.branch}`;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(r);
+  }
+  return [...groups].map(([key, rs]) => {
+    const first = rs[0].value;
+    const addresses = [...new Set(rs.map((r) => r.value.address).filter(Boolean))];
+    const errors = {};
+    if (!addresses.length) errors.address = '주소 없음';
+    else if (addresses.length > 1) errors.address = '같은 조회처에 주소가 여러 개';
+    const party = { key, name: first.name, address: addresses[0] || '', lines: rs.map((r) => r.line), errors };
+    if (type === 'bank') {
+      party.branch = first.branch;
+      party.entries = rs.map((r) => ({ category: r.value.category, desc: r.value.desc, bookAmount: r.value.bookAmount }));
+    } else if (type === 'inventory') {
+      party.branch = first.branch;
+      party.goods = rs.map((r) => ({ item: r.value.item, quantity: r.value.quantity, unit: r.value.unit, bookAmount: r.value.bookAmount }));
+    } else {
+      party.lawyer = rs.map((r) => r.value.lawyer).find(Boolean) || '';
+      party.matters = rs.map((r) => r.value.matter).filter(Boolean);
+    }
+    return party;
+  });
+}
+
+// ---------- 조회서 문서 ----------
+
+/** '2026-12-31' → '2026년 12월 31일' */
+function longKoreanDate(iso) {
+  const [y, m, d] = iso.split('-').map(Number);
+  return `${y}년 ${m}월 ${d}일`;
+}
+
+function docNo(type, n) {
+  return `${CONF_TYPES[type].prefix}-${String(n).padStart(3, '0')}`;
+}
+
+function recipientName(type, p) {
+  if (type === 'bank' || type === 'inventory') return `${p.name}${p.branch ? ` ${p.branch}` : ''}`;
+  return p.name;
+}
+
+/**
+ * 조회서 문서 데이터. 화면·인쇄는 이 데이터만 보고 그린다.
+ * @param opts { startNo = 1, bankBlank = false }  bankBlank: 은행조회서 장부금액을 비워 보낼지
+ * @returns letter[] — { type, docNo, title, issuedOn, to, from, paragraphs, table, notes, reply, replyTo, party }
+ */
+function buildLetters(type, parties, setup, { startNo = 1, bankBlank = false } = {}) {
+  return parties.map((p, i) => {
+    const base = longKoreanDate(setup.baseDate);
+    const by = longKoreanDate(setup.replyBy);
+    const letter = {
+      type,
+      docNo: docNo(type, startNo + i),
+      title: CONF_TYPES[type].title,
+      issuedOn: longKoreanDate(setup.issuedOn),
+      to: { name: recipientName(type, p), attn: type === 'legal' ? p.lawyer : '', address: p.address },
+      from: { company: setup.companyName, ceo: setup.ceoName, address: setup.companyAddress },
+      replyTo: {
+        auditor: setup.auditorName, address: setup.auditorAddress, contact: setup.contactName,
+        phone: setup.contactPhone, email: setup.contactEmail,
+      },
+      replyBy: by,
+      party: p,
+    };
+    return { ...letter, ...LETTER_BODY[type](p, setup, base, by, { bankBlank }) };
+  });
+}
+
+const LETTER_BODY = {
+  bank(p, setup, base, by, { bankBlank }) {
+    const filled = !bankBlank;
+    return {
+      blank: bankBlank,
+      paragraphs: [
+        `당사의 외부감사인인 ${setup.auditorName}에서 당사 재무제표 감사를 위하여 ${base} 현재 귀 금융기관과 당사 간의 거래 내용을 조회하고자 합니다.`,
+        filled
+          ? `아래 당사 장부상 내용을 귀 금융기관의 기록과 대조하시어, ${by}까지 아래 회신처(당사 감사인)로 직접 회신하여 주시기 바랍니다.`
+          : `아래 항목에 대하여 귀 금융기관 기록상의 금액을 기재하시어, ${by}까지 아래 회신처(당사 감사인)로 직접 회신하여 주시기 바랍니다.`,
+      ],
+      table: {
+        columns: filled ? ['구분', '계좌번호·내역', '당사 장부금액(원)', '귀 금융기관 확인금액(원)'] : ['구분', '계좌번호·내역', '귀 금융기관 기록금액(원)'],
+        rows: p.entries.map((e) => (filled
+          ? [e.category, e.desc || '', e.bookAmount === null ? '' : formatAmount(e.bookAmount), '']
+          : [e.category, e.desc || '', ''])),
+        amountCols: filled ? [2, 3] : [2],
+      },
+      notes: [
+        '위에 기재되지 않은 예금·적금, 차입금, 지급보증, 담보 제공, 약정(한도·파생상품 포함) 등이 있는 경우 그 내용을 함께 기재하여 주시기 바랍니다.',
+        '본 조회는 감사 목적으로만 사용되며, 당사에 대한 지급 요청이나 거래 지시가 아닙니다.',
+      ],
+      reply: {
+        heading: '회신 (귀 금융기관 작성란)',
+        statements: filled
+          ? [`위 내용이 ${base} 현재 당 금융기관의 기록과 일치합니다.`, '위 내용과 다르며, 차이 내역은 별지에 기재합니다.']
+          : [`위에 기재한 금액은 ${base} 현재 당 금융기관의 기록과 같습니다.`],
+        signer: '금융기관명 · 확인자 직위·성명',
+      },
+    };
+  },
+
+  arap(p, setup, base, by) {
+    const filled = !p.blank;
+    return {
+      blank: p.blank,
+      paragraphs: [
+        `당사의 외부감사인인 ${setup.auditorName}의 감사 목적으로 ${base} 현재 귀사와 당사 간의 채권·채무 잔액을 조회합니다.`,
+        filled
+          ? `아래 당사 장부상 잔액을 귀사의 장부와 대조하시어, ${by}까지 아래 회신처(당사 감사인)로 직접 회신하여 주시기 바랍니다.`
+          : `귀사 장부상 잔액을 아래에 기재하시어, ${by}까지 아래 회신처(당사 감사인)로 직접 회신하여 주시기 바랍니다.`,
+      ],
+      table: filled
+        ? {
+          columns: ['구분', '당사 장부금액(원)', '귀사 확인금액(원)'],
+          rows: [
+            ['당사의 채권 (귀사의 채무)', formatAmount(p.receivable), ''],
+            ['당사의 채무 (귀사의 채권)', formatAmount(p.payable), ''],
+          ],
+          amountCols: [1, 2],
+        }
+        : {
+          columns: ['구분', '귀사 장부상 잔액(원)'],
+          rows: [['귀사의 채무 (당사의 채권)', ''], ['귀사의 채권 (당사의 채무)', '']],
+          amountCols: [1],
+        },
+      notes: [
+        '금액이 다른 경우 미착품, 송금 중인 금액 등 차이 내역을 함께 기재하여 주시기 바랍니다.',
+        '본 조회는 대금의 청구나 지급 요청이 아니며, 감사 목적으로만 사용됩니다.',
+      ],
+      reply: {
+        heading: '회신 (귀사 작성란)',
+        statements: filled
+          ? [`위 잔액이 ${base} 현재 당사의 장부와 일치합니다.`, '위 잔액과 다르며, 차이 내역은 별지에 기재합니다.']
+          : [`위에 기재한 잔액은 ${base} 현재 당사의 장부와 같습니다.`],
+        signer: '회사명 · 확인자 직위·성명',
+      },
+    };
+  },
+
+  legal(p, setup, base, by) {
+    return {
+      blank: false,
+      paragraphs: [
+        `당사의 외부감사인인 ${setup.auditorName}의 감사 목적으로, ${base} 현재 및 그 이후 회신일까지 귀 법무법인(사무소)이 당사를 위하여 수임하였거나 자문한 사항에 대하여 아래 내용을 조회합니다.`,
+        `아래 사항을 기재하시어 ${by}까지 아래 회신처(당사 감사인)로 직접 회신하여 주시기 바랍니다. 당사는 귀 법무법인이 본 조회에 회신하는 것에 동의합니다.`,
+      ],
+      table: p.matters.length
+        ? {
+          caption: '당사가 파악하고 있는 사건',
+          columns: ['사건', '소송가액·청구금액', '진행 상황 및 예상 결과'],
+          rows: p.matters.map((m) => [m, '', '']),
+          amountCols: [],
+        }
+        : null,
+      requests: [
+        '진행 중이거나 제기될 가능성이 있는 소송·중재·분쟁의 내용, 소송가액, 진행 상황 및 예상 결과',
+        '당사에 대한 청구 또는 우발부채가 될 수 있는 사항',
+        `${base} 현재 당사가 지급하지 않은 수임료 및 비용`,
+      ],
+      notes: [
+        p.matters.length
+          ? '위 목록에 없는 사건이 있는 경우 그 내용을 함께 기재하여 주시기 바랍니다.'
+          : '해당 사항이 없는 경우에도 "해당 없음"으로 회신하여 주시기 바랍니다.',
+      ],
+      reply: {
+        heading: '회신 (귀 법무법인 작성란)',
+        statements: ['위 조회 사항에 대한 내용은 별지와 같습니다.', '위 조회 사항에 해당하는 내용이 없습니다.'],
+        signer: '법무법인명 · 담당 변호사 성명',
+      },
+    };
+  },
+
+  // 보관처에는 금액이 아니라 수량과 소유권·권리 제한 여부를 확인받는다.
+  inventory(p, setup, base, by) {
+    return {
+      blank: false,
+      paragraphs: [
+        `당사의 외부감사인인 ${setup.auditorName}의 감사 목적으로, ${base} 현재 귀사가 보관하고 있는 당사 소유 재고자산의 내역을 조회합니다.`,
+        `아래 품목과 수량을 귀사의 보관 기록과 대조하시어, ${by}까지 아래 회신처(당사 감사인)로 직접 회신하여 주시기 바랍니다.`,
+      ],
+      table: {
+        columns: ['품목', '단위', '당사 장부수량', '귀사 확인수량'],
+        rows: p.goods.map((g) => [g.item, g.unit || '', formatAmount(g.quantity), '']),
+        amountCols: [2, 3],
+      },
+      notes: [
+        '위 재고에 대하여 질권·담보 설정, 압류 등 제3자의 권리가 있거나 당사 외 다른 회사의 재고와 함께 보관 중인 경우 그 내용을 기재하여 주시기 바랍니다.',
+        '위에 기재되지 않은 당사 재고를 보관하고 있는 경우 함께 기재하여 주시기 바랍니다.',
+      ],
+      reply: {
+        heading: '회신 (귀사 작성란)',
+        statements: [
+          `위 품목과 수량이 ${base} 현재 당사의 보관 기록과 일치합니다.`,
+          '위 내용과 다르며, 차이 내역은 별지에 기재합니다.',
+          '위 재고에 대한 질권·담보 설정 등 제3자의 권리가 없습니다.',
+        ],
+        signer: '보관처명 · 확인자 직위·성명',
+      },
+    };
+  },
+};
+
+// ---------- 조회 목록 등록 ----------
+
+/** 이미 등록된 같은 종류 조회서 수 + 1 → 다음 문서번호 */
+function nextDocNo(items, type) {
+  return items.filter((x) => x.kind === 'confirmation' && x.confType === type).length + 1;
+}
+
+/**
+ * 조회서를 대시보드 조회 목록에 넣을 값으로 바꾼다. store.addItems()에 그대로 넘긴다.
+ * 조회처를 담당자(owner)로 두어 기존 대시보드의 담당자별 묶음·독촉 이력이 그대로 동작한다.
+ * 요청일 = 발송일, 필요일 = 회신 기한.
+ */
+function toRegistryValues(letters, setup) {
+  return letters.map((l) => {
+    const p = l.party;
+    const item = {
+      kind: 'confirmation',
+      confType: l.type,
+      docNo: l.docNo,
+      name: `${CONF_TYPES[l.type].label} (${l.to.name})`,
+      owner: l.to.name,
+      counterparty: l.to.name,
+      requestedOn: setup.issuedOn,
+      neededOn: setup.replyBy,
+      baseDate: setup.baseDate,
+      status: 'none',
+      procedure: '외부조회',
+      track: CONF_TYPES[l.type].track,
+      blank: l.blank,
+      nudges: [],
+    };
+    if (l.type === 'bank') {
+      item.bookAmount = p.entries.reduce((s, e) => s + (e.bookAmount || 0), 0);
+    } else if (l.type === 'inventory') {
+      item.bookAmount = p.goods.reduce((s, g) => s + (g.bookAmount || 0), 0);
+    } else if (l.type === 'arap') {
+      item.receivable = p.receivable;
+      item.payable = p.payable;
+      item.bookAmount = p.receivable + p.payable;
+    }
+    return { item, person: { owner: l.to.name, dept: CONF_TYPES[l.type].unit } };
+  });
+}
+
+/** 기존 자료(kind 없음)는 PBC로 본다. */
+function isConfirmation(item) {
+  return item?.kind === 'confirmation';
+}
+
+return { CONF_TYPES, TRACK_LABEL, TYPE_ORDER, BANK_CATEGORIES, defaultSetup, validateSetup, parseAmount, formatAmount, parseConfirmations, longKoreanDate, buildLetters, nextDocNo, toRegistryValues, isConfirmation };
+})();
+
 // ---- lib/engagement.js
 const __m_lib_engagement = (() => {
 
@@ -2028,6 +2855,438 @@ function fixMailToText(mail) {
 return { FIX_REASONS, fixReasonLabel, canOpenFix, currentFixReason, fixDetail, fixSummary, buildFixMail, fixMailToText };
 })();
 
+// ---- lib/followup.js
+const __m_lib_followup = (() => {
+const { addDays } = __m_lib_dates;
+// 외부조회 후속 절차: 회신 결과에 따라 갈라지는 두 갈래를 다룬다.
+//   noreply : 최종 독촉 후에도 회신이 없어 '미회수'로 확정 → 조회서 종류별 대체적 절차 가이드
+//   diff    : 회신은 왔지만 장부금액과 다름 → 차이 원인별 조정 기록과 결론
+// (회신이 불완전한 경우 — 서명 누락·기준일 상이 등 — 는 기존 보완 요청(fix.js)을 그대로 쓴다.)
+//
+// 상태: 후속 절차가 시작되면 item.status = 'follow', 세부는 item.follow에 둔다.
+//   follow = { type: 'noreply'|'diff', startedOn, steps?: { [key]: true }, verified?: number,
+//              recon?: { book, confirmed, lines: [{ cause, amount, note }] }, requested?: string[] }
+// 판단은 모두 순수 함수. 화면은 views/follow.js.
+
+
+const FOLLOW_TYPES = {
+  noreply: { key: 'noreply', label: '미회수 확정', hint: '최종 독촉 후에도 회신이 없어요' },
+  diff: { key: 'diff', label: '금액 차이', hint: '회신 금액이 장부와 달라요' },
+};
+
+// ---------- 미회수: 조회서 종류별 절차 ----------
+// evidence: 회사에 요청할 자료명. 있으면 'PBC 요청으로 만들기'로 기존 자료 요청 목록에 넣을 수 있다.
+// role: 'alt'(대체적 절차) | 'escalate'(회수 재시도·보고) | 'support'(보조 증거, 단독으로 조회를 대신하지 못함)
+
+const BANK_STEPS = [
+  { key: 'resend', role: 'escalate', label: '조회서 재발송', detail: '금융기관의 조회 담당 부서·주소를 다시 확인해 2차 조회서를 보내요.' },
+  { key: 'call', role: 'escalate', label: '금융기관 담당자에게 직접 연락', detail: '감사인이 직접 연락해 회신을 요청해요. 회사를 거쳐 연락하지 않아요.' },
+  { key: 'visit', role: 'escalate', label: '방문해서 회신 직접 수령', detail: '감사인이 금융기관을 방문해 회신서를 받아요.' },
+  { key: 'statement', role: 'support', label: '기준일 잔액증명서·거래내역 입수', detail: '보조 증거로만 써요. 금융기관 조회를 대신하지는 못해요.', evidence: '기준일 잔액증명서 및 거래내역' },
+  { key: 'report', role: 'escalate', label: '담당 매니저에게 보고', detail: '그래도 회수하지 못하면 감사범위 제한에 해당하는지 함께 검토해요.' },
+];
+
+const AR_STEPS = [
+  { key: 'subsequent', role: 'alt', label: '기준일 이후 입금 확인', detail: '기준일 이후 실제 입금된 금액을 통장 내역과 대조해요.', evidence: '기준일 이후 입금 내역(통장 사본)' },
+  { key: 'invoice', role: 'alt', label: '세금계산서·거래명세서 대조', detail: '기말 잔액을 구성하는 매출 세금계산서와 거래명세서를 확인해요.', evidence: '기말 채권 구성 세금계산서·거래명세서' },
+  { key: 'shipping', role: 'alt', label: '출하·인수 증빙 확인', detail: '기준일 전후 출하 기록과 거래처 인수증으로 실재성과 기간귀속을 확인해요.', evidence: '기준일 전후 출하·인수 증빙' },
+];
+
+const AP_STEPS = [
+  { key: 'subsequentPay', role: 'alt', label: '기준일 이후 지급 확인', detail: '기준일 이후 실제 지급한 금액을 통장 출금 내역과 대조해요.', evidence: '기준일 이후 지급 내역(통장 사본)' },
+  { key: 'invoiceIn', role: 'alt', label: '매입 세금계산서·입고 증빙 대조', detail: '기말 채무를 구성하는 매입 세금계산서와 입고 기록을 확인해요.', evidence: '기말 채무 구성 매입 세금계산서·입고 증빙' },
+  { key: 'unrecorded', role: 'alt', label: '미기록부채 검토', detail: '기준일 이후 지급·청구서 중 기준일 이전 거래분이 빠지지 않았는지 봐요.', evidence: '기준일 이후 지급 및 수취 청구서 목록' },
+];
+
+const LEGAL_STEPS = [
+  { key: 'resend', role: 'escalate', label: '조회서 재발송·직접 연락', detail: '법무법인 담당 변호사에게 감사인이 직접 회신을 요청해요.' },
+  { key: 'mgmt', role: 'alt', label: '경영진 질문 및 확인서 반영', detail: '진행 중인 소송·분쟁을 경영진에게 묻고, 경영진 확인서에 포함해요.' },
+  { key: 'minutes', role: 'alt', label: '이사회 의사록·법률비용 검토', detail: '의사록과 지급수수료(법률비용) 계정에서 드러나지 않은 사건이 있는지 봐요.', evidence: '이사회 의사록 및 법률비용 지급 내역' },
+  { key: 'report', role: 'escalate', label: '담당 매니저에게 보고', detail: '회신 없이 중요한 소송 여부를 판단하기 어려우면 함께 검토해요.' },
+];
+
+const INVENTORY_STEPS = [
+  { key: 'resend', role: 'escalate', label: '조회서 재발송·보관처 직접 연락', detail: '보관처 담당자에게 감사인이 직접 회신을 요청해요.' },
+  { key: 'inspect', role: 'alt', label: '보관처 방문 실사', detail: '보관 장소에서 직접 수량을 세고 당사 재고로 구분 보관되는지 확인해요.' },
+  { key: 'receipts', role: 'alt', label: '창고증권·보관증 확인', detail: '보관처가 발행한 창고증권이나 보관증으로 품목·수량을 대조해요.', evidence: '창고증권·보관증 사본' },
+  { key: 'movement', role: 'alt', label: '기준일 전후 입출고 대조', detail: '기준일 전후 입출고 기록과 운송 증빙으로 기말 수량을 역산해요.', evidence: '기준일 전후 입출고 내역' },
+  { key: 'report', role: 'escalate', label: '담당 매니저에게 보고', detail: '중요한 재고를 확인하지 못하면 함께 검토해요.' },
+];
+
+/** 조회 건에 맞는 미회수 절차 목록. 채권채무는 채권·채무 중 금액이 있는 쪽만. */
+function noReplySteps(item) {
+  if (item.confType === 'bank') return BANK_STEPS;
+  if (item.confType === 'inventory') return INVENTORY_STEPS;
+  if (item.confType === 'legal') return LEGAL_STEPS;
+  const steps = [];
+  if ((item.receivable ?? item.bookAmount ?? 0) > 0) steps.push(...AR_STEPS);
+  if ((item.payable ?? 0) > 0) steps.push(...AP_STEPS);
+  return steps.length ? steps : AR_STEPS;
+}
+
+/** 은행·변호사 조회는 금액과 무관하게 회수해야 해서, 대체적 절차만으로 끝내지 않는다. */
+function noReplyNotice(item) {
+  if (item.track === 'required') {
+    return '금융기관 조회는 금액과 상관없이 회수해야 해요. 잔액증명서는 보조 증거일 뿐, 조회를 대신하지 못해요.';
+  }
+  if (item.track === 'general') {
+    return '경영진 질문, 의사록·법률비용 검토로 소송과 우발부채를 확인하고, 경영진 확인서에 반영해요.';
+  }
+  return '아래 절차로 기말 잔액을 확인하고, 확인한 금액만큼 커버리지에 반영해요.';
+}
+
+// ---------- 금액 차이: 원인과 결론 ----------
+
+const DIFF_CAUSES = [
+  { key: 'goods', label: '시점 차이 · 미착품', misstatement: false, hint: '기준일에 운송 중인 물품' },
+  { key: 'cash', label: '시점 차이 · 송금 중', misstatement: false, hint: '기준일에 이체 중인 대금' },
+  { key: 'party', label: '조회처 측 오류', misstatement: false, hint: '조회처 장부의 기장 오류' },
+  { key: 'company', label: '회사 장부 오류', misstatement: true, hint: '수정이 필요한 왜곡표시' },
+  { key: 'unknown', label: '원인 불명', misstatement: true, hint: '추가 절차가 필요한 차이' },
+];
+
+// 미착품 차이는 인도조건에 따라 성격이 갈린다.
+//   선적지 인도: 출고 때 소유권이 넘어가 회사 장부가 맞고, 조회처가 늦게 잡은 시점 차이
+//   도착지 인도: 도착 때 소유권이 넘어가 회사가 매출(채권)을 너무 일찍 잡은 기간귀속 오류 → 왜곡표시
+const DELIVERY_TERMS = [
+  { key: 'shipping', label: '선적지 인도', hint: '출고 때 소유권 이전 · 시점 차이' },
+  { key: 'destination', label: '도착지 인도', hint: '도착 때 소유권 이전 · 회사 기간귀속 오류' },
+];
+
+/** 이 차이 줄이 왜곡표시인지. 미착품은 도착지 인도일 때만 왜곡표시. */
+function isMisstatementLine(line) {
+  if (line.cause === 'goods') return line.terms === 'destination';
+  return Boolean(causeOf(line.cause)?.misstatement);
+}
+
+function causeOf(key) {
+  return DIFF_CAUSES.find((c) => c.key === key);
+}
+
+/**
+ * 조정 계산. 차이 = 장부금액 − 회신금액. 원인별 금액(부호 포함)의 합이 차이와 같아야 설명이 끝난다.
+ * @returns {{ book, confirmed, diff, explained, unexplained, misstatement, termsPending, lines, result }}
+ *   termsPending: 인도조건을 아직 확인하지 않은 미착품 줄 수
+ *   result: 'matched'(차이 없음) | 'timing'(시점 차이 등으로 모두 설명, 왜곡표시 없음)
+ *         | 'misstatement'(회사 오류·원인 불명 금액 있음) | 'open'(아직 설명 안 된 차이)
+ */
+function reconcile(recon) {
+  const book = Number(recon?.book) || 0;
+  const confirmed = Number(recon?.confirmed) || 0;
+  const lines = (recon?.lines || []).filter((l) => l.cause && Number(l.amount));
+  const diff = book - confirmed;
+  const explained = lines.reduce((s, l) => s + Number(l.amount), 0);
+  const unexplained = diff - explained;
+  const misstatement = lines.filter(isMisstatementLine).reduce((s, l) => s + Number(l.amount), 0);
+  const termsPending = lines.filter((l) => l.cause === 'goods' && !l.terms).length;
+  let result;
+  if (diff === 0) result = 'matched';
+  else if (unexplained !== 0) result = 'open';
+  else if (misstatement !== 0) result = 'misstatement';
+  else result = 'timing';
+  return { book, confirmed, diff, explained, unexplained, misstatement, termsPending, lines, result };
+}
+
+const won = (n) => `${Number(n).toLocaleString('ko-KR')}원`;
+
+/** 조서에 옮겨 적을 결론 문장 */
+function reconConclusion(r) {
+  switch (r.result) {
+    case 'matched': return '회신금액이 장부금액과 일치해요. 추가 절차 없이 완료할 수 있어요.';
+    case 'timing': return `차이 ${won(r.diff)}은 시점 차이·조회처 오류로 모두 설명돼요. 왜곡표시는 없어요.`;
+    case 'misstatement': return `왜곡표시 후보 ${won(r.misstatement)}(회사 장부 오류·원인 불명·도착지 인도 미착품)은 수정 여부를 검토해야 해요.`;
+    default: return `아직 설명되지 않은 차이가 ${won(r.unexplained)} 남았어요. 원인을 더 확인해야 해요.`;
+  }
+}
+
+// ---------- 상태 전환 ----------
+
+/** 후속 절차는 외부조회 건이고, 아직 완료되지 않았을 때만 시작할 수 있다. */
+function canStartFollow(item) {
+  return item?.kind === 'confirmation' && item.status !== 'done';
+}
+
+/** 후속 절차를 시작한 새 자료. 원래 자료는 바꾸지 않는다. */
+function startFollow(item, type, on) {
+  if (!canStartFollow(item)) throw new Error('외부조회 건만 후속 절차를 시작할 수 있어요.');
+  const follow = { type, startedOn: on, requested: [] };
+  if (type === 'noreply') {
+    follow.steps = {};
+    follow.verified = 0;
+  } else {
+    follow.recon = { book: item.bookAmount ?? 0, confirmed: null, lines: [] };
+  }
+  const next = { ...item, status: 'follow', follow };
+  if (type === 'diff') next.received = { ...(item.received || {}), on: item.received?.on || on };
+  return next;
+}
+
+/**
+ * 완료할 수 있는지와, 막혀 있으면 그 이유.
+ * - 미회수: 필수 회수 조회(은행·변호사)는 대체적 절차로 끝낼 수 없다. 커버리지 조회는 대체적 절차를 하나 이상 마쳐야 한다.
+ * - 금액 차이: 설명되지 않은 차이가 없어야 한다.
+ */
+function completeCheck(item) {
+  const f = item.follow;
+  if (!f) return { ok: false, reason: '후속 절차가 시작되지 않았어요.' };
+  if (f.type === 'noreply') {
+    if (item.track === 'required') {
+      return { ok: false, reason: '필수 회수 조회라 회신을 받은 뒤 완료할 수 있어요.' };
+    }
+    const doneAlt = noReplySteps(item).some((s) => s.role === 'alt' && f.steps?.[s.key]);
+    return doneAlt ? { ok: true } : { ok: false, reason: '대체적 절차를 하나 이상 마쳐야 해요.' };
+  }
+  if (f.recon?.confirmed === null || f.recon?.confirmed === undefined || f.recon?.confirmed === '') {
+    return { ok: false, reason: '회신금액을 입력해 주세요.' };
+  }
+  const r = reconcile(f.recon);
+  if (r.result === 'open') return { ok: false, reason: '설명되지 않은 차이가 남아 있어요.' };
+  if (r.termsPending) return { ok: false, reason: '미착품 차이의 인도조건을 확인해 주세요.' };
+  return { ok: true };
+}
+
+/**
+ * 완료 기록(감사기준서 230: 수행자·완료일·검토자) 검증. 수행자와 완료일은 필수, 검토자는 나중에 채워도 된다.
+ * @returns {Record<string,string>} 비어 있으면 통과
+ */
+function validateSignoff({ preparer, completedOn, reviewer } = {}) {
+  const errors = {};
+  if (!String(preparer ?? '').trim()) errors.preparer = '수행자를 입력해 주세요.';
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(completedOn ?? ''))) errors.completedOn = '완료일을 입력해 주세요.';
+  return errors;
+}
+
+/** 완료 처리한 새 자료. 결론과 수행자·완료일·검토자를 남긴다. */
+function completeFollow(item, signoff) {
+  const check = completeCheck(item);
+  if (!check.ok) throw new Error(check.reason);
+  const errors = validateSignoff(signoff);
+  if (Object.keys(errors).length) throw new Error(Object.values(errors)[0]);
+  const f = item.follow;
+  const conclusion = f.type === 'diff'
+    ? reconConclusion(reconcile(f.recon))
+    : `대체적 절차로 ${won(f.verified || 0)} 확인`;
+  return {
+    ...item,
+    status: 'done',
+    follow: {
+      ...f,
+      closedOn: signoff.completedOn,
+      conclusion,
+      signoff: { preparer: signoff.preparer.trim(), reviewer: String(signoff.reviewer ?? '').trim() },
+    },
+  };
+}
+
+/** 대체적 절차로 확인한 금액. 장부금액을 넘지 않게 자른다. */
+function clampVerified(item, value) {
+  const n = Math.max(0, Math.round(Number(String(value).replace(/[,\s원]/g, '')) || 0));
+  return Math.min(n, item.bookAmount ?? n);
+}
+
+// ---------- 회사에 요청할 증빙 (기존 PBC 자료 요청으로 연결) ----------
+
+/**
+ * 후속 절차에 필요한 증빙을 PBC 자료 요청 값으로 만든다. store.addItems()에 그대로 넘긴다.
+ * - 미회수: 선택한 절차 중 증빙이 필요한 것
+ * - 금액 차이: 거래처별 차이 소명 자료 1건
+ * 이미 요청한 증빙(follow.requested)은 다시 만들지 않는다.
+ */
+function evidenceRequests(item, { stepKeys = [], owner, dept = '', today, days = 5 }) {
+  const f = item.follow;
+  const already = new Set(f?.requested || []);
+  let wanted;
+  if (f?.type === 'diff') {
+    wanted = [{ key: 'diff', name: `차이 소명 자료 (${item.counterparty})`, procedure: '외부조회 차이 조정' }];
+  } else {
+    wanted = noReplySteps(item)
+      .filter((s) => s.evidence && stepKeys.includes(s.key))
+      .map((s) => ({ key: s.key, name: `${s.evidence} (${item.counterparty})`, procedure: '외부조회 대체적 절차' }));
+  }
+  return wanted.filter((w) => !already.has(w.key)).map((w) => ({
+    key: w.key,
+    value: {
+      item: {
+        name: w.name, owner, requestedOn: today, neededOn: addDays(today, days),
+        status: 'none', procedure: w.procedure, nudges: [], sourceId: item.id,
+      },
+      person: { owner, dept },
+    },
+  }));
+}
+
+// ---------- 커버리지 (금액 커버리지 트랙) ----------
+
+/**
+ * 커버리지 트랙 조회의 확인 금액 집계.
+ * 확인 = 회신 완료(완료 상태) 금액 + 대체적 절차로 확인한 금액
+ *      + 차이 건의 회신금액 (조정을 마쳤으면 왜곡표시가 아닌 설명분까지)
+ */
+function coverageSummary(items) {
+  const list = items.filter((x) => x.kind === 'confirmation' && x.track === 'coverage');
+  const total = list.reduce((s, x) => s + (x.bookAmount || 0), 0);
+  let confirmed = 0;
+  let alternative = 0;
+  for (const x of list) {
+    if (x.follow?.type === 'noreply') alternative += x.follow.verified || 0;
+    else if (x.follow?.type === 'diff' && x.follow.recon?.confirmed != null) {
+      // 조정 중: 회신금액만. 조정을 마친 건: 왜곡표시가 아닌 것으로 설명된 차이(시점 차이 등)까지 확인된 것으로 본다.
+      let amount = Number(x.follow.recon.confirmed) || 0;
+      if (x.status === 'done') {
+        const r = reconcile(x.follow.recon);
+        amount += r.explained - r.misstatement;
+      }
+      confirmed += Math.min(Math.max(amount, 0), x.bookAmount || 0);
+    }
+    else if (x.status === 'done') confirmed += x.bookAmount || 0;
+  }
+  const covered = confirmed + alternative;
+  return { count: list.length, total, confirmed, alternative, covered, uncovered: total - covered, ratio: total ? covered / total : 0 };
+}
+
+// ---------- 대시보드 외부조회 현황 (트랙별) ----------
+
+/**
+ * 트랙별 현황. 회신 완료(완료 상태)를 '회수'로 본다.
+ * @param performance 수행중요성(원). 회사 단위로 하나. 없으면 비교하지 않는다.
+ * @returns {{
+ *   any: boolean,
+ *   required: { total, received, pending: { id, name }[] },   // 은행: 금액과 무관하게 전수 회수
+ *   general:  { total, received, pending: { id, name }[] },   // 변호사
+ *   coverage: coverageSummary() + { performance, exceeds, gap }  // 미확인 잔액 vs 수행중요성
+ * }}
+ */
+function trackOverview(items, performance) {
+  const conf = items.filter((x) => x.kind === 'confirmation');
+  const byTrack = (track) => {
+    const list = conf.filter((x) => x.track === track);
+    return {
+      total: list.length,
+      received: list.filter((x) => x.status === 'done').length,
+      pending: list.filter((x) => x.status !== 'done').map((x) => ({ id: x.id, name: x.counterparty })),
+    };
+  };
+  const cov = coverageSummary(items);
+  const perf = Number(performance) || 0;
+  return {
+    any: conf.length > 0,
+    required: byTrack('required'),
+    general: byTrack('general'),
+    coverage: { ...cov, performance: perf || null, exceeds: perf ? cov.uncovered > perf : false, gap: perf ? cov.uncovered - perf : 0 },
+  };
+}
+
+return { FOLLOW_TYPES, noReplySteps, noReplyNotice, DIFF_CAUSES, DELIVERY_TERMS, isMisstatementLine, causeOf, reconcile, reconConclusion, canStartFollow, startFollow, completeCheck, validateSignoff, completeFollow, clampVerified, evidenceRequests, coverageSummary, trackOverview };
+})();
+
+// ---- lib/pbcTemplate.js
+const __m_lib_pbcTemplate = (() => {
+const { formatMD } = __m_lib_dates;
+// PBC 요청서 표준 양식: 자료를 요청할 때 기준일과 필수 컬럼을 고정해 보내고,
+// 받은 자료를 같은 기준으로 점검해 보완 요청(기준일 상이·항목 누락·서명 누락)을 바로 잡는다.
+// 양식은 일반적인 구성이다(법인 실무 양식으로 바꿀 수 있게 이 파일 한 곳에 모아 둔다).
+
+
+const PBC_TEMPLATES = {
+  ppe: {
+    key: 'ppe', name: '유형자산 증감내역', procedure: '유형자산 실증',
+    columns: ['계정과목', '기초', '취득', '처분', '대체', '감가상각비', '기말'],
+    example: ['건물', '1,200,000,000', '0', '0', '0', '40,000,000', '1,160,000,000'],
+    checks: ['기말 합계가 시산표 유형자산 잔액과 일치', '기초가 전기말 감사받은 잔액과 일치', '건설중인자산 대체 내역 포함'],
+    sign: '담당 임원 확인란',
+  },
+  inventory: {
+    key: 'inventory', name: '재고실사 결과표', procedure: '재고 실사 검토',
+    columns: ['실사일', '창고', '품목코드', '품목명', '단위', '장부수량', '실사수량', '차이', '차이사유'],
+    example: ['2026-12-31', '본사 1창고', 'P-1001', 'OLED 패널 A-15', 'EA', '12,400', '12,380', '-20', '파손 폐기'],
+    checks: ['차이 합계가 재고 조정 분개와 일치', '제3자 보관 재고는 별도 표시'],
+    sign: '실사 참여자 서명란',
+  },
+  related: {
+    key: 'related', name: '특수관계자 거래내역', procedure: '특수관계자 검토',
+    columns: ['특수관계자명', '관계', '거래유형', '거래금액', '기말 채권', '기말 채무'],
+    example: ['㈜한빛홀딩스', '지배기업', '경영자문료', '360,000,000', '0', '30,000,000'],
+    checks: ['전기 특수관계자 목록과 비교해 누락 없음', '주석 공시 금액과 일치'],
+    sign: '담당 임원 확인란',
+  },
+  aging: {
+    key: 'aging', name: '매출채권 연령분석표', procedure: '채권 평가',
+    columns: ['거래처', '기말잔액', '30일 이내', '31~90일', '91~180일', '181~365일', '1년 초과', '대손충당금'],
+    example: ['㈜대한부품', '842,000,000', '842,000,000', '0', '0', '0', '0', '0'],
+    checks: ['기말잔액 합계가 매출채권 잔액과 일치', '1년 초과 채권의 대손 검토 근거'],
+    sign: null,
+  },
+};
+
+const TEMPLATE_ORDER = ['ppe', 'inventory', 'related', 'aging'];
+
+const norm = (s) => String(s ?? '').replace(/\s+/g, '');
+
+/** 자료명으로 양식 찾기. '유형자산 증감내역(1분기)'처럼 뒤에 붙은 말이 있어도 찾는다. */
+function templateForName(name) {
+  const n = norm(name);
+  if (!n) return null;
+  return TEMPLATE_ORDER.map((k) => PBC_TEMPLATES[k]).find((t) => n.startsWith(norm(t.name))) || null;
+}
+
+/** 자료의 양식: 저장된 키가 있으면 그것, 없으면 자료명으로. 외부조회 건은 대상이 아니다. */
+function templateOf(item) {
+  if (!item || item.kind === 'confirmation') return null;
+  return PBC_TEMPLATES[item.template] || templateForName(item.name);
+}
+
+/** 기준일 기본값: 외부조회서 공통 정보의 기준일, 없으면 그 해 결산일 */
+function defaultBasisDate(state, today) {
+  return state?.confirmSetup?.baseDate || `${today.slice(0, 4)}-12-31`;
+}
+
+/**
+ * 엑셀에 붙여넣을 표 (탭 구분). 1행 기준일 안내, 2행 컬럼, 3행 작성 예시.
+ * 회사가 이 표에 그대로 채워 보내면 기준일·항목 누락이 줄어든다.
+ */
+function requestSheetTsv(template, basisDate) {
+  return [
+    [`${template.name} · 기준일 ${basisDate}${template.sign ? ` · ${template.sign} 서명 필요` : ''}`],
+    template.columns,
+    template.example.map((v, i) => (i === 0 ? `(예시) ${v}` : v)),
+  ].map((row) => row.join('\t')).join('\n');
+}
+
+/** 메일에 붙일 한 줄 안내 */
+function requestNote(template, basisDate) {
+  const [, m, d] = basisDate.split('-').map(Number);
+  return `${m}월 ${d}일 기준으로, ${template.columns.join(' · ')} 항목을 포함해 주세요.${template.sign ? ` ${template.sign}에 서명도 부탁드립니다.` : ''}`;
+}
+
+/**
+ * 받은 자료 점검 → 상태 변경 추천.
+ * check = { basisOk: true|false|null, missing: string[], signOk: true|false|null }
+ *   null은 아직 확인 안 함. 기준일이 다르면 '기준일 상이'가 가장 먼저(다시 받아야 하므로).
+ * @returns {{ status: 'done'|'fix'|null, reason?, requiredBasisDate?, detail?, summary }}
+ *   status null: 점검을 다 하지 않음
+ */
+function receiptSuggestion(template, check, basisDate) {
+  const missing = check.missing || [];
+  if (check.basisOk === false) {
+    return { status: 'fix', reason: 'date', requiredBasisDate: basisDate,
+      summary: `기준일이 ${formatMD(basisDate)}이 아니에요. 기준일 상이로 재요청해요.` };
+  }
+  if (missing.length) {
+    return { status: 'fix', reason: 'missing', detail: missing.join(', '),
+      summary: `${missing.join(', ')} 항목이 빠졌어요. 일부 항목 누락으로 재요청해요.` };
+  }
+  if (template.sign && check.signOk === false) {
+    return { status: 'fix', reason: 'sign', detail: template.sign,
+      summary: `${template.sign}에 서명이 없어요. 서명 누락으로 재요청해요.` };
+  }
+  const pending = check.basisOk == null || (template.sign && check.signOk == null);
+  if (pending) return { status: null, summary: '기준일과 서명을 확인하면 상태를 추천해 드려요.' };
+  return { status: 'done', summary: '양식대로 받았어요. 완료로 처리할 수 있어요.' };
+}
+
+return { PBC_TEMPLATES, TEMPLATE_ORDER, templateForName, templateOf, defaultBasisDate, requestSheetTsv, requestNote, receiptSuggestion };
+})();
+
 // ---- lib/report.js
 const __m_lib_report = (() => {
 const { addDays, formatMD } = __m_lib_dates;
@@ -2038,7 +3297,7 @@ const { fixReasonLabel } = __m_lib_fix;
 // 숫자는 대시보드와 같은 함수(withDays·riskOf·sortItems·groupByOwner)로 계산한다.
 
 
-const STATUS = { none: '미회신', part: '일부 수령', fix: '보완 요청', done: '완료' };
+const STATUS = { none: '미회신', part: '일부 수령', fix: '보완 요청', follow: '후속 절차', done: '완료' };
 const RISK = { late: '지연', high: '2일 이내', mid: '3~7일', low: '8일 이상' };
 const DOW = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -2087,6 +3346,7 @@ function buildReport(state, today) {
     none: count('none'),
     part: count('part'),
     fix: count('fix'),
+    follow: count('follow'), // 외부조회 후속 절차. 칸 합계(완료+미회신+일부 수령+보완 요청+후속 절차)가 전체와 같아지도록
     open: open.length,
     late: open.filter((x) => x.risk === 'late').length,
     urgent: open.filter((x) => x.risk === 'late' || x.risk === 'high').length,
@@ -2115,6 +3375,10 @@ function buildReport(state, today) {
     riskLabel: isOpen(x) ? RISK[x.risk] : '',
     lastNudgedOn: lastOf(x.nudges)?.on ?? null,
     fixReason: x.status === 'fix' && x.fix?.reason ? fixReasonLabel(x.fix.reason) : null,
+    // 외부조회 후속 절차를 마친 건: 수행자·검토자 (감사기준서 230)
+    signoff: x.follow?.signoff
+      ? `수행 ${x.follow.signoff.preparer}${x.follow.signoff.reviewer ? ` · 검토 ${x.follow.signoff.reviewer}` : ' · 검토 전'}`
+      : null,
   });
 
   const owners = groupByOwner(open).map(({ owner, items }) => ({
@@ -2448,7 +3712,12 @@ function baseDateOf(state, override, realToday) {
   return override || state?.demoDate || realToday;
 }
 
-/** 예시 자료. 시연 기준일(DEMO_DATE) 기준 상대 날짜로 만든다. */
+/**
+ * 예시 자료. 시연 기준일(DEMO_DATE) 기준 상대 날짜로 만든다.
+ * PBC 자료 5건(4건은 표준 양식으로 요청, template·basisDate) + 외부조회 7건(kind: 'confirmation'). 외부조회는 조회처가 담당자(owner)이고,
+ * 미회신·독촉 중·회신 기한 지남·회신 완료·후속 절차(미회수 확정, 금액 차이)가 고루 보이게 넣었다.
+ * confirmSetup은 외부조회서 작성 화면의 공통 정보 기본값이다 (결산일 12/31 기준).
+ */
 function sampleState() {
   const d = (n) => addDays(DEMO_DATE, n);
   return {
@@ -2456,29 +3725,78 @@ function sampleState() {
     client: { name: '㈜한빛전자', engagement: '2026 기말감사' },
     team: { manager: { name: '이서연 매니저', dept: '감사팀' } },
     people: {
-      '박준호 과장': { dept: '재무팀', nudges: 1, lastNudgedOn: d(-1) },
+      '박준호 과장': { dept: '재무팀', nudges: 0, lastNudgedOn: null },
       '김민지 대리': { dept: '재무팀', nudges: 2, lastNudgedOn: d(-2) },
       '최도윤 차장': { dept: '관리팀', nudges: 2, lastNudgedOn: d(-5) },
+      '한빛은행 여의도지점': { dept: '금융기관', nudges: 1, lastNudgedOn: d(-2) },
+      '바다저축은행 본점': { dept: '금융기관', nudges: 0, lastNudgedOn: null },
+      '㈜대한부품': { dept: '거래처', nudges: 1, lastNudgedOn: d(-4) },
+      '세진물산㈜': { dept: '거래처', nudges: 2, lastNudgedOn: d(-2) },
+      '㈜오성테크': { dept: '거래처', nudges: 3, lastNudgedOn: d(-1) },
+      '법무법인 정의': { dept: '법무법인', nudges: 0, lastNudgedOn: null },
+      '㈜한결물류 평택센터': { dept: '보관처', nudges: 0, lastNudgedOn: null },
+    },
+    // 회사 단위 중요성. 예시 회사는 매출 약 500억원을 가정해 전체 중요성 0.5%, 수행중요성은 그 약 75%.
+    materiality: { overall: 250000000, performance: 180000000, basis: '매출 약 500억원 가정 · 전체 중요성 0.5% · 수행중요성 약 75%' },
+    confirmSetup: {
+      companyName: '㈜한빛전자', ceoName: '정한빛', companyAddress: '경기도 성남시 분당구 판교역로 1',
+      auditorName: '삼일회계법인', auditorAddress: '서울특별시 용산구 한강대로 100 아모레퍼시픽빌딩',
+      contactName: '이서연 매니저', contactPhone: '02-0000-0000', contactEmail: '',
+      baseDate: '2026-12-31',
     },
     items: [
-      { id: 'i1', name: '은행조회서 회신', owner: '박준호 과장', requestedOn: d(-3), neededOn: d(1), status: 'none',
-        procedure: '은행 조회', nudges: [{ on: d(-1), tone: 'angel' }] },
       { id: 'i2', name: '유형자산 증감내역', owner: '최도윤 차장', requestedOn: d(-1), neededOn: d(7), status: 'fix', reason: '기준일 상이 · 12/31 기준 재요청 필요',
-        procedure: '유형자산 실증', nudges: [],
+        procedure: '유형자산 실증', nudges: [], template: 'ppe', basisDate: '2026-12-31',
         received: { on: d(-1), basisDate: '2026-06-30' },
         fix: { reason: 'date', requiredBasisDate: '2026-12-31',
                details: { sign: '담당 임원 확인란', missing: '건설중인자산 대체 내역' } },
         fixes: [{ on: d(-1), reason: 'date' }] },
       { id: 'i3', name: '재고실사 결과표', owner: '김민지 대리', requestedOn: d(-5), neededOn: d(5), status: 'none',
-        procedure: '재고 실사 검토', nudges: [{ on: d(-2), tone: 'polite' }] },
+        procedure: '재고 실사 검토', nudges: [{ on: d(-2), tone: 'polite' }], template: 'inventory', basisDate: '2026-12-31' },
       { id: 'i4', name: '특수관계자 거래내역', owner: '김민지 대리', requestedOn: d(-9), neededOn: d(9), status: 'part',
-        procedure: '특수관계자 검토', nudges: [{ on: d(-6), tone: 'angel' }, { on: d(-2), tone: 'polite' }] },
+        procedure: '특수관계자 검토', nudges: [{ on: d(-6), tone: 'angel' }, { on: d(-2), tone: 'polite' }], template: 'related', basisDate: '2026-12-31' },
       { id: 'i5', name: '매출채권 연령분석표', owner: '김민지 대리', requestedOn: d(-11), neededOn: d(19), status: 'none',
-        procedure: '채권 평가', nudges: [{ on: d(-6), tone: 'angel' }, { on: d(-2), tone: 'polite' }] },
+        procedure: '채권 평가', nudges: [{ on: d(-6), tone: 'angel' }, { on: d(-2), tone: 'polite' }], template: 'aging', basisDate: '2026-12-31' },
       { id: 'i6', name: '법인세 신고서 사본', owner: '박준호 과장', requestedOn: d(-6), neededOn: d(3), status: 'done',
         procedure: '법인세 검토', nudges: [] },
+      ...sampleConfirmations(d),
     ],
   };
+}
+
+/** 예시 외부조회 건. 발송일 = 요청일, 회신 기한 = 필요일. */
+function sampleConfirmations(d) {
+  const conf = (id, confType, docNo, counterparty, extra) => {
+    const label = { bank: '은행조회서', arap: '채권채무조회서', legal: '변호사조회서', inventory: '제3자보관재고자산조회서' }[confType];
+    return {
+      id, kind: 'confirmation', confType, docNo, name: `${label} (${counterparty})`, owner: counterparty, counterparty,
+      baseDate: '2026-12-31', procedure: '외부조회', blank: false, nudges: [],
+      track: { bank: 'required', legal: 'general' }[confType] || 'coverage',
+      ...extra,
+    };
+  };
+  return [
+    conf('c1', 'bank', 'BK-001', '한빛은행 여의도지점', {
+      bookAmount: 4250000000, requestedOn: d(-9), neededOn: d(2), status: 'none',
+      nudges: [{ on: d(-2), tone: 'polite' }] }),
+    conf('c2', 'bank', 'BK-002', '바다저축은행 본점', {
+      bookAmount: 500000000, requestedOn: d(-9), neededOn: d(2), status: 'done', received: { on: d(-3) } }),
+    conf('c3', 'arap', 'AR-001', '㈜대한부품', {
+      receivable: 842000000, payable: 0, bookAmount: 842000000, requestedOn: d(-9), neededOn: d(2), status: 'follow',
+      nudges: [{ on: d(-4), tone: 'polite' }], received: { on: d(-1) },
+      follow: { type: 'diff', startedOn: d(-1), requested: [],
+        recon: { book: 842000000, confirmed: 830000000, lines: [{ cause: 'goods', amount: 9000000, note: '12/29 출고 · 1/2 거래처 입고분' }] } } }),
+    conf('c4', 'arap', 'AR-002', '세진물산㈜', {
+      receivable: 315500000, payable: 120000000, bookAmount: 435500000, requestedOn: d(-16), neededOn: d(-2), status: 'none',
+      nudges: [{ on: d(-6), tone: 'polite' }, { on: d(-2), tone: 'firm' }] }),
+    conf('c5', 'arap', 'AR-003', '㈜오성테크', {
+      receivable: 0, payable: 96300000, bookAmount: 96300000, blank: true, requestedOn: d(-16), neededOn: d(-2), status: 'follow',
+      nudges: [{ on: d(-9), tone: 'polite' }, { on: d(-5), tone: 'firm' }, { on: d(-1), tone: 'cc' }],
+      follow: { type: 'noreply', startedOn: d(0), requested: [], steps: { subsequentPay: true }, verified: 60000000 } }),
+    conf('c6', 'legal', 'LG-001', '법무법인 정의', { requestedOn: d(-9), neededOn: d(5), status: 'none' }),
+    conf('c7', 'inventory', 'IV-001', '㈜한결물류 평택센터', {
+      bookAmount: 1913000000, requestedOn: d(-9), neededOn: d(2), status: 'done', received: { on: d(-2) } }),
+  ];
 }
 
 /**
@@ -2620,12 +3938,13 @@ const ICON = {
   moon: svg('<path d="M13 9.5A5.5 5.5 0 0 1 6.5 3a5.5 5.5 0 1 0 6.5 6.5z"/>', 1.8),
   arrow: svg('<path d="M3 8h10M9.5 4.5L13 8l-3.5 3.5"/>', 1.8),
   download: svg('<path d="M8 2.5v8M4.5 7L8 10.5 11.5 7M3 13h10"/>', 1.8),
+  follow: svg('<path d="M2.5 8h5M7.5 8l3.5-3.5M7.5 8l3.5 3.5M11 4.5h2.5M11 11.5h2.5"/>', 1.8),
   copy: svg('<rect x="5" y="5" width="9" height="9" rx="2"/><path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/>', 1.8),
 };
 
 const RISK_LABEL = { late: '지연', high: '2일 이내', mid: '3~7일', low: '8일 이상' };
 const RISK_SHORT = { late: '지연', high: '2일 내', mid: '7일 내', low: '여유' };
-const STATUS_LABEL = { none: '미회신', part: '일부 수령', fix: '보완 요청', done: '완료' };
+const STATUS_LABEL = { none: '미회신', part: '일부 수령', fix: '보완 요청', follow: '후속 절차', done: '완료' };
 
 return { esc, ICON, RISK_LABEL, RISK_SHORT, STATUS_LABEL };
 })();
@@ -2679,7 +3998,8 @@ function topbar(client, today, isDemo, active) {
       <span class="chip">${esc(client.name)} · ${esc(client.engagement)}</span>
       <nav class="tabs">
         <a class="tab ${active === 'dashboard' ? 'is-active' : ''}" href="#">대시보드</a>
-        <a class="tab" href="#/add">자료 요청</a>
+        <a class="tab" href="#/add">자료 요청</a> <!-- 자료 추가 창은 이 탭으로 연다 (+ 자료 추가 버튼은 같은 기능이라 뺐다) -->
+        <a class="tab ${active === 'confirm' ? 'is-active' : ''}" href="#/confirm">외부조회서</a>
         <a class="tab ${active === 'calendar' ? 'is-active' : ''}" href="#/calendar">일정</a>
         <a class="tab ${active === 'report' ? 'is-active' : ''}" href="#/report">주간 보고</a>
       </nav>
@@ -2687,9 +4007,6 @@ function topbar(client, today, isDemo, active) {
       <div class="topbar-end">
         <span class="org-label desktop-only">삼일회계법인</span>
         <span class="today">${formatKoreanDay(today)}</span>
-        <a class="btn btn-sub" href="#/add" aria-label="자료 추가">
-          <span class="desktop-only">+ 자료 추가</span><span class="mobile-only">${ICON.plus}</span>
-        </a>
       </div>
     </header>`;
 }
@@ -2807,7 +4124,12 @@ function fixHref(item) {
 }
 
 // 자료를 눌렀을 때: 보완 요청 자료는 보완 요청 화면, 나머지는 단건 독촉
+function followHref(item) {
+  return `#/follow/${encodeURIComponent(item.id)}`;
+}
+
 function itemHref(x) {
+  if (x.status === 'follow') return followHref(x);
   return x.status === 'fix' ? fixHref(x) : composeHref(x);
 }
 
@@ -2825,7 +4147,14 @@ function riskBadge(risk, short = false) {
 
 function itemMeta(x) {
   if (x.status === 'fix') return x.reason || '보완 요청';
+  if (x.status === 'follow') return x.follow?.type === 'diff' ? '회신 금액 차이 · 조정 중' : '미회수 확정 · 대체적 절차 진행 중';
   return `${formatMD(x.neededOn)} 필요 · 요청 ${formatMD(x.requestedOn)} · D+${x.elapsed}`;
+}
+
+function rowActionLabel(x) {
+  if (x.status === 'fix') return '보완 재요청 메일 쓰기';
+  if (x.status === 'follow') return '후속 절차 열기';
+  return '이 자료만 따로 독촉';
 }
 
 function leftBig(left) {
@@ -2843,6 +4172,10 @@ function ownerCards(groups, people, done, text) {
       ? `마지막 독촉 ${formatMD(person.lastNudgedOn)} · 독촉 ${person.nudges}회`
       : '아직 독촉하지 않았어요';
 
+    // 묶음 독촉 대상이 2건 이상인 카드: 항목마다 따로 보내는 경우를 위한 버튼을 붙인다.
+    const bundlable = g.items.filter(isBundleEligible);
+    const perItem = bundlable.length > 1;
+
     const rows = g.items.map((x) => `
       <div class="row ${x.id === topId ? 'is-top' : ''}">
         <div class="row-main">
@@ -2851,6 +4184,7 @@ function ownerCards(groups, people, done, text) {
             ${x.id === topId ? `<span class="top-badge">${text.top}</span>` : ''}
           </div>
           <div class="row-meta">${statusBadge(x.status)}<span class="ellipsis">${esc(itemMeta(x))}</span></div>
+          ${perItem ? `<a class="row-action" href="${itemHref(x)}">${ICON.mail}${rowActionLabel(x)}</a>` : ''}
         </div>
         <div class="row-left">
           <div class="left-big">${leftBig(x.left)}</div>
@@ -2862,8 +4196,7 @@ function ownerCards(groups, people, done, text) {
       ? `<div class="done-line">${ICON.done}완료 ${doneHere.length}건 · ${doneHere.map((x) => esc(x.name)).join(', ')}</div>`
       : '';
 
-    // 버튼 건수는 묶음 독촉 화면과 같은 기준(보완 요청 제외)으로 센다.
-    const bundlable = g.items.filter(isBundleEligible);
+    // 버튼 건수는 묶음 독촉 화면과 같은 기준(보완 요청 제외)으로 센다. (bundlable은 위에서 계산)
     let cta;
     if (bundlable.length > 1) {
       cta = `<a class="btn btn-cta" href="${bundleHref(g.owner)}">
@@ -2871,7 +4204,9 @@ function ownerCards(groups, people, done, text) {
     } else if (bundlable.length === 1) {
       cta = `<a class="btn btn-sub" href="${composeHref(bundlable[0])}">${esc(bundlable[0].name)} 독촉하기</a>`;
     } else {
-      cta = `<a class="btn btn-sub" href="${fixHref(g.items[0])}">보완 재요청 메일 쓰기</a>`;
+      cta = g.items[0].status === 'follow'
+        ? `<a class="btn btn-sub" href="${followHref(g.items[0])}">후속 절차 열기</a>`
+        : `<a class="btn btn-sub" href="${fixHref(g.items[0])}">보완 재요청 메일 쓰기</a>`;
     }
 
     return `
@@ -3138,7 +4473,7 @@ function dayPanel(state, entries, selected, today, form) {
       ? progressSwitch(e)
       : `<span class="progress-pill is-${e.progress}"><i></i>${progressLabel(e.progress)}</span>`;
     const link = e.kind === 'need' && e.status !== 'done'
-      ? `<a class="link" href="${e.status === 'fix' ? `#/fix/${e.itemId}` : `#/compose/${e.itemId}`}">열기</a>` : '';
+      ? `<a class="link" href="${e.status === 'fix' ? `#/fix/${e.itemId}` : e.status === 'follow' ? `#/follow/${e.itemId}` : `#/compose/${e.itemId}`}">열기</a>` : '';
     const remove = e.kind === 'event'
       ? `<button type="button" class="link cal-remove" data-action="cal-remove-event" data-event="${e.eventId}">삭제</button>` : '';
     return `
@@ -3216,6 +4551,7 @@ const { sendTiming } = __m_lib_timing;
 const { timingChip, timingBanner } = __m_views_timing;
 const { mailDates } = __m_lib_calendar;
 const { mailField, mailDateDock } = __m_views_calendar;
+const { templateOf } = __m_lib_pbcTemplate;
 const { esc, ICON, RISK_LABEL, STATUS_LABEL } = __m_views_html;
 // 2. 단건 독촉 — 레퍼런스 2 / 2-1 / 2-2 / 2-3 / 2-M
 // 데스크톱은 대시보드 위 오른쪽 패널, 모바일(720px 이하)은 전체 화면.
@@ -3263,6 +4599,7 @@ function renderCompose(state, { today, clock, itemId, tone, copied, toast }) {
         ${mobileChips(item, history, last)}
         ${toneSlider(tone, recommended, item)}
         ${preview(mail, dates)}
+        ${item.kind === 'confirmation' ? followEntry(item) : templateNote(item)}
         ${mailDateDock(dates, state)}
       </div>
 
@@ -3281,6 +4618,32 @@ function renderCompose(state, { today, clock, itemId, tone, copied, toast }) {
             <small>독촉 이력에 기록했어요<span class="desktop-only"> · 발송은 아웃룩에서 직접 해주세요</span></small></span>
         </div>` : ''}
     </aside>`;
+}
+
+// 표준 양식으로 요청한 자료: 독촉하면서 양식을 다시 보낼 수 있게
+function templateNote(item) {
+  const t = templateOf(item);
+  if (!t) return '';
+  return `
+    <section class="tpl-note">
+      <div class="section-label">요청 양식 <small class="fu-count">${item.basisDate ? `${formatMD(item.basisDate)} 기준 · ` : ''}${t.columns.length}개 항목${t.sign ? ' · 서명 필요' : ''}</small></div>
+      <div class="tpl-cols">${t.columns.map((c) => `<i>${esc(c)}</i>`).join('')}</div>
+      <button type="button" class="btn btn-sub tpl-copy" data-action="copy-template" data-item="${esc(item.id)}">${ICON.copy}엑셀용 요청 양식 다시 복사</button>
+    </section>`;
+}
+
+// 외부조회 건: 독촉을 마치고도 회신이 없거나, 회신 금액이 다르면 후속 절차로 넘어간다.
+function followEntry(item) {
+  return `
+    <section class="follow-entry">
+      <div class="section-label">회신 결과가 나왔나요?</div>
+      <div class="follow-entry-btns">
+        <button type="button" class="btn btn-sub" data-action="start-follow" data-type="noreply" data-item="${esc(item.id)}">
+          ${ICON.follow}<span><b>미회수로 확정</b><small>대체적 절차 가이드로</small></span></button>
+        <button type="button" class="btn btn-sub" data-action="start-follow" data-type="diff" data-item="${esc(item.id)}">
+          ${ICON.follow}<span><b>회신 받음 · 금액 차이</b><small>차이 조정표로</small></span></button>
+      </div>
+    </section>`;
 }
 
 // 데스크톱 상단 4칸: 필요일 / 남은 날 / 요청 후 / 독촉 이력
@@ -3668,7 +5031,8 @@ return { renderFix };
 const __m_views_add = (() => {
 const { formatMD, formatMDW, daysBetween } = __m_lib_dates;
 const { riskOf, leftText } = __m_lib_priority;
-const { parsePaste, rowErrorText, leftOf, normalizeDate } = __m_lib_add;
+const { parsePaste, markDuplicates, rowErrorText, leftOf, normalizeDate } = __m_lib_add;
+const { PBC_TEMPLATES, TEMPLATE_ORDER, templateForName, defaultBasisDate } = __m_lib_pbcTemplate;
 const { esc, ICON, RISK_LABEL } = __m_views_html;
 // 6. 자료 추가 — 레퍼런스 6 / 6-1
 // 데스크톱은 가운데 모달, 모바일(720px 이하)은 전체 화면.
@@ -3682,9 +5046,11 @@ const PASTE_EXAMPLE = [
 
 /**
  * @param state 앱 상태
- * @param opts  { today, tab: 'single'|'paste', form, errors, pasteText }
+ * @param opts  { today, tab: 'single'|'paste', form, errors, pasteText, source }
+ *   source: 외부조회 후속 절차에서 연 경우 { itemId, key, counterparty } — 값이 미리 채워져 있다
  */
-function renderAdd(state, { today, tab, form, errors, pasteText }) {
+function renderAdd(state, { today, tab, form, errors, pasteText, source }) {
+  const parsed = markDuplicates(parsePaste(pasteText, today), state.items);
   return `
     <div class="drawer-dim" data-action="close-drawer"></div>
     <div class="modal add" role="dialog" aria-modal="true" aria-labelledby="add-title">
@@ -3704,14 +5070,16 @@ function renderAdd(state, { today, tab, form, errors, pasteText }) {
           <button type="button" role="tab" data-action="add-tab" data-tab="paste" aria-pressed="${tab === 'paste'}">여러 건 붙여넣기 (엑셀)</button>
         </div>
 
-        ${tab === 'single' ? singleForm(state, today, form, errors) : pasteForm(state, today, pasteText)}
+        ${source ? `<div class="add-source">${ICON.follow}<span><b>외부조회 후속 절차에서 요청하는 증빙이에요</b>
+          <small>${esc(source.counterparty)} · 값이 미리 채워져 있어요. 확인하고 필요한 곳만 고쳐 주세요.</small></span></div>` : ''}
+        ${tab === 'single' ? singleForm(state, today, form, errors) : pasteForm(state, today, pasteText, parsed)}
       </div>
 
       <footer class="modal-foot">
         <button type="button" class="btn btn-sub" data-action="close-drawer">취소</button>
         ${tab === 'single'
           ? `<button type="submit" form="add-form" class="btn btn-cta">추가하기</button>`
-          : pasteSubmit(parsePaste(pasteText, today))}
+          : pasteSubmit(parsed)}
       </footer>
     </div>`;
 }
@@ -3726,7 +5094,9 @@ function field(label, name, value, { type = 'text', placeholder = '', error = ''
 }
 
 function singleForm(state, today, form, errors) {
-  const owners = Object.keys(state.people);
+  // 자료 요청은 회사 담당자에게 한다. 외부조회의 조회처(은행·거래처 등)는 최근 담당자에서 뺀다.
+  const counterparties = new Set(state.items.filter((x) => x.kind === 'confirmation').map((x) => x.owner));
+  const owners = Object.keys(state.people).filter((o) => !counterparties.has(o));
   const chips = owners.map((o) => `
     <button type="button" class="owner-chip" data-action="pick-owner" data-owner="${esc(o)}" data-dept="${esc(state.people[o].dept || '')}">${esc(o)}</button>`).join('');
   const procedures = [...new Set(state.items.map((x) => x.procedure).filter(Boolean))];
@@ -3734,7 +5104,9 @@ function singleForm(state, today, form, errors) {
   return `
     <form id="add-form" class="add-single" data-action-submit="add-single" novalidate>
       <div class="add-col">
+        ${templatePicker(form)}
         ${field('자료명', 'name', form.name, { placeholder: '예: 차입금 약정서 사본', error: errors.name })}
+        ${templatePreview(state, today, form, errors)}
         <div class="f-group">
           <span class="f-label">담당자</span>
           <div class="owner-grid">
@@ -3758,6 +5130,39 @@ function singleForm(state, today, form, errors) {
     </form>`;
 }
 
+// ---------- 표준 양식 ----------
+// 고르면 자료명·감사 절차가 채워지고, 기준일과 필수 컬럼이 박힌 요청 양식을 복사할 수 있다.
+
+function currentTemplate(form) {
+  return PBC_TEMPLATES[form.template] || templateForName(form.name);
+}
+
+function templatePicker(form) {
+  const picked = currentTemplate(form)?.key;
+  return `
+    <div class="tpl-picker">
+      <span class="f-label">표준 양식 <small>선택 · 기준일과 필수 항목을 정해서 요청해요</small></span>
+      <div class="tpl-chips">
+        ${TEMPLATE_ORDER.map((k) => `<button type="button" class="owner-chip" data-action="pick-template" data-template="${k}" aria-pressed="${picked === k}">${PBC_TEMPLATES[k].name}</button>`).join('')}
+      </div>
+      <input type="hidden" name="template" value="${esc(picked || '')}">
+    </div>`;
+}
+
+function templatePreview(state, today, form, errors) {
+  const t = currentTemplate(form);
+  if (!t) return '';
+  const basis = form.basisDate || defaultBasisDate(state, today);
+  return `
+    <div class="tpl-preview">
+      ${field('자료 기준일', 'basisDate', basis, { type: 'date', error: errors.basisDate, hint: '받은 자료를 이 기준일로 점검해요' })}
+      <div class="tpl-cols"><span>필수 항목</span>${t.columns.map((c) => `<i>${esc(c)}</i>`).join('')}</div>
+      ${t.sign ? `<div class="tpl-line"><span>서명</span>${esc(t.sign)}</div>` : ''}
+      <div class="tpl-line"><span>확인 포인트</span>${t.checks.map(esc).join(' · ')}</div>
+      <button type="button" class="btn btn-sub tpl-copy" data-action="copy-template">${ICON.copy}엑셀용 요청 양식 복사</button>
+    </div>`;
+}
+
 // 필요일을 고르면 남은 날과 위험도를 미리 보여준다.
 function needPreview(neededOn, today) {
   const iso = normalizeDate(neededOn, today);
@@ -3773,7 +5178,7 @@ function needPreview(neededOn, today) {
     </div>`;
 }
 
-function pasteForm(state, today, pasteText) {
+function pasteForm(state, today, pasteText, parsed) {
   return `
     <div class="add-paste">
       <label class="f">
@@ -3781,7 +5186,7 @@ function pasteForm(state, today, pasteText) {
           <small>열 순서: 자료명 · 담당자 · 요청일 · 필요일 · 감사절차(선택) — 첫 줄이 제목이면 자동으로 빼요</small></span>
         <textarea name="paste" rows="5" data-action-input="paste" placeholder="${esc(PASTE_EXAMPLE)}" spellcheck="false">${esc(pasteText)}</textarea>
       </label>
-      <div class="paste-preview">${pastePreview(parsePaste(pasteText, today), today)}</div>
+      <div class="paste-preview">${pastePreview(parsed, today)}</div>
       <div class="need-note">담당자는 기존 목록과 이름이 같으면 자동으로 묶여요 · 모두 ‘미회신’으로 시작해요</div>
     </div>`;
 }
@@ -3836,6 +5241,83 @@ function pasteSubmit(parsed) {
 return { PASTE_EXAMPLE, renderAdd, pastePreview, pasteSubmit };
 })();
 
+// ---- views/overview.js
+const __m_views_overview = (() => {
+const { esc, ICON } = __m_views_html;
+// 외부조회 현황 (주간 보고 화면)
+
+
+// ---------- 외부조회 현황: 트랙별로 다른 기준 ----------
+// 주간 보고 화면 맨 위에 둔다. 은행(필수 회수)은 건수, 채권채무·재고(커버리지)는 미확인 잔액을 수행중요성과 비교, 변호사(일반)는 회신 여부.
+
+const eok = (n) => {
+  const v = Math.abs(n) / 100000000;
+  return `${n < 0 ? '−' : ''}${v >= 10 ? v.toFixed(0) : v.toFixed(1)}억원`;
+};
+
+function confirmOverview(o, materiality) {
+  if (!o.any) return '';
+  const c = o.coverage;
+  const pct = (n) => (c.total ? Math.round((n / c.total) * 1000) / 10 : 0);
+  const pending = (list) => list.map((p) => `<a class="co-chip" href="#/compose/${encodeURIComponent(p.id)}">${esc(p.name)}</a>`).join('');
+  const reqDone = o.required.total > 0 && o.required.received === o.required.total;
+
+  const perf = c.performance
+    ? `<div class="co-verdict ${c.exceeds ? 'is-bad' : 'is-ok'}">
+         ${c.exceeds ? ICON.high : ICON.done}
+         <span>미확인 잔액 <b>${eok(c.uncovered)}</b>이 수행중요성 ${eok(c.performance)}을
+         ${c.exceeds ? `<b>${eok(c.gap)} 넘어요</b>. 회신 독촉이나 대체적 절차가 더 필요해요.` : '넘지 않아요.'}</span>
+       </div>`
+    : '<div class="co-verdict is-open">수행중요성을 입력하면 미확인 잔액과 비교해 드려요.</div>';
+
+  return `
+    <section class="confirm-overview" aria-label="외부조회 현황">
+      <div class="co-head">
+        <h2>외부조회 현황 <span>· 조회서 성격에 따라 다른 기준으로 봐요</span></h2>
+        <label class="co-perf">
+          <span>수행중요성</span>
+          <input type="text" inputmode="numeric" data-action-change="set-performance" value="${c.performance ? c.performance.toLocaleString('ko-KR') : ''}" placeholder="예: 180,000,000" aria-label="수행중요성(원)">
+          <span>원</span>
+        </label>
+      </div>
+      ${materiality?.basis ? `<p class="co-basis">${esc(materiality.basis)}${materiality.overall ? ` · 전체 중요성 ${eok(materiality.overall)}` : ''}</p>` : ''}
+
+      <div class="co-grid">
+        <div class="co-card ${reqDone ? 'is-ok' : 'is-required'}">
+          <div class="co-label">필수 회수 · 은행</div>
+          <div class="co-big">${o.required.received}<small> / ${o.required.total}건 회수</small></div>
+          <div class="co-sub">금액과 상관없이 전부 회수해야 해요.</div>
+          ${o.required.pending.length ? `<div class="co-chips"><span>남은 곳</span>${pending(o.required.pending)}</div>` : ''}
+        </div>
+
+        <div class="co-card co-wide">
+          <div class="co-label">커버리지 · 채권채무 · 재고</div>
+          <div class="co-big">${pct(c.covered)}%<small> 확인 · ${eok(c.covered)} / ${eok(c.total)}</small></div>
+          <div class="co-bar" role="img" aria-label="회신 확인 ${pct(c.confirmed)}%, 대체적 절차 ${pct(c.alternative)}%, 미확인 ${pct(c.uncovered)}%">
+            <span class="co-seg is-confirmed" style="width:${pct(c.confirmed)}%"></span>
+            <span class="co-seg is-alt" style="width:${pct(c.alternative)}%"></span>
+          </div>
+          <div class="co-legend">
+            <span><i class="is-confirmed"></i>회신 확인 ${eok(c.confirmed)}</span>
+            <span><i class="is-alt"></i>대체적 절차 ${eok(c.alternative)}</span>
+            <span><i></i>미확인 ${eok(c.uncovered)}</span>
+          </div>
+          ${perf}
+        </div>
+
+        <div class="co-card">
+          <div class="co-label">일반 · 변호사</div>
+          <div class="co-big">${o.general.received}<small> / ${o.general.total}건 회신</small></div>
+          <div class="co-sub">회신이 없으면 경영진 질문·의사록 검토로 확인해요.</div>
+          ${o.general.pending.length ? `<div class="co-chips"><span>남은 곳</span>${pending(o.general.pending)}</div>` : ''}
+        </div>
+      </div>
+    </section>`;
+}
+
+return { confirmOverview };
+})();
+
 // ---- views/report.js
 const __m_views_report = (() => {
 const { formatMD, formatMDW } = __m_lib_dates;
@@ -3843,6 +5325,8 @@ const { leftText } = __m_lib_priority;
 const { weekLabel, summaryLines } = __m_lib_report;
 const { esc, ICON, STATUS_LABEL } = __m_views_html;
 const { topbar } = __m_views_dashboard;
+const { confirmOverview } = __m_views_overview;
+const { trackOverview } = __m_lib_followup;
 // 7. 주간 현황 보고 — 레퍼런스 7
 // 대시보드와 같은 상단바 아래에 요약 카드(왼쪽)와 담당자별 현황·자료 목록(오른쪽)을 보여준다.
 
@@ -3872,11 +5356,11 @@ function renderReport(state, report, { today, isDemo }) {
           </div>` : ''}
       </section>
 
-      ${counts.total ? body(report, lines) : empty()}
+      ${counts.total ? body(report, lines, state) : empty()}
     </div>`;
 }
 
-function body(report, lines) {
+function body(report, lines, state) {
   const { counts, received, owners, rows } = report;
   return `
     <div class="report-grid">
@@ -3887,7 +5371,8 @@ function body(report, lines) {
           ${stat('미회신', counts.none, '')}
           ${stat('일부 수령', counts.part, '')}
           ${stat('보완 요청', counts.fix, '', counts.fix ? 'is-fix' : '')}
-          ${stat('지연', counts.late, counts.urgent ? `2일 이내 포함 ${counts.urgent}건` : '', counts.late ? 'is-late' : '')}
+          ${counts.follow ? stat('후속 절차', counts.follow, '외부조회 미회수·차이', 'is-follow') : ''}
+          ${stat('지연', counts.late, counts.urgent ? `2일 이내 포함 ${counts.urgent}건` : '', `${counts.late ? 'is-late' : ''} ${counts.follow ? 'stat-span' : ''}`)}
         </div>
         <div class="stat stat-wide">
           <div class="stat-label">이번 주 수령</div>
@@ -3900,6 +5385,8 @@ function body(report, lines) {
       </aside>
 
       <section class="report-main">
+        ${confirmOverview(trackOverview(state.items, state.materiality?.performance), state.materiality)}
+
         <div class="report-block">
           <h2>담당자별 현황</h2>
           <div class="owner-table">
@@ -3921,7 +5408,7 @@ function body(report, lines) {
             <div class="it-row it-head"><div>자료명</div><div>담당자</div><div>상태</div><div>필요일</div><div>남은 날</div><div>최근 독촉</div></div>
             ${rows.map((r) => `
               <div class="it-row ${r.status === 'done' ? 'is-done' : ''}">
-                <div class="it-name">${esc(r.name)}${r.fixReason ? `<small>${esc(r.fixReason)}</small>` : ''}</div>
+                <div class="it-name">${esc(r.name)}${r.fixReason ? `<small>${esc(r.fixReason)}</small>` : ''}${r.signoff ? `<small>${esc(r.signoff)}</small>` : ''}</div>
                 <div>${esc(r.owner)}</div>
                 <div><span class="status status-${r.status}">${ICON[r.status]}${STATUS_LABEL[r.status]}</span></div>
                 <div>${formatMD(r.neededOn)}</div>
@@ -3962,6 +5449,7 @@ const __m_views_status = (() => {
 const { formatMD } = __m_lib_dates;
 const { allowedStatuses, STATUS_HINT } = __m_lib_status;
 const { FIX_REASONS } = __m_lib_fix;
+const { templateOf, receiptSuggestion } = __m_lib_pbcTemplate;
 const { esc, ICON, STATUS_LABEL } = __m_views_html;
 // 자료 상태 변경 시트 — 단건 독촉·보완 요청 화면 위에 작게 뜬다.
 
@@ -3971,7 +5459,7 @@ const { esc, ICON, STATUS_LABEL } = __m_views_html;
  * @param sheet { status, reason, basisDate, requiredBasisDate, errors }
  * @param today 기준일 (수령일로 기록될 날짜)
  */
-function renderStatusSheet(item, { status, reason, basisDate, requiredBasisDate, errors }, today) {
+function renderStatusSheet(item, { status, reason, basisDate, requiredBasisDate, errors, check }, today) {
   const options = allowedStatuses(item).map((s) => `
     <button type="button" class="status-opt" data-action="pick-status" data-status="${s}" aria-pressed="${status === s}">
       <span class="status status-${s}">${ICON[s]}${STATUS_LABEL[s]}</span>
@@ -3998,6 +5486,7 @@ function renderStatusSheet(item, { status, reason, basisDate, requiredBasisDate,
       </div>
 
       <div class="sheet-body">
+        ${receiptCheck(item, check, today)}
         <div class="status-opts">${options}</div>
         ${errors.status ? `<div class="f-error">${esc(errors.status)}</div>` : ''}
         ${status === 'fix' ? fixFields(reason, basisDate, requiredBasisDate, errors) : ''}
@@ -4009,6 +5498,29 @@ function renderStatusSheet(item, { status, reason, basisDate, requiredBasisDate,
         <button type="button" class="btn btn-cta" data-action="save-status" ${status ? '' : 'disabled'}>${saveLabel(status)}</button>
       </footer>
     </div>`;
+}
+
+// 표준 양식으로 요청한 자료: 받은 자료를 양식 기준으로 점검하면 상태와 보완 사유를 추천한다.
+function receiptCheck(item, check, today) {
+  const t = templateOf(item);
+  if (!t || !check) return '';
+  const basis = item.basisDate || `${today.slice(0, 4)}-12-31`;
+  const s = receiptSuggestion(t, check, basis);
+  const yesNo = (action, value, yes, no) => `
+    <span class="rc-yn">
+      <button type="button" data-action="${action}" data-ok="1" aria-pressed="${value === true}">${yes}</button>
+      <button type="button" data-action="${action}" data-ok="0" aria-pressed="${value === false}">${no}</button>
+    </span>`;
+  return `
+    <section class="receipt-check">
+      <div class="f-label">받은 자료 점검 <small>${esc(t.name)} 표준 양식 기준</small></div>
+      <div class="rc-row"><span>기준일이 <b>${basis.replaceAll('-', '.')}</b>인가요?</span>${yesNo('check-basis', check.basisOk, '맞아요', '달라요')}</div>
+      <div class="rc-row rc-cols"><span>빠진 항목을 눌러 표시해 주세요</span>
+        <div class="tpl-cols">${t.columns.map((c) => `<button type="button" data-action="check-col" data-col="${esc(c)}" aria-pressed="${check.missing.includes(c)}">${esc(c)}</button>`).join('')}</div>
+      </div>
+      ${t.sign ? `<div class="rc-row"><span>${esc(t.sign)}에 서명이 있나요?</span>${yesNo('check-sign', check.signOk, '있어요', '없어요')}</div>` : ''}
+      <div class="rc-result ${s.status === 'fix' ? 'is-fix' : s.status === 'done' ? 'is-done' : ''}">${esc(s.summary)}</div>
+    </section>`;
 }
 
 function saveLabel(status) {
@@ -4052,6 +5564,482 @@ function fixFields(reason, basisDate, requiredBasisDate, errors) {
 return { renderStatusSheet };
 })();
 
+// ---- views/confirm.js
+const __m_views_confirm = (() => {
+const { CONF_TYPES, TYPE_ORDER, TRACK_LABEL, validateSetup, parseConfirmations, buildLetters, formatAmount, nextDocNo } = __m_lib_confirmation;
+const { esc, ICON } = __m_views_html;
+const { topbar } = __m_views_dashboard;
+// 외부조회서 작성 — 공통 정보 → 종류 선택 → 선정된 조회처 붙여넣기 → 검증 → 조회서 미리보기·인쇄 → 조회 목록 등록
+// 판단(검증·묶기·문안)은 lib/confirmation.js가 하고, 여기서는 그리기만 한다.
+
+
+/**
+ * @param state 앱 상태
+ * @param opts  { today, isDemo, type, setup, setupErrors, pasteText, bankBlank, resetArmed }
+ *   resetArmed: 초기화를 한 번 눌러 확인을 기다리는 중 (브라우저 확인창 대신 버튼을 두 번 누르게 한다)
+ */
+function renderConfirm(state, { today, isDemo, type, setup, setupErrors, pasteText, bankBlank, resetArmed }) {
+  const t = CONF_TYPES[type];
+  return `
+    <div class="page confirm">
+      ${topbar(state.client, today, isDemo, 'confirm')}
+
+      <section class="report-head confirm-head">
+        <div>
+          <h1>외부조회서 작성 <span>· 선정된 조회처 목록으로 표준 조회서를 만들고 조회 목록에 등록해요</span></h1>
+        </div>
+        <div class="report-actions">
+          <button type="button" class="btn ${resetArmed ? 'btn-danger' : 'btn-sub'}" data-action="conf-reset">${resetArmed
+            ? '한 번 더 누르면 모두 지워져요'
+            : `${ICON.fix}초기화`}</button>
+        </div>
+      </section>
+
+      <div class="confirm-grid">
+        <aside class="confirm-side">
+          ${setupForm(setup, setupErrors)}
+        </aside>
+
+        <section class="confirm-main">
+          <div class="report-block">
+            <h2>조회서 종류</h2>
+            <div class="segmented conf-types" role="tablist">
+              ${TYPE_ORDER.map((k) => `
+                <button type="button" role="tab" data-action="conf-type" data-type="${k}" aria-pressed="${k === type}">
+                  <span class="seg-label">${CONF_TYPES[k].label}</span>
+                  <span class="seg-caption">${TRACK_LABEL[CONF_TYPES[k].track]}</span>
+                </button>`).join('')}
+            </div>
+            ${type === 'bank' ? `
+              <label class="conf-check">
+                <input type="checkbox" data-action-change="conf-bank-blank" ${bankBlank ? 'checked' : ''}>
+                장부금액을 적지 않고 보내기 (공란형) <small>금융기관이 직접 금액을 기재해요</small>
+              </label>` : ''}
+          </div>
+
+          <div class="report-block">
+            <h2>선정된 ${t.unit} 목록 <span>· 엑셀에서 복사해 붙여넣기</span></h2>
+            <label class="f">
+              <span class="f-label">열 순서: ${t.columns.join(' · ')}
+                <small>첫 줄이 제목이면 자동으로 빼요${type === 'arap' ? '' : ` · 같은 ${t.unit}의 여러 행은 한 장으로 묶어요`}</small></span>
+              <textarea name="conf-paste" rows="6" data-action-input="conf-paste" placeholder="${esc(t.example)}" spellcheck="false">${esc(pasteText)}</textarea>
+            </label>
+            <div class="conf-paste-actions">
+              <button type="button" class="btn btn-sub" data-action="conf-example">예시 데이터 넣기</button>
+              ${pasteText ? '<button type="button" class="btn btn-sub" data-action="conf-clear">지우기</button>' : ''}
+            </div>
+            <div class="conf-preview">${partiesPreview(type, parseConfirmations(type, pasteText))}</div>
+          </div>
+
+          <div class="conf-output">${outputSection(state, { today, type, setup, pasteText, bankBlank })}</div>
+        </section>
+      </div>
+    </div>`;
+}
+
+// ---------- 공통 정보 ----------
+
+function field(label, name, value, { type = 'text', placeholder = '', error = '', hint = '' } = {}) {
+  return `
+    <label class="f ${error ? 'has-error' : ''}">
+      <span class="f-label">${label}${hint ? ` <small>${hint}</small>` : ''}</span>
+      <input type="${type}" name="${name}" value="${esc(value ?? '')}" placeholder="${esc(placeholder)}" autocomplete="off">
+      ${error ? `<span class="f-error">${esc(error)}</span>` : ''}
+    </label>`;
+}
+
+function setupForm(s, e) {
+  return `
+    <form id="conf-setup" class="conf-setup" novalidate>
+      <div class="report-block">
+        <h2>발신 회사 <span>· 조회서는 회사 명의로 나가요</span></h2>
+        ${field('회사명', 'companyName', s.companyName, { error: e.companyName })}
+        ${field('대표이사', 'ceoName', s.ceoName, { placeholder: '정한빛', error: e.ceoName })}
+        ${field('회사 주소', 'companyAddress', s.companyAddress, { placeholder: '경기도 성남시 분당구 판교역로 1', error: e.companyAddress })}
+      </div>
+      <div class="report-block">
+        <h2>회신처 <span>· 회신은 감사인에게 직접 와야 해요</span></h2>
+        ${field('감사인', 'auditorName', s.auditorName, { error: e.auditorName })}
+        ${field('감사인 주소', 'auditorAddress', s.auditorAddress, { error: e.auditorAddress })}
+        ${field('담당자', 'contactName', s.contactName, { placeholder: '장재혁 회계사', error: e.contactName })}
+        <div class="owner-grid conf-two">
+          ${field('전화', 'contactPhone', s.contactPhone, { placeholder: '02-0000-0000', error: e.contactPhone })}
+          ${field('이메일', 'contactEmail', s.contactEmail, { type: 'email', hint: '선택', error: e.contactEmail })}
+        </div>
+      </div>
+      <div class="report-block">
+        <h2>일정</h2>
+        ${field('조회 기준일', 'baseDate', s.baseDate, { type: 'date', hint: '보통 결산일', error: e.baseDate })}
+        <div class="owner-grid conf-two">
+          ${field('발송일', 'issuedOn', s.issuedOn, { type: 'date', error: e.issuedOn })}
+          ${field('회신 기한', 'replyBy', s.replyBy, { type: 'date', error: e.replyBy })}
+        </div>
+        <div class="need-note">발송일은 조회 목록의 요청일, 회신 기한은 필요일이 돼요.</div>
+      </div>
+    </form>`;
+}
+
+// ---------- 붙여넣기 미리보기 ----------
+
+const ERR_ORDER = ['name', 'address', 'category', 'amount', 'form', 'duplicate'];
+const errText = (errors) => ERR_ORDER.filter((k) => errors[k]).map((k) => errors[k]).join(' · ');
+
+/** textarea 입력 중에 미리보기만 다시 그릴 때도 쓴다. */
+function partiesPreview(type, parsed) {
+  const { rows, parties, headerSkipped, errorCount } = parsed;
+  if (!rows.length) {
+    return `<div class="pp-empty">붙여넣은 내용이 없어요. 표본 선정이 끝난 ${CONF_TYPES[type].unit} 목록을 붙여넣어 주세요.</div>`;
+  }
+  const badRows = rows.filter((r) => Object.keys(r.errors).length);
+  const summary = `${rows.length}행 → 조회서 <b>${parties.length}장</b>${errorCount ? ` · <b class="pp-warn">${errorCount}건 확인 필요</b>` : ''}`;
+
+  const rowErrors = badRows.length ? `
+    <div class="conf-row-errors">
+      ${badRows.map((r) => `<div><span class="pp-err">${ICON.high}${r.line}행</span> ${esc(r.cells[0] || '(이름 없음)')} — ${esc(errText(r.errors))}</div>`).join('')}
+    </div>` : '';
+
+  return `
+    <div class="pp-summary">${summary}${headerSkipped ? ' <span>· 첫 줄은 제목으로 보고 뺐어요</span>' : ''}</div>
+    ${rowErrors}
+    <div class="pp-table conf-table">
+      <div class="pp-row pp-head"><div>${CONF_TYPES[type].unit}</div><div>주소</div><div>조회 내용</div><div>행</div></div>
+      ${parties.map((p) => partyRow(type, p)).join('')}
+    </div>`;
+}
+
+function partyRow(type, p) {
+  const bad = Object.keys(p.errors).length;
+  let content;
+  if (type === 'bank') {
+    const total = p.entries.reduce((s, e) => s + (e.bookAmount || 0), 0);
+    content = `${p.entries.map((e) => esc(e.category)).join(' · ')}<small>${p.entries.length}개 항목 · 장부 ${formatAmount(total)}원</small>`;
+  } else if (type === 'inventory') {
+    const total = p.goods.reduce((s, g) => s + (g.bookAmount || 0), 0);
+    content = `${p.goods.map((g) => esc(g.item)).join(' · ')}<small>${p.goods.length}개 품목${total ? ` · 장부 ${formatAmount(total)}원` : ''}</small>`;
+  } else if (type === 'arap') {
+    content = `채권 ${formatAmount(p.receivable)} · 채무 ${formatAmount(p.payable)}<small>${p.blank ? '공란형 (금액 미기재)' : '금액 기재형'}</small>`;
+  } else {
+    content = p.matters.length ? `${p.matters.length}건<small>${esc(p.matters[0])}${p.matters.length > 1 ? ' 외' : ''}</small>` : '사건 미기재<small>전체 조회</small>';
+  }
+  const name = (type === 'bank' || type === 'inventory') && p.branch ? `${p.name} ${p.branch}` : p.name;
+  return `
+    <div class="pp-row ${bad ? 'is-error' : ''}">
+      <div class="pp-name">${esc(name)}${type === 'legal' && p.lawyer ? `<small>${esc(p.lawyer)}</small>` : ''}</div>
+      <div class="conf-addr">${bad && p.errors.address ? `<span class="pp-err">${ICON.high}${esc(p.errors.address)}</span>` : esc(p.address)}${p.errors.duplicate ? `<span class="pp-err">${ICON.high}${esc(p.errors.duplicate)}</span>` : ''}</div>
+      <div class="conf-content">${content}</div>
+      <div class="pp-date">${p.lines.join(', ')}</div>
+    </div>`;
+}
+
+// ---------- 결과: 조회서 미리보기 + 등록 ----------
+
+/** 입력이 바뀔 때 이 영역만 다시 그린다. */
+function outputSection(state, { today, type, setup, pasteText, bankBlank }) {
+  const parsed = parseConfirmations(type, pasteText);
+  const { errors, value } = validateSetup(setup, today);
+  const missing = [];
+  if (!value) missing.push(`공통 정보 ${Object.keys(errors).length}곳`);
+  if (!parsed.parties.length) missing.push(`${CONF_TYPES[type].unit} 목록`);
+  else if (parsed.errorCount) missing.push(`목록 오류 ${parsed.errorCount}건`);
+
+  if (missing.length) {
+    return `
+      <div class="report-block conf-wait">
+        <h2>조회서 미리보기</h2>
+        <p>${missing.join(' · ')}을(를) 확인하면 조회서가 여기에 만들어져요.</p>
+      </div>`;
+  }
+
+  const letters = buildLetters(type, parsed.parties, value, { startNo: nextDocNo(state.items, type), bankBlank });
+  return `
+    <div class="report-block">
+      <div class="conf-out-head">
+        <h2>조회서 미리보기 <span>· ${letters.length}장 · ${letters[0].docNo}${letters.length > 1 ? ` ~ ${letters.at(-1).docNo}` : ''}</span></h2>
+        <div class="report-actions">
+          <button type="button" class="btn btn-sub" data-action="conf-print">${ICON.download}인쇄 · PDF 저장</button>
+          <button type="button" class="btn btn-cta" data-action="conf-register">조회 목록에 ${letters.length}건 등록</button>
+        </div>
+      </div>
+      <p class="need-note">등록하면 대시보드에서 ${CONF_TYPES[type].unit}별로 회신을 추적하고 독촉 메일을 만들 수 있어요. ${{ required: '금액과 상관없이 전부 회수해야 하는 조회서예요.', coverage: '수행중요성 대비 금액 커버리지로 관리하는 조회서예요.', general: '회신 여부와 내용으로 관리하는 조회서예요.' }[CONF_TYPES[type].track]}</p>
+    </div>
+    <div class="letters">${letters.map(letterHtml).join('')}</div>`;
+}
+
+function tableHtml(table) {
+  if (!table) return '';
+  const amount = new Set(table.amountCols);
+  return `
+    ${table.caption ? `<div class="lt-caption">${esc(table.caption)}</div>` : ''}
+    <table class="lt-table">
+      <thead><tr>${table.columns.map((c, i) => `<th class="${amount.has(i) ? 'is-amt' : ''}">${esc(c)}</th>`).join('')}</tr></thead>
+      <tbody>${table.rows.map((r) => `<tr>${r.map((c, i) => `<td class="${amount.has(i) ? 'is-amt' : ''}">${esc(c) || '&nbsp;'}</td>`).join('')}</tr>`).join('')}</tbody>
+    </table>`;
+}
+
+/** 조회서 한 장 (A4). 인쇄할 때는 이 부분만 나간다. */
+function letterHtml(l) {
+  return `
+    <article class="letter">
+      <div class="lt-meta"><span>문서번호 ${esc(l.docNo)}</span><span>${esc(l.issuedOn)}</span></div>
+      <h3 class="lt-title">${esc(l.title)}</h3>
+      ${l.blank ? '<div class="lt-badge">금액 미기재 (공란형)</div>' : ''}
+
+      <dl class="lt-addr">
+        <div><dt>수신</dt><dd><b>${esc(l.to.name)}</b> 귀중${l.to.attn ? ` (${esc(l.to.attn)})` : ''}<br><small>${esc(l.to.address)}</small></dd></div>
+        <div><dt>발신</dt><dd><b>${esc(l.from.company)}</b> 대표이사 ${esc(l.from.ceo)}<br><small>${esc(l.from.address)}</small></dd></div>
+      </dl>
+
+      ${l.paragraphs.map((p) => `<p class="lt-p">${esc(p)}</p>`).join('')}
+      ${tableHtml(l.table)}
+      ${l.requests ? `<ol class="lt-requests">${l.requests.map((r) => `<li>${esc(r)}</li>`).join('')}</ol>` : ''}
+      <ul class="lt-notes">${l.notes.map((n) => `<li>${esc(n)}</li>`).join('')}</ul>
+
+      <div class="lt-sign">
+        <span>${esc(l.from.company)}</span>
+        <span>대표이사 ${esc(l.from.ceo)} <span class="lt-seal">(인)</span></span>
+      </div>
+
+      <div class="lt-reply-to">
+        <b>회신처 · ${esc(l.replyBy)}까지</b>
+        <span>${esc(l.replyTo.auditor)} · ${esc(l.replyTo.address)}</span>
+        <span>담당 ${esc(l.replyTo.contact)}${l.replyTo.phone ? ` · ${esc(l.replyTo.phone)}` : ''}${l.replyTo.email ? ` · ${esc(l.replyTo.email)}` : ''}</span>
+      </div>
+
+      <div class="lt-cut">절 취 선 · 아래는 조회처에서 작성하여 회신처로 직접 보내 주세요</div>
+      <div class="lt-reply">
+        <b>${esc(l.reply.heading)}</b>
+        ${l.reply.statements.map((s) => `<div class="lt-check"><span class="lt-box"></span>${esc(s)}</div>`).join('')}
+        <div class="lt-signline"><span>${esc(l.reply.signer)}</span><span>(서명 또는 인)</span></div>
+        <div class="lt-signline"><span>회신일</span><span>년 &nbsp;&nbsp; 월 &nbsp;&nbsp; 일</span></div>
+      </div>
+    </article>`;
+}
+
+return { renderConfirm, partiesPreview, outputSection, letterHtml };
+})();
+
+// ---- views/follow.js
+const __m_views_follow = (() => {
+const { formatMD } = __m_lib_dates;
+const { FOLLOW_TYPES, DIFF_CAUSES, DELIVERY_TERMS, noReplySteps, noReplyNotice, reconcile, reconConclusion, completeCheck } = __m_lib_followup;
+const { TRACK_LABEL } = __m_lib_confirmation;
+const { esc, ICON } = __m_views_html;
+// 외부조회 후속 절차 — 미회수 확정(대체적 절차 가이드) / 금액 차이(조정 기록)
+// 데스크톱은 대시보드 위 오른쪽 패널, 모바일(720px 이하)은 전체 화면. 판단은 lib/followup.js.
+
+
+const won = (n) => Number(n || 0).toLocaleString('ko-KR');
+const ROLE_LABEL = { alt: '대체적 절차', escalate: '회수 재시도·보고', support: '보조 증거' };
+const RESULT_CLASS = { matched: 'is-ok', timing: 'is-ok', misstatement: 'is-bad', open: 'is-open' };
+
+/**
+ * @param state 앱 상태
+ * @param opts  { today, itemId, owner, signoff, signoffErrors }
+ *   owner: 증빙을 요청할 회사 담당자 · signoff: { preparer, completedOn, reviewer } 완료 기록 입력값
+ */
+function renderFollow(state, { today, itemId, owner, signoff = {}, signoffErrors = {} }) {
+  const item = state.items.find((x) => x.id === itemId);
+  const f = item.follow;
+  const check = completeCheck(item);
+  const owners = [...new Set(state.items.filter((x) => x.kind !== 'confirmation').map((x) => x.owner))];
+
+  const typeBtns = Object.values(FOLLOW_TYPES).map((t) => `
+    <button type="button" class="reason-btn" data-action="start-follow" data-type="${t.key}" data-item="${esc(item.id)}" aria-pressed="${f.type === t.key}">
+      <b>${t.label}</b><small>${t.hint}</small>
+    </button>`).join('');
+
+  return `
+    <div class="drawer-dim" data-action="close-drawer"></div>
+    <aside class="drawer follow" role="dialog" aria-modal="true" aria-labelledby="follow-title">
+      <header class="m-header mobile-only">
+        <button type="button" class="icon-btn" data-action="close-drawer" aria-label="뒤로">${ICON.back}</button>
+        <div class="m-header-title">후속 절차</div>
+      </header>
+
+      <div class="drawer-body">
+        <div class="compose-head">
+          <div class="compose-who">
+            <div class="eyebrow desktop-only">외부조회 후속 절차 · ${formatMD(f.startedOn)} 시작</div>
+            <h2 id="follow-title">${esc(item.name)}</h2>
+            <div class="fix-sub">${TRACK_LABEL[item.track] || ''}${item.bookAmount ? ` · 장부 ${won(item.bookAmount)}원` : ''} · 회신 기한 ${formatMD(item.neededOn)}</div>
+          </div>
+          <button type="button" class="icon-btn btn-sub desktop-only" data-action="close-drawer" aria-label="닫기">${ICON.close}</button>
+        </div>
+
+        <section class="fix-reason">
+          <div class="section-label">회신 결과</div>
+          <div class="reason-grid" role="group" aria-label="회신 결과">${typeBtns}</div>
+        </section>
+
+        ${f.type === 'noreply' ? noReplyBody(item, f) : diffBody(item, f)}
+
+        ${evidenceBox(item, f, owner, owners)}
+
+        ${signoffBox(signoff, signoffErrors)}
+      </div>
+
+      <footer class="compose-foot">
+        <div class="foot-note ${check.ok ? 'is-done' : ''}">${check.ok
+          ? `${ICON.done}완료할 수 있어요. 결론이 기록되고 대시보드에서 완료로 바뀌어요.`
+          : esc(check.reason)}</div>
+        <div class="foot-actions">
+          <button type="button" class="btn btn-cta" data-action="complete-follow" ${check.ok ? '' : 'disabled'}>${ICON.done}<span>후속 절차 완료</span></button>
+        </div>
+      </footer>
+    </aside>`;
+}
+
+// ---------- 완료 기록 (감사기준서 230: 수행자·완료일·검토자) ----------
+
+function signoffBox(s, e) {
+  const field = (label, name, value, { type = 'text', hint = '', placeholder = '' } = {}) => `
+    <label class="f ${e[name] ? 'has-error' : ''}">
+      <span class="f-label">${label}${hint ? ` <small>${hint}</small>` : ''}</span>
+      <input type="${type}" data-action-input="follow-signoff" data-field="${name}" value="${esc(s[name] ?? '')}" placeholder="${esc(placeholder)}" autocomplete="off">
+      ${e[name] ? `<span class="f-error">${esc(e[name])}</span>` : ''}
+    </label>`;
+  return `
+    <section class="fu-signoff">
+      <div class="section-label">완료 기록 <small class="fu-count">조서에 남길 수행자와 검토자</small></div>
+      <div class="fu-signoff-grid">
+        ${field('수행자', 'preparer', s.preparer, { placeholder: '예: 장재혁' })}
+        ${field('완료일', 'completedOn', s.completedOn, { type: 'date' })}
+        ${field('검토자', 'reviewer', s.reviewer, { hint: '선택 · 나중에 채워도 돼요', placeholder: '예: 이서연 매니저' })}
+      </div>
+    </section>`;
+}
+
+// ---------- 미회수 ----------
+
+function noReplyBody(item, f) {
+  const steps = noReplySteps(item).map((s) => `
+    <label class="fu-step ${f.steps?.[s.key] ? 'is-done' : ''}">
+      <input type="checkbox" data-action-change="follow-step" data-step="${s.key}" ${f.steps?.[s.key] ? 'checked' : ''}>
+      <span class="fu-step-text">
+        <b>${esc(s.label)} <span class="fu-role fu-role-${s.role}">${ROLE_LABEL[s.role]}</span></b>
+        <small>${esc(s.detail)}</small>
+      </span>
+    </label>`).join('');
+
+  const pct = item.bookAmount ? Math.round(((f.verified || 0) / item.bookAmount) * 100) : 0;
+  const verified = item.track === 'coverage' ? `
+    <section class="fu-verified">
+      <label class="f">
+        <span class="f-label">대체적 절차로 확인한 금액 <small>장부 ${won(item.bookAmount)}원 중</small></span>
+        <input type="text" inputmode="numeric" data-action-change="follow-verified" value="${won(f.verified)}" autocomplete="off">
+      </label>
+      <div class="fu-meter" role="img" aria-label="확인 비율 ${pct}%"><span style="width:${pct}%"></span></div>
+      <small class="need-note">${pct}% 확인 · 이 금액이 커버리지에 반영돼요</small>
+    </section>` : '';
+
+  return `
+    <div class="fix-alert ${item.track === 'required' ? 'is-required' : ''}">
+      <span class="fix-alert-icon">${item.track === 'required' ? ICON.high : ICON.help}</span>
+      <div><b>${item.track === 'required' ? '대체적 절차로 끝낼 수 없는 조회예요' : item.track === 'general' ? '회신 대신 다른 경로로 소송·우발부채를 확인해요' : '회신 대신 다른 증거로 잔액을 확인해요'}</b>
+        <small>${esc(noReplyNotice(item))}</small></div>
+    </div>
+    <section class="fix-status">
+      <div class="section-label">진행할 절차 <small class="fu-count">${Object.values(f.steps || {}).filter(Boolean).length}/${noReplySteps(item).length} 완료</small></div>
+      <div class="fu-steps">${steps}</div>
+    </section>
+    ${verified}`;
+}
+
+// ---------- 금액 차이 ----------
+
+// 미착품은 인도조건에 따라 시점 차이(선적지 인도)인지 기간귀속 오류(도착지 인도)인지 갈린다.
+function termsRow(l, i) {
+  const picked = DELIVERY_TERMS.find((t) => t.key === l.terms);
+  return `
+    <div class="fu-terms ${l.terms ? '' : 'is-pending'} ${l.terms === 'destination' ? 'is-bad' : ''}">
+      <span>인도조건 확인</span>
+      <select data-action-change="follow-line" data-index="${i}" data-field="terms" aria-label="인도조건">
+        <option value="">확인 전</option>
+        ${DELIVERY_TERMS.map((t) => `<option value="${t.key}" ${t.key === l.terms ? 'selected' : ''}>${t.label}</option>`).join('')}
+      </select>
+      <small>${picked ? esc(picked.hint) : '계약서·거래명세서로 인도조건을 확인해 주세요. 도착지 인도면 회사의 기간귀속 오류예요.'}</small>
+    </div>`;
+}
+
+function diffBody(item, f) {
+  const recon = f.recon || { lines: [] };
+  const r = reconcile(recon);
+  const hasConfirmed = recon.confirmed !== null && recon.confirmed !== undefined && recon.confirmed !== '';
+
+  const causeOptions = (selected) => [`<option value="">원인 선택</option>`,
+    ...DIFF_CAUSES.map((c) => `<option value="${c.key}" ${c.key === selected ? 'selected' : ''}>${c.label}</option>`)].join('');
+
+  const lines = (recon.lines || []).map((l, i) => `
+    <div class="fu-line">
+      <select data-action-change="follow-line" data-index="${i}" data-field="cause" aria-label="차이 원인">${causeOptions(l.cause)}</select>
+      <input type="text" inputmode="numeric" data-action-change="follow-line" data-index="${i}" data-field="amount" value="${l.amount ? won(l.amount) : ''}" placeholder="금액" aria-label="금액">
+      <input type="text" data-action-change="follow-line" data-index="${i}" data-field="note" value="${esc(l.note || '')}" placeholder="근거 (예: 1/3 입고분)" aria-label="근거">
+      <button type="button" class="icon-btn btn-sub" data-action="follow-remove-line" data-index="${i}" aria-label="이 줄 삭제">${ICON.close}</button>
+    </div>
+    ${l.cause === 'goods' ? termsRow(l, i) : ''}`).join('');
+
+  return `
+    <section class="fu-recon">
+      <div class="section-label">차이 조정표</div>
+      <div class="fu-amounts">
+        <label class="f"><span class="f-label">장부금액</span>
+          <input type="text" inputmode="numeric" data-action-change="follow-amount" data-field="book" value="${won(recon.book)}" autocomplete="off"></label>
+        <label class="f"><span class="f-label">회신금액</span>
+          <input type="text" inputmode="numeric" data-action-change="follow-amount" data-field="confirmed" value="${hasConfirmed ? won(recon.confirmed) : ''}" placeholder="회신서의 금액" autocomplete="off"></label>
+        <div class="fu-diff"><small>차이 (장부 − 회신)</small><b>${hasConfirmed ? `${won(r.diff)}원` : '—'}</b></div>
+      </div>
+
+      ${hasConfirmed && r.diff !== 0 ? `
+        <div class="fu-lines">
+          <div class="fu-line fu-line-head"><div>차이 원인</div><div>금액</div><div>근거</div><div></div></div>
+          ${lines || '<div class="pp-empty">원인을 추가해 차이를 설명해 주세요.</div>'}
+          <button type="button" class="btn btn-sub fu-add" data-action="follow-add-line">${ICON.plus}원인 추가</button>
+        </div>
+        <dl class="fu-sum">
+          <div><dt>설명된 금액</dt><dd>${won(r.explained)}원</dd></div>
+          <div class="${r.unexplained ? 'is-open' : ''}"><dt>설명되지 않은 차이</dt><dd>${won(r.unexplained)}원</dd></div>
+          <div class="${r.misstatement ? 'is-bad' : ''}"><dt>왜곡표시 후보</dt><dd>${won(r.misstatement)}원</dd></div>
+        </dl>` : ''}
+
+      ${hasConfirmed ? `<div class="fu-result ${RESULT_CLASS[r.result]}"><small>조서 결론</small><b>${esc(reconConclusion(r))}</b></div>` : ''}
+    </section>`;
+}
+
+// ---------- 회사에 증빙 요청 (기존 자료 요청으로 연결) ----------
+
+function evidenceBox(item, f, owner, owners) {
+  const requested = new Set(f.requested || []);
+  let rows;
+  if (f.type === 'diff') {
+    rows = [{ key: 'diff', label: `차이 소명 자료 (${item.counterparty})` }];
+  } else {
+    rows = noReplySteps(item).filter((s) => s.evidence).map((s) => ({ key: s.key, label: s.evidence }));
+  }
+  if (!rows.length) return '';
+
+  return `
+    <section class="fu-evidence">
+      <div class="section-label">회사에 요청할 증빙 <small class="fu-count">자료 요청 목록에 추가돼 독촉까지 이어져요</small></div>
+      <label class="f fu-owner">
+        <span class="f-label">회사 담당자</span>
+        <input type="text" data-action-input="follow-owner" value="${esc(owner || '')}" placeholder="예: 김민지 대리" list="follow-owners" autocomplete="off">
+        <datalist id="follow-owners">${owners.map((o) => `<option value="${esc(o)}">`).join('')}</datalist>
+      </label>
+      <div class="fu-ev-list">
+        ${rows.map((r) => `
+          <div class="fu-ev">
+            <span>${esc(r.label)}</span>
+            ${requested.has(r.key)
+              ? `<span class="status status-done">${ICON.done}요청함</span>`
+              : `<button type="button" class="btn btn-sub" data-action="follow-request" data-key="${r.key}">자료 요청 만들기</button>`}
+          </div>`).join('')}
+      </div>
+    </section>`;
+}
+
+return { renderFollow };
+})();
+
 // ---- main.js
 (() => {
 const { todayISO } = __m_lib_dates;
@@ -4061,12 +6049,13 @@ const { buildMail, mailToText } = __m_lib_mail;
 const { bundleItems, bundleTone, buildBundleMail, bundleMailToText } = __m_lib_bundle;
 const { canOpenFix, currentFixReason, buildFixMail, fixMailToText } = __m_lib_fix;
 const { parseNow, clockOf } = __m_lib_timing;
-const { validateItem, parsePaste } = __m_lib_add;
+const { validateItem, parsePaste, markDuplicates, duplicateMessage, normalizeDate } = __m_lib_add;
+const { PBC_TEMPLATES, templateForName, templateOf, defaultBasisDate, requestSheetTsv, receiptSuggestion } = __m_lib_pbcTemplate;
 const { josa } = __m_lib_korean;
 const { buildReport, reportToText, reportToCsv, csvFileName } = __m_lib_report;
 const { monthOf, shiftMonth, addEvent, removeEvent, moveEntry, setEventProgress, progressLabel } = __m_lib_calendar;
 const { formatMD } = __m_lib_dates;
-const { validateTransition } = __m_lib_status;
+const { validateTransition, canTransition } = __m_lib_status;
 const { validateEngagement } = __m_lib_engagement;
 const { load, save, clear, sampleState, baseDateOf, copyAndRecord, copyAndRecordFix, addItems, updateItemStatus, createEmptyState } = __m_store;
 const { renderDashboard } = __m_views_dashboard;
@@ -4078,10 +6067,14 @@ const { renderAdd, pastePreview, pasteSubmit } = __m_views_add;
 const { renderReport } = __m_views_report;
 const { renderStatusSheet } = __m_views_status;
 const { renderCalendar } = __m_views_calendar;
+const { renderConfirm, partiesPreview, outputSection } = __m_views_confirm;
+const { renderFollow } = __m_views_follow;
+const { startFollow, completeFollow, clampVerified, evidenceRequests, validateSignoff, FOLLOW_TYPES } = __m_lib_followup;
+const { CONF_TYPES, defaultSetup, validateSetup, parseConfirmations, buildLetters, toRegistryValues, nextDocNo } = __m_lib_confirmation;
 // 진입점: 상태를 불러와 화면을 그리고, data-action 클릭을 처리한다.
 // 화면 주소: (없음) 대시보드 · #/compose/<자료id> 단건 독촉 · #/bundle/<담당자> 묶음 독촉
 //           #/fix/<자료id> 보완 요청 · #/add 자료 추가 (#/add/paste 붙여넣기 탭) · #/report 주간 현황
-//           #/calendar 일정
+//           #/calendar 일정 · #/confirm 외부조회서 작성 · #/follow/<자료id> 외부조회 후속 절차
 
 
 // ?today=2026-10-01 처럼 기준일을 직접 지정해 확인할 수 있다.
@@ -4100,6 +6093,9 @@ let add = null;     // 자료 추가 화면 상태: { tab, form, errors, pasteTe
 let sheet = null;   // 상태 변경 시트: { itemId, status, reason, basisDate, requiredBasisDate, errors }
 let emptyForm = { clientName: '', engagement: '', errors: {} }; // 첫 실행 화면 입력값
 let cal = null;     // 일정 탭 상태: { month, selected, form: { title, errors }, filter }
+let conf = null;    // 외부조회서 작성 상태: { type, setup, touched:Set, pasteText, bankBlank, resetArmed }
+let confResetTimer;
+let fu = null;      // 외부조회 후속 절차 패널: { itemId, owner, signoff: { preparer, completedOn, reviewer }, signoffErrors }
 
 function currentToday() {
   return baseDateOf(state, todayParam, todayISO());
@@ -4133,6 +6129,20 @@ function render() {
     compose = bundle = fix = add = sheet = null;
     if (!cal) cal = { month: monthOf(today), selected: today, form: { title: '', errors: {} }, filter: 'all' };
     app.innerHTML = renderCalendar(state, { today, isDemo, ...cal });
+    document.body.classList.remove('has-drawer');
+    return;
+  }
+
+  // 외부조회서 작성: 대시보드 대신 그리는 전체 화면
+  if (location.hash === '#/confirm') {
+    compose = bundle = fix = add = sheet = null;
+    if (!conf) {
+      conf = {
+        type: 'bank', touched: new Set(), pasteText: '', bankBlank: false,
+        setup: { ...defaultSetup(state.client, today), ...(state.confirmSetup || {}), issuedOn: today, replyBy: defaultSetup(state.client, today).replyBy },
+      };
+    }
+    app.innerHTML = renderConfirm(state, { today, isDemo, ...conf, setupErrors: confSetupErrors(today) });
     document.body.classList.remove('has-drawer');
     return;
   }
@@ -4180,6 +6190,20 @@ function render() {
     fix = null;
   }
 
+  const followId = routeParam('follow');
+  const followItem = followId && state.items.find((x) => x.id === followId);
+  if (followItem?.status === 'follow') {
+    if (fu?.itemId !== followId) {
+      // 수행자·검토자는 마지막으로 입력한 값을 기본으로 (완료일은 오늘)
+      const last = state.lastSignoff || {};
+      fu = { itemId: followId, owner: defaultPbcOwner(), signoffErrors: {},
+        signoff: { preparer: last.preparer || '', completedOn: today, reviewer: last.reviewer || '' } };
+    }
+    html += renderFollow(state, { today, ...fu });
+  } else {
+    fu = null;
+  }
+
   const addRoute = location.hash === '#/add' || location.hash === '#/add/paste';
   if (addRoute) {
     if (!add) add = { tab: location.hash.endsWith('/paste') ? 'paste' : 'single', form: {}, errors: {}, pasteText: '' };
@@ -4199,7 +6223,7 @@ function render() {
   const focusedTone = document.activeElement?.dataset?.tone;
   const focusedReason = document.activeElement?.dataset?.reason;
   app.innerHTML = html;
-  document.body.classList.toggle('has-drawer', Boolean(item || b || fix || add));
+  document.body.classList.toggle('has-drawer', Boolean(item || b || fix || add || fu));
   // 톤·사유를 바꾼 뒤에도 키보드 포커스가 같은 버튼에 남도록 (데스크톱·모바일 중 보이는 쪽)
   if (focusedTone) {
     [...app.querySelectorAll(`[data-tone="${focusedTone}"]`)].find((b) => b.offsetParent)?.focus();
@@ -4261,6 +6285,51 @@ async function copyForDrawer(view, { itemIds, text }, record) {
   drawerToastTimer = setTimeout(() => { view.toast = false; render(); }, 2800);
 }
 
+// 외부조회서: 손댄 칸의 오류만 보여준다 (처음 열었을 때 빨간 칸이 가득하지 않게)
+function confSetupErrors(today) {
+  const { errors } = validateSetup(conf.setup, today);
+  return Object.fromEntries(Object.entries(errors).filter(([k]) => conf.touched.has(k)));
+}
+
+function readConfSetup() {
+  const form = document.getElementById('conf-setup');
+  if (!form || !conf) return;
+  for (const el of form.elements) if (el.name) conf.setup[el.name] = el.value;
+}
+
+// 붙여넣기·공통 정보가 바뀌면 미리보기와 조회서 영역만 다시 그린다 (입력 포커스 유지)
+function refreshConfOutput() {
+  const today = currentToday();
+  app.querySelector('.conf-preview').innerHTML = partiesPreview(conf.type, parseConfirmations(conf.type, conf.pasteText));
+  app.querySelector('.conf-output').innerHTML = outputSection(state, { today, ...conf });
+}
+
+// ---------- 외부조회 후속 절차 ----------
+
+// 증빙을 요청할 회사 담당자 기본값: PBC 자료를 가장 많이 맡은 사람
+function defaultPbcOwner() {
+  const counts = new Map();
+  for (const x of state.items) if (x.kind !== 'confirmation') counts.set(x.owner, (counts.get(x.owner) || 0) + 1);
+  return [...counts].sort((a, b) => b[1] - a[1])[0]?.[0] || '';
+}
+
+/** '1,250,000' · '-3,000' · '' → 정수 / null */
+function numOf(value) {
+  const t = String(value ?? '').replace(/[,\s원₩]/g, '');
+  if (!t) return null;
+  const n = Number(t);
+  return Number.isFinite(n) ? Math.round(n) : null;
+}
+
+function setItem(id, fn) {
+  state = { ...state, items: state.items.map((x) => (x.id === id ? fn(x) : x)) };
+  save(state);
+}
+
+function setFollow(fn) {
+  setItem(fu.itemId, (x) => ({ ...x, follow: fn(x.follow, x) }));
+}
+
 const actions = {
   'set-mode': (el) => { mode = el.dataset.mode; render(); },
   'load-sample': () => { state = sampleState(); save(state); render(); },
@@ -4284,10 +6353,50 @@ const actions = {
 
   // 자료 상태 변경 시트
   'open-status': (el) => {
-    sheet = { itemId: el.dataset.item, status: null, reason: null, basisDate: '', requiredBasisDate: '', errors: {} };
+    sheet = { itemId: el.dataset.item, status: null, reason: null, basisDate: '', requiredBasisDate: '', errors: {},
+      check: { basisOk: null, missing: [], signOk: null } }; // 받은 자료 점검 (표준 양식 자료만 화면에 보임)
     render();
   },
   'close-status': () => { sheet = null; render(); },
+  // 받은 자료 점검 → 점검 결과에 맞춰 상태·보완 사유를 골라 둔다 (지금 상태에서 바꿀 수 있을 때만)
+  'check-basis': (el) => { readSheetDates(); sheet.check.basisOk = el.dataset.ok === '1'; applyReceiptCheck(); },
+  'check-sign': (el) => { readSheetDates(); sheet.check.signOk = el.dataset.ok === '1'; applyReceiptCheck(); },
+  'check-col': (el) => {
+    readSheetDates();
+    const col = el.dataset.col;
+    const m = sheet.check.missing;
+    sheet.check.missing = m.includes(col) ? m.filter((c) => c !== col) : [...m, col];
+    applyReceiptCheck();
+  },
+  // 표준 양식 고르기 (자료 추가)
+  'pick-template': (el) => {
+    const prev = PBC_TEMPLATES[add.form.template] || templateForName(add.form.name);
+    add.form = readAddForm();
+    const t = PBC_TEMPLATES[el.dataset.template];
+    add.form.template = t.key;
+    // 비어 있거나 다른 양식 값이 들어 있으면 이 양식 값으로 바꾼다 (직접 고친 값은 둔다)
+    if (!add.form.name || add.form.name === prev?.name) add.form.name = t.name;
+    if (!add.form.procedure || add.form.procedure === prev?.procedure) add.form.procedure = t.procedure;
+    if (!add.form.basisDate) add.form.basisDate = defaultBasisDate(state, currentToday());
+    add.errors = {};
+    render();
+  },
+  // 엑셀용 요청 양식 복사: 자료 추가 창이면 입력 중인 값, 독촉 패널이면 그 자료 기준
+  'copy-template': async (el) => {
+    let t; let basis;
+    if (el.dataset.item) {
+      const item = state.items.find((x) => x.id === el.dataset.item);
+      t = templateOf(item);
+      basis = item.basisDate || defaultBasisDate(state, currentToday());
+    } else {
+      add.form = readAddForm();
+      t = PBC_TEMPLATES[add.form.template] || templateForName(add.form.name);
+      basis = normalizeDate(add.form.basisDate, currentToday()) || defaultBasisDate(state, currentToday());
+    }
+    if (!t) return;
+    const ok = await copyText(requestSheetTsv(t, basis));
+    toast(ok ? `${t.name} 요청 양식을 복사했어요. 엑셀에 붙여넣으면 기준일과 항목이 들어가요.` : '복사하지 못했어요.');
+  },
   'pick-status': (el) => {
     readSheetDates();
     sheet.status = el.dataset.status;
@@ -4304,6 +6413,9 @@ const actions = {
     if (Object.keys(sheet.errors).length) { render(); return; }
 
     state = updateItemStatus(state, item.id, change, currentToday());
+    if (change.status === 'fix' && sheet.detail && (change.reason === 'missing' || change.reason === 'sign')) {
+      setItem(item.id, (x) => ({ ...x, fix: { ...x.fix, details: { ...(x.fix?.details || {}), [change.reason]: sheet.detail } } }));
+    }
     save(state);
     sheet = null;
     const name = `‘${item.name}’${josa(item.name, '을', '를')}`;
@@ -4323,7 +6435,11 @@ const actions = {
 
   'set-tone': (el) => { compose.tone = el.dataset.tone; compose.copied = false; render(); },
   'close-compose': closeDrawer,
-  'close-drawer': closeDrawer,
+  'close-drawer': () => {
+    // 후속 절차에서 연 자료 추가 창을 닫으면 후속 절차 화면으로 돌아간다
+    if (add?.source) { const id = add.source.itemId; add = null; location.hash = `#/follow/${encodeURIComponent(id)}`; render(); return; }
+    closeDrawer();
+  },
   'copy-mail': () => {
     const today = currentToday();
     const item = withDays(state.items.find((x) => x.id === compose.itemId), today);
@@ -4390,7 +6506,7 @@ const actions = {
   },
   'add-paste': () => {
     const today = currentToday();
-    const parsed = parsePaste(add.pasteText, today);
+    const parsed = markDuplicates(parsePaste(add.pasteText, today), state.items);
     if (!parsed.rows.length || parsed.errorCount) return;
     state = addItems(state, parsed.rows.map((r) => r.value));
     save(state);
@@ -4406,6 +6522,109 @@ const actions = {
     return copyForDrawer(fix, { text: fixMailToText(mail) },
       (s, on, text, copy) => copyAndRecordFix(s, { itemId: item.id, reason, on, text }, copy));
   },
+  // 외부조회서 작성
+  'conf-type': (el) => { readConfSetup(); conf.type = el.dataset.type; conf.pasteText = ''; render(); },
+  'conf-example': () => { readConfSetup(); conf.pasteText = CONF_TYPES[conf.type].example; render(); },
+  'conf-clear': () => { readConfSetup(); conf.pasteText = ''; render(); },
+  'conf-print': () => window.print(),
+  // 초기화: 첫 클릭은 확인 대기, 4초 안에 한 번 더 누르면 입력값·종류·기억해 둔 회사/감사인 정보까지 지운다.
+  // 이미 조회 목록에 등록한 조회서는 지우지 않는다.
+  'conf-reset': () => {
+    clearTimeout(confResetTimer);
+    if (!conf.resetArmed) {
+      readConfSetup();
+      conf.resetArmed = true;
+      render();
+      confResetTimer = setTimeout(() => { if (conf) { conf.resetArmed = false; render(); } }, 4000);
+      return;
+    }
+    const { confirmSetup, ...rest } = state;
+    state = rest;
+    save(state);
+    conf = null;
+    render();
+    toast('외부조회서 작성 화면을 처음 상태로 되돌렸어요. 등록한 조회서는 그대로예요.');
+  },
+  'conf-register': () => {
+    readConfSetup();
+    const today = currentToday();
+    const { value: setup } = validateSetup(conf.setup, today);
+    const parsed = parseConfirmations(conf.type, conf.pasteText);
+    if (!setup || !parsed.parties.length || parsed.errorCount) return;
+    const letters = buildLetters(conf.type, parsed.parties, setup,
+      { startNo: nextDocNo(state.items, conf.type), bankBlank: conf.bankBlank });
+    state = addItems(state, toRegistryValues(letters, setup));
+    // 다음 작성 때 회사·감사인 정보를 다시 입력하지 않도록 기억한다 (날짜는 매번 새로)
+    const { issuedOn, replyBy, ...keep } = setup;
+    state = { ...state, confirmSetup: keep };
+    save(state);
+    const label = CONF_TYPES[conf.type].label;
+    conf.pasteText = '';
+    location.hash = '';
+    render();
+    toast(`${label} ${letters.length}건을 조회 목록에 등록했어요. 회신 기한 ${formatMD(setup.replyBy)} 기준으로 추적해요.`);
+  },
+  // 외부조회 후속 절차
+  'start-follow': (el) => {
+    const id = el.dataset.item;
+    const type = el.dataset.type;
+    const item = state.items.find((x) => x.id === id);
+    if (item.status === 'follow' && item.follow?.type === type) return;
+    const switching = item.status === 'follow';
+    setItem(id, (x) => startFollow(x, type, currentToday()));
+    location.hash = `#/follow/${encodeURIComponent(id)}`;
+    render();
+    toast(switching
+      ? `‘${FOLLOW_TYPES[type].label}’로 바꿨어요. 앞에서 기록한 내용은 지웠어요.`
+      : type === 'noreply' ? '미회수로 확정했어요. 조회서 종류에 맞는 절차를 정리했어요.' : '금액 차이 조정을 시작했어요. 회신금액부터 입력해 주세요.');
+  },
+  'follow-add-line': () => {
+    setFollow((f) => ({ ...f, recon: { ...f.recon, lines: [...(f.recon.lines || []), { cause: '', amount: null, note: '' }] } }));
+    render();
+    app.querySelector('.fu-line:last-of-type select')?.focus();
+  },
+  'follow-remove-line': (el) => {
+    const i = Number(el.dataset.index);
+    setFollow((f) => ({ ...f, recon: { ...f.recon, lines: f.recon.lines.filter((_, j) => j !== i) } }));
+    render();
+  },
+  // 후속 절차의 증빙 → 기존 자료 추가 창을 미리 채워서 연다 (사용자가 확인·수정 후 저장)
+  'follow-request': (el) => {
+    const item = state.items.find((x) => x.id === fu.itemId);
+    const owner = fu.owner.trim();
+    const [req] = evidenceRequests(item, { stepKeys: [el.dataset.key], owner, dept: state.people[owner]?.dept || '', today: currentToday() });
+    if (!req) return;
+    const v = req.value.item;
+    const [ownerName = '', ...title] = owner.split(' ');
+    add = {
+      tab: 'single', errors: {}, pasteText: '',
+      source: { itemId: item.id, key: req.key, counterparty: item.counterparty },
+      form: {
+        name: v.name, ownerName, ownerTitle: title.join(' '), dept: req.value.person.dept,
+        requestedOn: v.requestedOn, neededOn: v.neededOn, procedure: v.procedure,
+      },
+    };
+    location.hash = '#/add';
+    render();
+    app.querySelector('#add-form [name="name"]')?.focus();
+  },
+  'complete-follow': () => {
+    const item = state.items.find((x) => x.id === fu.itemId);
+    fu.signoffErrors = validateSignoff(fu.signoff);
+    if (Object.keys(fu.signoffErrors).length) {
+      render();
+      app.querySelector('.fu-signoff .has-error input')?.focus();
+      return;
+    }
+    let done;
+    try { done = completeFollow(item, fu.signoff); } catch (err) { toast(err.message); return; }
+    setItem(item.id, () => done);
+    state = { ...state, lastSignoff: { preparer: fu.signoff.preparer.trim(), reviewer: fu.signoff.reviewer.trim() } };
+    save(state);
+    fu = null;
+    closeDrawer();
+    toast(`${item.counterparty} 후속 절차를 완료했어요. ${done.follow.conclusion}`);
+  },
   'copy-bundle': () => {
     const sorted = bundleItems(state.items, bundle.owner, currentToday());
     const mail = buildBundleMail({
@@ -4415,6 +6634,22 @@ const actions = {
     return copyForDrawer(bundle, { itemIds: sorted.map((x) => x.id), text: bundleMailToText(mail) });
   },
 };
+
+function applyReceiptCheck() {
+  const item = state.items.find((x) => x.id === sheet.itemId);
+  const t = templateOf(item);
+  const s = receiptSuggestion(t, sheet.check, item.basisDate || defaultBasisDate(state, currentToday()));
+  if (s.status && canTransition(item, s.status)) {
+    sheet.status = s.status;
+    sheet.errors = {};
+    if (s.status === 'fix') {
+      sheet.reason = s.reason;
+      if (s.requiredBasisDate) sheet.requiredBasisDate = s.requiredBasisDate;
+    }
+  }
+  sheet.detail = s.status === 'fix' ? s.detail : null;
+  render();
+}
 
 // 시트의 기준일 입력값을 상태에 옮겨 둔다 (다시 그려도 입력이 남도록)
 function readSheetDates() {
@@ -4489,12 +6724,59 @@ app.addEventListener('drop', (e) => {
 // 일정 패널의 날짜 입력으로 이동 (모바일·키보드)
 app.addEventListener('change', (e) => {
   if (e.target.dataset.actionChange === 'cal-move') moveCalendarEntry(e.target.dataset.entry, e.target.value);
+  if (e.target.dataset.actionChange === 'set-performance') {
+    const value = numOf(e.target.value);
+    state = { ...state, materiality: { ...(state.materiality || {}), performance: value && value > 0 ? value : null } };
+    save(state);
+    render();
+    toast(value > 0 ? `수행중요성을 ${value.toLocaleString('ko-KR')}원으로 정했어요.` : '수행중요성을 지웠어요.');
+    return;
+  }
+  const fuAction = e.target.dataset.actionChange;
+  if (fu && fuAction?.startsWith('follow-')) {
+    const t = e.target;
+    if (fuAction === 'follow-step') {
+      setFollow((f) => ({ ...f, steps: { ...f.steps, [t.dataset.step]: t.checked } }));
+    } else if (fuAction === 'follow-verified') {
+      setFollow((f, x) => ({ ...f, verified: clampVerified(x, t.value) }));
+    } else if (fuAction === 'follow-amount') {
+      setFollow((f) => ({ ...f, recon: { ...f.recon, [t.dataset.field]: numOf(t.value) } }));
+    } else if (fuAction === 'follow-line') {
+      const i = Number(t.dataset.index);
+      const v = t.dataset.field === 'amount' ? numOf(t.value) : t.value;
+      setFollow((f) => ({ ...f, recon: { ...f.recon, lines: f.recon.lines.map((l, j) => (j === i ? { ...l, [t.dataset.field]: v } : l)) } }));
+    }
+    const scroll = app.querySelector('.drawer-body')?.scrollTop;
+    render();
+    const body = app.querySelector('.drawer-body');
+    if (body && scroll) body.scrollTop = scroll;
+    return;
+  }
+  if (e.target.dataset.actionChange === 'conf-bank-blank') {
+    readConfSetup();
+    conf.bankBlank = e.target.checked;
+    refreshConfOutput();
+  }
+  // 공통 정보 칸을 벗어나면 그 칸의 오류를 보여준다
+  if (e.target.form?.id === 'conf-setup' && e.target.name) {
+    // 다시 그리면 Tab으로 넘어간 다음 칸의 포커스가 사라지므로, 오류 표시만 바꾼다.
+    readConfSetup();
+    conf.touched.add(e.target.name);
+    const errors = confSetupErrors(currentToday());
+    for (const label of app.querySelectorAll('#conf-setup .f')) {
+      const name = label.querySelector('input')?.name;
+      if (!conf.touched.has(name)) continue;
+      label.classList.toggle('has-error', Boolean(errors[name]));
+      label.querySelector('.f-error')?.remove();
+      if (errors[name]) label.insertAdjacentHTML('beforeend', `<span class="f-error">${errors[name]}</span>`);
+    }
+  }
 });
 
 function readAddForm() {
   const form = document.getElementById('add-form');
   if (!form) return add?.form || {};
-  return Object.fromEntries(['name', 'ownerName', 'ownerTitle', 'dept', 'requestedOn', 'neededOn', 'procedure']
+  return Object.fromEntries(['name', 'ownerName', 'ownerTitle', 'dept', 'requestedOn', 'neededOn', 'procedure', 'basisDate', 'template']
     .map((k) => [k, form[k]?.value ?? '']));
 }
 
@@ -4523,24 +6805,59 @@ app.addEventListener('submit', (e) => {
   const today = currentToday();
   add.form = readAddForm();
   const { errors, value } = validateItem(add.form, today);
+  const dup = value && duplicateMessage(state.items, value.item.name);
+  if (dup) errors.name = dup;
   add.errors = errors;
-  if (!value) {
+  if (!value || dup) {
     render();
     app.querySelector('.f.has-error input')?.focus();
     return;
   }
+  const source = add.source;
+  if (source) value.item.sourceId = source.itemId; // 어느 외부조회 건의 증빙인지
+  const tpl = PBC_TEMPLATES[add.form.template] || templateForName(value.item.name);
+  if (tpl) {
+    value.item.template = tpl.key;
+    value.item.basisDate = normalizeDate(add.form.basisDate, today) || defaultBasisDate(state, today);
+  }
   state = addItems(state, [value]);
+  if (source) {
+    setItem(source.itemId, (x) => ({ ...x, follow: { ...x.follow, requested: [...(x.follow?.requested || []), source.key] } }));
+  }
   save(state);
   add = null;
-  closeDrawer();
+  if (source) {
+    location.hash = `#/follow/${encodeURIComponent(source.itemId)}`;
+    render();
+  } else {
+    closeDrawer();
+  }
   toast(`‘${value.item.name}’${josa(value.item.name, '을', '를')} 추가했어요.`);
 });
 
 // 붙여넣기: 입력할 때마다 미리보기와 저장 버튼만 갱신한다 (textarea 포커스 유지).
 app.addEventListener('input', (e) => {
+  if (e.target.dataset.actionInput === 'follow-signoff') {
+    fu.signoff[e.target.dataset.field] = e.target.value;
+    return;
+  }
+  if (e.target.dataset.actionInput === 'follow-owner') {
+    fu.owner = e.target.value;
+    return;
+  }
+  if (e.target.dataset.actionInput === 'conf-paste') {
+    conf.pasteText = e.target.value;
+    refreshConfOutput();
+    return;
+  }
+  if (e.target.form?.id === 'conf-setup') {
+    readConfSetup();
+    refreshConfOutput();
+    return;
+  }
   if (e.target.dataset.actionInput === 'paste') {
     add.pasteText = e.target.value;
-    const parsed = parsePaste(add.pasteText, currentToday());
+    const parsed = markDuplicates(parsePaste(add.pasteText, currentToday()), state.items);
     app.querySelector('.paste-preview').innerHTML = pastePreview(parsed, currentToday());
     app.querySelector('.modal-foot .btn-cta').outerHTML = pasteSubmit(parsed);
   } else if (e.target.name === 'neededOn' && e.target.form?.id === 'add-form') {
@@ -4563,11 +6880,11 @@ window.addEventListener('popstate', render);
 document.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
   if (sheet) { sheet = null; render(); return; }
-  if (compose || bundle || fix || add) closeDrawer();
+  if (compose || bundle || fix || add || fu) actions['close-drawer']();
 });
 
 // 개발용: 콘솔에서 pbc.reset() 하면 첫 실행 화면으로 돌아간다.
-window.pbc = { reset() { clear(); state = null; compose = bundle = fix = add = sheet = cal = null; render(); } };
+window.pbc = { reset() { clear(); state = null; compose = bundle = fix = add = sheet = cal = conf = fu = null; render(); } };
 
 render();
 
