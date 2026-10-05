@@ -5,6 +5,7 @@ import { formatMD, formatMDW, daysBetween } from '../lib/dates.js';
 import { riskOf, leftText } from '../lib/priority.js';
 import { parsePaste, markDuplicates, rowErrorText, leftOf, normalizeDate } from '../lib/add.js';
 import { PBC_TEMPLATES, TEMPLATE_ORDER, templateForName, defaultBasisDate } from '../lib/pbcTemplate.js';
+import { requesterMembers, defaultRequester } from '../lib/team.js';
 import { esc, ICON, RISK_LABEL } from './html.js';
 import { termsOf } from '../lib/terms.js';
 import { josa } from '../lib/korean.js';
@@ -89,6 +90,7 @@ function singleForm(state, today, form, errors) {
           ${owners.length ? `<div class="recent-owners"><span>최근 담당자</span>${chips}</div>` : ''}
         </div>
         ${field('요청일', 'requestedOn', form.requestedOn ?? today, { type: 'date', error: errors.requestedOn })}
+        ${requesterField(state, form)}
         <div class="need-note">새 자료는 ‘미회신’으로 시작해요. 받은 뒤에는 자료 화면에서 상태를 바꿔요.</div>
       </div>
 
@@ -133,6 +135,18 @@ function templatePreview(state, today, form, errors) {
       <div class="tpl-line"><span>확인 포인트</span>${t.checks.map(esc).join(' · ')}</div>
       <button type="button" class="btn btn-sub tpl-copy" data-action="copy-template">${ICON.copy}엑셀용 요청 양식 복사</button>
     </div>`;
+}
+
+// 요청 감사인: 지금 쓰는 사람이 기본값, 팀원 중에서 바꿀 수 있다
+function requesterField(state, form) {
+  const members = requesterMembers(state);
+  if (!members.length) return '';
+  const value = form.requester || defaultRequester(state) || members[0];
+  return `
+    <label class="f">
+      <span class="f-label">요청 감사인 <small>실무진 중에서 · 감사인별로 진행 상황을 볼 수 있어요</small></span>
+      <select name="requester">${members.map((m) => `<option value="${esc(m)}" ${m === value ? 'selected' : ''}>${esc(m)}</option>`).join('')}</select>
+    </label>`;
 }
 
 // 필요일을 고르면 남은 날과 위험도를 미리 보여준다.

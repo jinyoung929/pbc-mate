@@ -5,8 +5,7 @@ import {
   addEvent, removeEvent, moveEntry, replyByDate, mailDates, matchMailDate,
   PROGRESS, progressLabel, setEventProgress, countByProgress,
 } from '../src/js/lib/calendar.js';
-import { DEMO_DATE } from '../src/js/store.js';
-import { sampleState } from './fixtures.js';
+import { sampleState, DEMO_DATE } from './fixtures.js';
 import { withDays, isOpen, sortItems } from '../src/js/lib/priority.js';
 import { buildMail } from '../src/js/lib/mail.js';
 

@@ -724,7 +724,7 @@ a.m-bundle { text-decoration: none; }
 .owner-table, .item-table { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
 .ot-row, .it-row { display: grid; gap: 12px; padding: 10px 16px; align-items: center; border-top: 1px solid var(--line-soft); font-size: 14px; }
 .ot-row { grid-template-columns: minmax(0, 1.4fr) 80px 90px minmax(0, 1.4fr) 100px; }
-.it-row { grid-template-columns: minmax(0, 1.6fr) 110px 110px 70px 170px 90px; }
+.it-row { grid-template-columns: minmax(0, 1.5fr) 110px 100px 60px 160px 70px minmax(0, 1.1fr); }
 .ot-head, .it-head { background: var(--fill); font-size: 12px; font-weight: 700; color: var(--ink-2); border-top: 0; border-bottom: 1px solid var(--line); padding-top: 9px; padding-bottom: 9px; }
 .ot-row > div, .it-row > div { min-width: 0; }
 .ot-owner b, .it-name { font-weight: 700; color: var(--ink); }
@@ -1112,6 +1112,8 @@ a.m-bundle { text-decoration: none; }
   .it-row > div:nth-child(5) { grid-column: 2; grid-row: 2 / 4; justify-self: end; align-self: center; flex-direction: column; align-items: flex-end; gap: 4px; }
   .it-row > div:nth-child(6) { grid-column: 1; font-size: 12.5px; color: var(--ink-3); }
   .it-row > div:nth-child(6)::before { content: '최근 독촉 '; }
+  .it-row > div:nth-child(7) { grid-column: 1 / -1; }
+  .it-row > div.it-att:empty, .it-head > div:nth-child(7) { display: none; }
 
   /* 상태 변경 시트: 아래에서 올라오는 시트 */
   .sheet { left: 0; top: auto; bottom: 0; transform: none; width: 100%; max-width: 100%; max-height: 92%; border: 0; border-top: 1px solid var(--line); border-radius: 0; }
@@ -1428,10 +1430,216 @@ a.m-bundle { text-decoration: none; }
 .row-action svg { width: 12px; height: 12px; }
 .row-action:hover { border-color: var(--orange); color: var(--orange-dark); }
 
+/* ---------- 첨부자료 ---------- */
+.sheet.attach .sheet-body { display: flex; flex-direction: column; gap: 10px; }
+.attach-drop { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 22px 16px; border: 1.5px dashed var(--line); border-radius: var(--radius); background: var(--fill-2); text-align: center; cursor: pointer; }
+.attach-drop svg { width: 20px; height: 20px; color: var(--orange); }
+.attach-drop b { font-size: 14px; color: var(--ink); }
+.attach-drop small { font-size: 12px; color: var(--ink-3); }
+.attach-drop:hover, .attach-drop.is-over { border-color: var(--orange); background: var(--peach-light); }
+.attach-list { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: var(--radius); }
+.attach-list li { display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 12px; font-size: 13px; }
+.attach-list li + li { border-top: 1px solid var(--line-soft); }
+.attach-name { flex-grow: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; color: var(--ink); }
+.attach-list small { color: var(--ink-3); flex-shrink: 0; }
+.attach-list .icon-btn { width: 28px; height: 28px; }
+.attach-rejected { font-size: 12.5px; color: var(--high-fg); background: var(--high-bg); padding: 8px 10px; border-radius: var(--radius); }
+.att-cell { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-width: 0; }
+.att-file { display: inline-flex; align-items: center; max-width: 100%; border: 1px solid var(--line); border-radius: 3px; background: #fff; }
+.att-link { display: inline-flex; align-items: center; gap: 4px; min-width: 0; padding: 2px 6px; border: 0; background: none; font-size: 12px; font-weight: 600; color: var(--ink); }
+.att-link span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.att-link svg { width: 11px; height: 11px; color: var(--orange); flex-shrink: 0; }
+.att-link:hover span { text-decoration: underline; }
+.att-remove { display: inline-flex; padding: 3px 5px; border: 0; border-left: 1px solid var(--line-soft); background: none; color: var(--ink-3); }
+.att-remove svg { width: 9px; height: 9px; }
+.att-remove:hover { color: var(--high-fg); }
+.att-add { display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px; border: 1px dashed var(--line); border-radius: 3px; background: none; font-size: 12px; font-weight: 600; color: var(--ink-3); }
+.att-add svg { width: 10px; height: 10px; }
+.att-add:hover { border-color: var(--orange); color: var(--orange-dark); }
+.it-row.is-done .att-link { color: var(--ink-2); }
+
+/* ---------- 주간 보고: 담당자 링크·검색 / 담당자 상세 ---------- */
+.owner-link { display: inline-flex; align-items: center; gap: 3px; font-weight: 700; color: var(--ink); text-decoration: none; }
+.owner-link svg { width: 11px; height: 11px; color: var(--ink-3); }
+.owner-link:hover { color: var(--orange-dark); text-decoration: underline; text-underline-offset: 3px; }
+.owner-link:hover svg { color: var(--orange); }
+.owner-link.is-plain { font-weight: 400; color: inherit; }
+.it-headline { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.it-search { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 10px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; min-width: 220px; }
+.it-search:focus-within { outline: 2px solid var(--orange); outline-offset: -1px; }
+.it-search svg { width: 14px; height: 14px; color: var(--ink-3); }
+.it-search input { border: 0; outline: 0; font: inherit; font-size: 13.5px; flex-grow: 1; min-width: 0; background: none; }
+.it-count { padding: 8px 16px; font-size: 12.5px; color: var(--ink-3); background: var(--fill-2); border-top: 1px solid var(--line-soft); }
+.it-empty { padding: 24px 16px; text-align: center; font-size: 13.5px; color: var(--ink-3); border-top: 1px solid var(--line-soft); }
+
+.owner-back { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: var(--ink-3); text-decoration: none; margin-bottom: 6px; }
+.owner-back svg { width: 12px; height: 12px; }
+.owner-back:hover { color: var(--orange-dark); }
+.owner-page .stat-value { font-size: 28px; }
+.owner-items .it-row { grid-template-columns: minmax(0, 1.6fr) 100px 90px 150px 80px minmax(0, 1fr) 96px; }
+.it-go .btn { height: 32px; padding: 0 10px; font-size: 12.5px; width: 100%; }
+.muted-text { color: var(--ink-3); }
+.oh-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--radius); }
+.oh-list li { display: grid; grid-template-columns: 40px 20px minmax(0, 1fr); gap: 8px; align-items: start; padding: 9px 12px; font-size: 13px; }
+.oh-list li + li { border-top: 1px solid var(--line-soft); }
+.oh-date { color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.oh-icon svg { width: 13px; height: 13px; margin-top: 3px; color: var(--ink-3); }
+.oh-fix .oh-icon svg { color: var(--fix-fg); }
+.oh-received .oh-icon svg, .oh-closed .oh-icon svg { color: var(--low-fg); }
+.oh-text { display: flex; flex-direction: column; min-width: 0; }
+.oh-text b { font-weight: 600; color: var(--ink); }
+.oh-text small { font-size: 12px; color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 720px) {
+  .it-search { min-width: 0; width: 100%; }
+  .owner-items .it-row { grid-template-columns: 1fr auto; }
+  .owner-items .it-row > div:nth-child(n) { grid-column: auto; grid-row: auto; }
+  .owner-items .it-row > div:nth-child(1) { grid-column: 1; }
+  .owner-items .it-row > div:nth-child(2) { grid-column: 2; grid-row: 1; justify-self: end; }
+  .owner-items .it-row > div:nth-child(3), .owner-items .it-row > div:nth-child(5) { grid-column: 1; font-size: 13px; color: var(--ink-3); }
+  .owner-items .it-row > div:nth-child(4) { grid-column: 2; grid-row: 2 / 4; justify-self: end; flex-direction: column; align-items: flex-end; gap: 4px; }
+  .owner-items .it-row > div:nth-child(6), .owner-items .it-row > div:nth-child(7) { grid-column: 1 / -1; }
+  .owner-items .it-row > div:nth-child(3)::before, .owner-items .it-row > div:nth-child(5)::before, .owner-items .it-row > div:nth-child(6)::before { content: none; }
+}
+
+/* 필요일 타임라인: 박스에 올리면 살짝 커지고 맨 앞으로, 누르면 자료 화면(독촉·보완·후속 절차) */
+a.tl-label { text-decoration: none; color: inherit; cursor: pointer; transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
+.above a.tl-label { transform-origin: left bottom; }
+.below a.tl-label { transform-origin: left top; }
+.anchor-end.above a.tl-label { transform-origin: right bottom; }
+.anchor-end.below a.tl-label { transform-origin: right top; }
+.tl-mark:hover, .tl-mark:focus-within { z-index: 5; }
+a.tl-label:hover, a.tl-label:focus-visible { transform: scale(1.08); border-color: var(--orange); box-shadow: 0 4px 12px rgba(0, 0, 0, .12); outline: none; }
+a.tl-label:hover b, a.tl-label:focus-visible b { color: var(--orange-dark); }
+@media (prefers-reduced-motion: reduce) { a.tl-label { transition: none; } }
+
+/* ---------- 감사팀: 첫 화면 · 상단바 사용자 · 요청 감사인 ---------- */
+.me-picker { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 6px 0 4px; border: 1px solid var(--line); border-radius: 16px; background: #fff; }
+.me-dot { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--orange); color: #fff; font-size: 12px; font-weight: 700; }
+.me-picker select { border: 0; background: none; font: inherit; font-size: 13px; font-weight: 600; color: var(--ink); padding-right: 2px; cursor: pointer; }
+.me-picker select:focus { outline: none; }
+.me-picker:focus-within { outline: 2px solid var(--orange); outline-offset: 1px; }
+.who-bar .segmented button { min-height: 40px; }
+.it-req { display: block; font-size: 11.5px; color: var(--ink-3); }
+.req-table .ot-row { grid-template-columns: minmax(0, 1.4fr) 80px 90px 70px minmax(0, 1.4fr); }
+button.owner-link { border: 0; background: none; padding: 0; font: inherit; font-weight: 700; cursor: pointer; }
+.add-col select, .f select[name="requester"] { height: 42px; border: 1px solid var(--line); border-radius: var(--radius); padding: 0 10px; font: inherit; background: #fff; }
+@media (max-width: 720px) {
+  .who-bar .segmented { grid-template-columns: 1fr 1fr; }
+  .me-picker select { max-width: 110px; }
+  .req-table .ot-row { grid-template-columns: 1fr 1fr; }
+}
+
+/* 상단바 폭: 사용자·처음으로 버튼이 늘어 좁은 화면에서는 덜 중요한 것부터 줄인다 */
+.topbar .chip { max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; line-height: 22px; }
+@media (max-width: 1500px) { .topbar .org-label { display: none; } }
+@media (max-width: 1380px) { .topbar .today { display: none; } .me-picker select { max-width: 120px; } .topbar .chip { max-width: 170px; } }
+@media (max-width: 1240px) { .topbar .tab { padding: 0 7px; } .topbar .tab.is-active::after { left: 7px; right: 7px; } .demo-date { font-size: 11px; } }
+@media (max-width: 1120px) { .topbar .chip { display: none; } }
+@media (max-width: 720px) { .topbar .chip { display: inline-block; max-width: none; } }
+
+/* ---------- 첫 화면: 감사 계약 조회 ---------- */
+.eng-lookup { grid-column: 1 / -1; }
+.eng-search { display: flex; gap: 8px; }
+.eng-search input { flex-grow: 1; min-width: 0; }
+.eng-search .btn { height: 42px; flex-shrink: 0; }
+.eng-results { grid-column: 1 / -1; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--radius); max-height: 240px; overflow-y: auto; }
+.eng-results.is-empty { padding: 12px 14px; font-size: 13px; color: var(--ink-3); background: var(--fill-2); }
+.eng-item { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 10px 14px; border: 0; background: #fff; text-align: left; cursor: pointer; }
+.eng-item + .eng-item { border-top: 1px solid var(--line-soft); }
+.eng-item:hover, .eng-item:focus-visible { background: var(--peach-light); outline: none; }
+.eng-name { font-size: 14px; color: var(--ink-2); }
+.eng-name b { color: var(--ink); }
+.eng-item small { font-size: 12px; color: var(--ink-3); }
+.eng-picked { grid-column: 1 / -1; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 12px 14px; border: 1px solid var(--orange); border-radius: var(--radius); background: var(--peach-light); }
+.eng-picked dl { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; font-size: 13.5px; }
+.eng-picked dl div { display: contents; }
+.eng-picked dt { color: var(--ink-3); }
+.eng-picked dd { margin: 0; font-weight: 600; color: var(--ink); }
+.eng-picked .link { flex-shrink: 0; font-size: 12.5px; }
+
+/* 타임라인 박스: 긴 자료명은 말줄임, 올리면(포커스) 전체 이름 */
+.tl-label b { max-width: 170px; overflow: hidden; text-overflow: ellipsis; }
+a.tl-label:hover b, a.tl-label:focus-visible b { max-width: none; }
+
+/* 첫 화면 클라이언트명: 직접 입력하지 않고 조회 창에서 고른다 */
+.eng-display { background: var(--fill-2) !important; cursor: pointer; color: var(--ink); font-weight: 600; }
+.eng-display::placeholder { font-weight: 400; color: var(--ink-3); }
+.eng-search .btn svg { width: 14px; height: 14px; }
+.eng-modal .sheet-body { display: flex; flex-direction: column; gap: 12px; }
+.eng-modal .eng-results { max-height: 320px; }
+.eng-list { min-height: 60px; }
+
+/* ---------- 첨부 미리보기 ---------- */
+.sheet.preview-sheet { width: 820px; height: calc(100% - 64px); }
+.preview-sheet .sheet-body { flex-grow: 1; display: flex; min-height: 0; padding: 12px 22px; }
+.pv-frame { flex-grow: 1; min-height: 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--fill-2); overflow: auto; }
+.pv-frame iframe { width: 100%; height: 100%; border: 0; background: #fff; }
+.pv-image { display: grid; place-items: start center; padding: 12px; }
+/* 문서 스캔처럼 세로로 긴 이미지는 폭에 맞추고 세로로 스크롤해 읽는다 */
+.pv-image img { display: block; max-width: 100%; height: auto; box-shadow: 0 1px 4px rgba(0,0,0,.12); }
+.pv-text { margin: 0; padding: 14px 16px; font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 13px; line-height: 1.6; white-space: pre-wrap; word-break: break-word; color: var(--ink); background: #fff; }
+.pv-none { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; color: var(--ink-3); }
+.pv-none svg { width: 22px; height: 22px; color: var(--ink-3); }
+.pv-none b { color: var(--ink); font-size: 14px; }
+.preview-sheet .sheet-foot .btn svg { width: 14px; height: 14px; }
+@media (max-width: 720px) { .sheet.preview-sheet { height: 92%; } .preview-sheet .sheet-body { padding: 10px 16px; } }
+
+.cal-scope { display: inline-flex; align-items: center; gap: 5px; margin-top: 4px; padding: 2px 8px; border-radius: 3px; background: var(--peach-light); color: var(--orange-dark); font-size: 12.5px; font-weight: 600; }
+.cal-scope svg { width: 12px; height: 12px; }
+
+/* 감사인별 현황: 지금 쓰는 사람의 줄 */
+.req-table .ot-row.is-me { background: var(--peach-light); box-shadow: inset 3px 0 0 var(--orange); }
+.req-table .ot-owner { display: flex; align-items: center; gap: 6px; flex-direction: row; }
+.me-tag { font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 3px; background: var(--orange); color: #fff; }
+
+/* 왼쪽 위 PBC Mate: 누르면 대시보드 */
+a.brand { color: inherit; text-decoration: none; }
+a.brand:hover { color: var(--orange-dark); }
+
+.preview-sheet .sheet-foot .btn[disabled] { opacity: .45; cursor: not-allowed; }
+.pv-none small { max-width: 360px; }
+
 </style>
 <div id="app"></div>
 <div id="toast" class="toast" role="status" hidden></div>
 <script>
+// ---- files.js
+const __m_files = (() => {
+
+// 첨부 파일 내용을 브라우저 IndexedDB에 저장한다 (localStorage는 용량이 작아 파일에 맞지 않는다).
+// 이 브라우저에만 남고 다른 사람·기기와 공유되지 않는다. 막힌 환경에서는 Promise가 실패한다.
+
+const DB_NAME = 'pbc-mate-files';
+const STORE = 'files';
+
+function openDb() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = () => req.result.createObjectStore(STORE);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function run(mode, fn) {
+  const db = await openDb();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE, mode);
+    const result = fn(tx.objectStore(STORE));
+    tx.oncomplete = () => { db.close(); resolve(result?.result); };
+    tx.onerror = () => { db.close(); reject(tx.error); };
+    tx.onabort = () => { db.close(); reject(tx.error); };
+  });
+}
+
+const putFile = (id, blob) => run('readwrite', (s) => s.put(blob, id));
+const getFile = (id) => run('readonly', (s) => s.get(id));
+const deleteFile = (id) => run('readwrite', (s) => s.delete(id));
+const clearFiles = () => run('readwrite', (s) => s.clear());
+
+return { putFile, getFile, deleteFile, clearFiles };
+})();
+
 // ---- lib/dates.js
 const __m_lib_dates = (() => {
 
@@ -1643,6 +1851,77 @@ function leftOf(value, baseDate) {
 }
 
 return { normalizeDate, ownerName, validateItem, splitCells, parsePaste, findExisting, duplicateMessage, markDuplicates, rowErrorText, leftOf };
+})();
+
+// ---- lib/attach.js
+const __m_lib_attach = (() => {
+
+// 완료한 자료에 받은 파일을 첨부한다. 파일 내용은 브라우저 저장소(files.js, IndexedDB)에,
+// 자료에는 목록만 둔다: item.attachments = [{ id, name, size, type, addedOn }]
+// 순수 함수만 둔다.
+
+const MAX_FILE_BYTES = 20 * 1024 * 1024; // 한 파일 20MB까지
+
+/** 1536 → '1.5KB' */
+function formatSize(bytes) {
+  const n = Number(bytes) || 0;
+  if (n < 1024) return `${n}B`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(n < 10 * 1024 ? 1 : 0)}KB`;
+  return `${(n / 1024 / 1024).toFixed(1)}MB`;
+}
+
+/**
+ * 고른 파일 검사. files: [{ name, size }]
+ * - 빈 파일, 너무 큰 파일은 뺀다
+ * - 이 자료에 이미 같은 이름으로 첨부한 파일, 이번에 고른 것 안에서 같은 이름도 뺀다
+ * @returns {{ ok: object[], rejected: { name, reason }[] }}
+ */
+function checkFiles(files, existing = [], maxBytes = MAX_FILE_BYTES) {
+  const names = new Set(existing.map((a) => a.name));
+  const ok = [];
+  const rejected = [];
+  for (const f of files) {
+    if (!f.size) rejected.push({ name: f.name, reason: '빈 파일' });
+    else if (f.size > maxBytes) rejected.push({ name: f.name, reason: `${formatSize(maxBytes)} 초과` });
+    else if (names.has(f.name)) rejected.push({ name: f.name, reason: '이미 첨부한 파일' });
+    else { names.add(f.name); ok.push(f); }
+  }
+  return { ok, rejected };
+}
+
+/** 첨부 목록을 더한 새 자료 */
+function addAttachments(item, metas) {
+  return { ...item, attachments: [...(item.attachments || []), ...metas] };
+}
+
+/** 첨부 하나를 뺀 새 자료 */
+function removeAttachment(item, fileId) {
+  return { ...item, attachments: (item.attachments || []).filter((a) => a.id !== fileId) };
+}
+
+/** 저장소 키. 같은 밀리초에 여러 개를 올려도 겹치지 않게 순번을 붙인다. */
+function newFileId(now = Date.now(), seq = 0) {
+  return `f${now.toString(36)}${seq.toString(36)}`;
+}
+
+// ---------- 미리보기 ----------
+
+const IMAGE_EXT = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp', 'svg'];
+const TEXT_EXT = ['txt', 'csv', 'tsv', 'md', 'json', 'log', 'xml'];
+
+/** 미리보기 방식: 'image' | 'pdf' | 'text' | 'none'(엑셀·워드 등 브라우저가 직접 못 여는 형식) */
+function previewKind(name, type = '') {
+  const ext = String(name ?? '').split('.').pop().toLowerCase();
+  if (type.startsWith('image/') || IMAGE_EXT.includes(ext)) return 'image';
+  if (type === 'application/pdf' || ext === 'pdf') return 'pdf';
+  if (type.startsWith('text/') || TEXT_EXT.includes(ext)) return 'text';
+  return 'none';
+}
+
+/** 텍스트 미리보기는 앞부분만 (너무 긴 파일로 화면이 멈추지 않게) */
+const TEXT_PREVIEW_LIMIT = 20000;
+
+return { MAX_FILE_BYTES, formatSize, checkFiles, addAttachments, removeAttachment, newFileId, previewKind, TEXT_PREVIEW_LIMIT };
 })();
 
 // ---- lib/korean.js
@@ -2126,7 +2405,7 @@ const { addDays, daysBetween, formatMD } = __m_lib_dates;
 const { withDays, isOpen } = __m_lib_priority;
 // 일정: 자료 필요일(자동) + 사용자가 만든 일정(events)을 한 달력에서 관리한다.
 //
-// state.events = [{ id, title, date, itemId?, note?, progress? }]   // 사용자가 만든 일정
+// state.events = [{ id, title, date, itemId?, note?, progress?, by? }]   // 사용자가 만든 일정 (by: 만든 감사인, 없으면 팀 공통)
 //   progress: 'planned'(진행예정, 기본) | 'doing'(진행중) | 'done'(완료)
 // 달력 항목(entry)은 두 종류:
 //   need:<itemId>  — 자료의 필요일. 옮기면 item.neededOn이 바뀐다.
@@ -2227,12 +2506,12 @@ function nextEventId(state) {
 }
 
 /** 사용자 일정 추가. 같은 자료·같은 날짜·같은 제목이 이미 있으면 그대로 둔다(중복 방지). */
-function addEvent(state, { title, date, itemId = null, note = '' }) {
+function addEvent(state, { title, date, itemId = null, note = '', by = '' }) {
   const t = String(title ?? '').trim();
   if (!t || !date) return { state, added: false };
   const dup = (state.events || []).some((e) => e.title === t && e.date === date && (e.itemId || null) === itemId);
   if (dup) return { state, added: false };
-  const event = { id: nextEventId(state), title: t, date, ...(itemId && { itemId }), ...(note && { note }) };
+  const event = { id: nextEventId(state), title: t, date, ...(itemId && { itemId }), ...(note && { note }), ...(by && { by }) };
   return { state: { ...state, events: [...(state.events || []), event] }, added: true, event };
 }
 
@@ -2822,6 +3101,62 @@ function validateEngagement({ clientName, engagement }) {
 }
 
 return { validateEngagement };
+})();
+
+// ---- lib/engagements.js
+const __m_lib_engagements = (() => {
+
+// 감사 계약 조회: 첫 화면에서 클라이언트명으로 조회해 감사명·팀원·담당 매니저를 불러온다.
+// 실제로는 법인 시스템에서 가져와야 하지만, 서버가 없는 프로토타입이라 가상의 계약 목록을 둔다.
+// (연결할 때는 searchEngagements만 바꾸면 된다.)
+
+const ENGAGEMENTS = [
+  { id: 'e1', client: '㈜한빛전자', engagement: '2026 기말감사', manager: '이서연 매니저', members: ['장재혁 회계사', '김서윤 회계사'] },
+  { id: 'e2', client: '㈜한빛전자', engagement: '2026 반기검토', manager: '이서연 매니저', members: ['김서윤 회계사', '박도윤 회계사'] },
+  { id: 'e3', client: '동해에너지㈜', engagement: '2026 기말감사', manager: '최민준 매니저', members: ['정하늘 회계사', '오지훈 회계사', '장재혁 회계사'] },
+  { id: 'e4', client: '㈜새봄바이오', engagement: '2026 기말감사', manager: '강태오 매니저', members: ['한유진 회계사', '윤가람 회계사'] },
+  { id: 'e5', client: '한결유통㈜', engagement: '2026 내부회계관리제도 감사', manager: '이서연 매니저', members: ['박도윤 회계사', '서민재 회계사'] },
+  { id: 'e6', client: '㈜미래모빌리티', engagement: '2026 기말감사', manager: '최민준 매니저', members: ['오지훈 회계사', '윤가람 회계사'] },
+];
+
+/** '㈜한빛전자' → '한빛전자' (㈜·(주)·주식회사·띄어쓰기 무시) */
+const key = (s) => String(s ?? '').replace(/㈜|\(주\)|주식회사|\s+/g, '').toLowerCase();
+
+/** 클라이언트명 일부로 조회. 빈 검색어면 빈 목록. */
+function searchEngagements(query, list = ENGAGEMENTS) {
+  const q = key(query);
+  return q ? list.filter((e) => key(e.client).includes(q)) : [];
+}
+
+function engagementById(id, list = ENGAGEMENTS) {
+  return list.find((e) => e.id === id) || null;
+}
+
+/** 시작 검증: 조회한 계약을 골랐는지, 내 이름을 넣었는지 */
+function validateStart({ selectedId, myName }) {
+  const errors = {};
+  if (!engagementById(selectedId)) errors.client = '클라이언트명으로 조회한 뒤 감사 계약을 골라 주세요.';
+  if (!String(myName ?? '').trim()) errors.myName = '내 이름을 입력해 주세요. 요청 감사인과 메일 서명에 들어가요.';
+  return errors;
+}
+
+/**
+ * 고른 계약 + 내 이름·직급 → state.team.
+ * 내 이름이 팀원 목록에 있으면(직급 없이 이름만 넣어도) 그 사람으로, 없으면 맨 앞에 더한다.
+ * 매니저는 팀원 맨 뒤.
+ */
+function teamFromEngagement(eng, myName, myTitle) {
+  const name = String(myName ?? '').trim().replace(/\s+/g, ' ');
+  const title = String(myTitle ?? '').trim();
+  const label = [name, title].filter(Boolean).join(' ');
+  const pool = [...eng.members, eng.manager];
+  const found = pool.find((m) => m === label) || pool.find((m) => m.split(' ')[0] === name && (!title || m === label));
+  const me = found || label;
+  const members = [...new Set([me, ...eng.members, eng.manager])];
+  return { manager: { name: eng.manager, dept: '감사팀' }, members, me };
+}
+
+return { ENGAGEMENTS, searchEngagements, engagementById, validateStart, teamFromEngagement };
 })();
 
 // ---- lib/fix.js
@@ -3469,6 +3804,8 @@ function buildReport(state, today) {
     riskLabel: isOpen(x) ? RISK[x.risk] : '',
     lastNudgedOn: lastOf(x.nudges)?.on ?? null,
     fixReason: x.status === 'fix' && x.fix?.reason ? fixReasonLabel(x.fix.reason) : null,
+    attachments: x.attachments || [], // 완료한 자료에 첨부한 파일 목록
+    requester: x.requester || '',     // 요청 감사인 (lib/team.js)
     // 외부조회 후속 절차를 마친 건: 수행자·검토자 (감사기준서 230)
     signoff: x.follow?.signoff
       ? `수행 ${x.follow.signoff.preparer}${x.follow.signoff.reviewer ? ` · 검토 ${x.follow.signoff.reviewer}` : ' · 검토 전'}`
@@ -3531,7 +3868,7 @@ function reportToText(report) {
     `보완 요청 ${counts.fix}건`,
   ];
   if (owners.length) {
-    lines.push('', '담당자별');
+    lines.push('', '담당자별(거래처별)');
     for (const o of owners) lines.push(`- ${o.owner}: ${o.open}건${o.urgent ? ` (긴급·지연 ${o.urgent})` : ''}`);
   }
   if (urgentItems.length) {
@@ -3560,7 +3897,212 @@ function csvFileName(report) {
   return `pbc-현황-${report.today}.csv`;
 }
 
-return { weekRange, weekLabel, buildReport, summaryLines, reportToText, reportToCsv, csvFileName };
+// ---------- 자료 목록 검색 ----------
+
+const normText = (s) => String(s ?? '').replace(/\s+/g, '').toLowerCase();
+
+/** 자료명으로 거르기 (띄어쓰기·대소문자 무시). 검색어가 비면 그대로. */
+function filterRows(rows, query) {
+  const q = normText(query);
+  return q ? rows.filter((r) => normText(r.name).includes(q)) : rows;
+}
+
+// ---------- 담당자 상세 ----------
+
+const TONE_NAME = { angel: '천사', polite: '정중', firm: '단호', cc: '매니저 참조' };
+const FIX_NAME = { date: '기준일 상이', sign: '서명 누락', missing: '일부 항목 누락', file: '파일 오류' };
+const CONF_NAME = { bank: '은행조회서', arap: '채권채무조회서', legal: '변호사조회서', inventory: '제3자보관재고자산조회서' };
+
+/**
+ * 한 담당자(회사 담당자 또는 외부조회 조회처)의 상세.
+ * @returns {null | {
+ *   owner, dept, isCounterparty,
+ *   counts: { total, open, urgent, done },
+ *   nudges, lastNudgedOn, bundlable,           // 묶음 독촉 가능한 건수
+ *   rows: 주간 보고 행 + { nudgeCount, kindLabel, bookAmount }[],  // 미완료(필요일순) → 완료
+ *   history: { on, kind: 'nudge'|'fix'|'received'|'closed', text, itemName }[]  // 최근 순
+ * }}
+ */
+function ownerDetail(state, owner, today) {
+  const items = state.items.filter((x) => x.owner === owner);
+  if (!items.length) return null;
+  const byId = new Map(items.map((x) => [x.id, x]));
+  const rows = buildReport(state, today).rows.filter((r) => r.owner === owner).map((r) => {
+    const x = byId.get(r.id);
+    return {
+      ...r,
+      nudgeCount: (x.nudges || []).length,
+      kindLabel: x.kind === 'confirmation' ? CONF_NAME[x.confType] : 'PBC 자료',
+      bookAmount: x.bookAmount ?? null,
+    };
+  });
+  const open = rows.filter((r) => r.status !== 'done');
+
+  const history = [];
+  for (const x of items) {
+    for (const n of x.nudges || []) history.push({ on: n.on, kind: 'nudge', text: `독촉 메일 · ${TONE_NAME[n.tone] || n.tone}`, itemName: x.name });
+    for (const f of x.fixes || []) history.push({ on: f.on, kind: 'fix', text: `보완 요청 · ${FIX_NAME[f.reason] || f.reason}`, itemName: x.name });
+    if (x.received?.on) history.push({ on: x.received.on, kind: 'received', text: '자료 수령', itemName: x.name });
+    if (x.follow?.closedOn) history.push({ on: x.follow.closedOn, kind: 'closed', text: '후속 절차 완료', itemName: x.name });
+  }
+  history.sort((a, b) => (a.on < b.on ? 1 : a.on > b.on ? -1 : 0));
+
+  const person = state.people[owner] || {};
+  return {
+    owner,
+    dept: person.dept || '',
+    isCounterparty: items.some((x) => x.kind === 'confirmation'),
+    counts: {
+      total: rows.length,
+      open: open.length,
+      urgent: open.filter((r) => r.risk === 'late' || r.risk === 'high').length,
+      done: rows.length - open.length,
+    },
+    nudges: person.nudges || 0,
+    lastNudgedOn: person.lastNudgedOn ?? null,
+    bundlable: items.filter((x) => x.status !== 'done' && x.status !== 'fix' && x.status !== 'follow').length,
+    rows,
+    history,
+  };
+}
+
+return { weekRange, weekLabel, buildReport, summaryLines, reportToText, reportToCsv, csvFileName, filterRows, ownerDetail };
+})();
+
+// ---- lib/sampleDocs.js
+const __m_lib_sampleDocs = (() => {
+
+// 시연용 예시 첨부파일의 내용 (스캔 문서처럼 그릴 수 있게 구조만 둔다).
+// 그리기는 src/js/scan.js가 한다. 금액·수량은 예시 자료(store.js)의 장부 금액과 맞춘다.
+// 모든 회사·은행·사람·번호는 가공의 것이다.
+
+const won = (n) => Number(n).toLocaleString('ko-KR');
+
+/** 은행조회서 회신 — 바다저축은행 본점 (BK-002, 장부 5억원과 일치) */
+function bankReply(item, setup) {
+  const deposits = [
+    ['보통예금', '110-482-***521', 'KRW', '-', '-', 120000000],
+    ['정기예금', '210-031-***087', 'KRW', '2027-06-30', '3.40%', 380000000],
+  ];
+  const total = deposits.reduce((s, r) => s + r[5], 0);
+  return {
+    kind: 'bank',
+    docNo: item.docNo,
+    title: '은 행 조 회 서 (회 신)',
+    to: `${setup.auditorName} 귀중 (담당: ${setup.contactName})`,
+    meta: [
+      ['조회 의뢰 회사', `${setup.companyName} (대표이사 ${setup.ceoName})`],
+      ['조회 기준일', '2026년 12월 31일'],
+      ['조회서 번호', item.docNo],
+    ],
+    lead: '귀 감사인의 조회 의뢰에 대하여 당행의 장부에 기록된 내용을 아래와 같이 회신합니다.',
+    sections: [
+      { heading: '1. 예금 잔액', cols: ['예금 종류', '계좌번호', '통화', '만기일', '이율', '잔액(원)'],
+        rows: deposits.map((r) => [...r.slice(0, 5), won(r[5])]), total: ['합계', '', '', '', '', won(total)] },
+      { heading: '2. 차입금 및 당좌차월', cols: ['종류', '약정한도', '잔액', '이율', '만기일', '담보'],
+        rows: [['해당 사항 없음', '', '', '', '', '']] },
+      { heading: '3. 담보 제공 · 지급보증 · 기타 약정', cols: ['구분', '내용'],
+        rows: [['담보 제공', '해당 사항 없음'], ['지급보증', '해당 사항 없음'], ['파생상품 · 기타 약정', '해당 사항 없음']] },
+    ],
+    remark: '상기 이외에 기준일 현재 귀사와의 거래로 당행 장부에 기록된 채권·채무는 없습니다.',
+    signed: { date: '2027년 1월 11일', org: '바다저축은행 본점 수신관리팀', person: '책임자  한 지 원 (인)', stamp: ['바다저축', '은행', '본점'] },
+    total,
+  };
+}
+
+/** 제3자 보관 재고자산 조회 회신 — ㈜한결물류 평택센터 (수량만 확인) */
+function inventoryReply(item, setup) {
+  const lines = [
+    ['P-1001', 'OLED 패널 A-15', 'EA', 8200, 8200],
+    ['P-1024', 'OLED 패널 B-13', 'EA', 5400, 5400],
+    ['M-3310', '구동 IC DR-7', 'BOX', 1260, 1260],
+    ['M-4102', '편광필름 PF-2', 'ROLL', 340, 340],
+  ];
+  return {
+    kind: 'inventory',
+    docNo: item.docNo,
+    title: '제3자 보관 재고자산 조회서 (회신)',
+    to: `${setup.auditorName} 귀중 (담당: ${setup.contactName})`,
+    meta: [
+      ['위탁 회사', setup.companyName],
+      ['보관 장소', '경기도 평택시 포승읍 평택항로 268 · 한결물류 평택센터 B동'],
+      ['조회 기준일', '2026년 12월 31일'],
+      ['조회서 번호', item.docNo],
+    ],
+    lead: '기준일 현재 당사가 위 회사를 위하여 보관 중인 재고자산의 수량을 아래와 같이 확인합니다.',
+    sections: [
+      { heading: '보관 수량 확인', cols: ['품목코드', '품목명', '단위', '회사 통지 수량', '보관 확인 수량', '차이'],
+        rows: lines.map(([code, name, unit, notified, held]) => [code, name, unit, won(notified), won(held), won(held - notified)]) },
+      { heading: '기타 확인 사항', cols: ['구분', '내용'],
+        rows: [['소유권', '상기 재고는 당사 소유가 아니며 위탁 회사의 소유임'],
+          ['담보 · 질권 설정', '해당 사항 없음'], ['출고 제한 · 보관료 미납', '해당 사항 없음']] },
+    ],
+    remark: '금액은 확인하지 않았으며 수량만 확인하였습니다.',
+    signed: { date: '2027년 1월 12일', org: '㈜한결물류 평택센터', person: '센터장  오 승 민 (인)', stamp: ['㈜한결', '물류', '평택센터'] },
+    lines,
+  };
+}
+
+/** 법인세 과세표준 및 세액신고서 사본 — 2025 사업연도 (세율 2억 이하 9%, 2억 초과~200억 19%) */
+function corporateTax(income) {
+  const base = income.net + income.add - income.deduct;
+  const low = Math.min(base, 200000000);
+  const computed = Math.round(low * 0.09 + Math.max(base - 200000000, 0) * 0.19);
+  const payable = computed - income.credit;
+  return { base, computed, payable, due: payable - income.prepaid };
+}
+
+function taxReturn(item, setup) {
+  const income = { net: 3120000000, add: 410000000, deduct: 185000000, credit: 42000000, prepaid: 280000000 };
+  const t = corporateTax(income);
+  const row = (no, label, amount) => [no, label, won(amount)];
+  return {
+    kind: 'tax',
+    title: '법인세 과세표준 및 세액신고서',
+    to: '',
+    meta: [
+      ['법인명', setup.companyName],
+      ['사업자등록번호', '124-81-*****'],
+      ['대표자', setup.ceoName],
+      ['사업연도', '2025.01.01 ~ 2025.12.31'],
+    ],
+    lead: '',
+    sections: [
+      { heading: '① 과세표준 및 세액의 계산', cols: ['코드', '구분', '금액(원)'],
+        rows: [
+          row('01', '결산서상 당기순손익', income.net),
+          row('02', '소득조정금액  익금산입', income.add),
+          row('03', '소득조정금액  손금산입', income.deduct),
+          row('04', '각 사업연도 소득금액 (01+02-03)', t.base),
+          row('10', '과세표준', t.base),
+          row('12', '산출세액', t.computed),
+          row('17', '공제감면세액', income.credit),
+          row('20', '총부담세액', t.payable),
+          row('22', '기납부세액 (중간예납)', income.prepaid),
+          row('25', '차감 납부할 세액', t.due),
+        ] },
+    ],
+    remark: '「법인세법」 제60조에 따라 위와 같이 신고합니다.',
+    signed: { date: '2026년 3월 31일', org: `신고인  ${setup.companyName}`, person: `대표이사  ${setup.ceoName.split('').join(' ')} (인)`, stamp: null },
+    receipt: ['전자신고 접수', '2026.03.31', '접수번호 1203-2026-***41'],
+    tax: t,
+  };
+}
+
+/** 예시 첨부 id → 문서 내용 */
+const SAMPLE_DOC_BUILDERS = {
+  'sample-f1': bankReply,
+  'sample-f2': inventoryReply,
+  'sample-f3': taxReturn,
+};
+
+/** 예시 첨부의 문서 내용. 해당 없으면 null */
+function sampleDoc(fileId, item, setup) {
+  const build = SAMPLE_DOC_BUILDERS[fileId];
+  return build && item && setup ? build(item, setup) : null;
+}
+
+return { corporateTax, SAMPLE_DOC_BUILDERS, sampleDoc };
 })();
 
 // ---- lib/status.js
@@ -3639,6 +4181,158 @@ function transitionItem(item, change, on) {
 }
 
 return { ALLOWED_TRANSITIONS, STATUS_HINT, allowedStatuses, canTransition, validateTransition, transitionItem };
+})();
+
+// ---- lib/team.js
+const __m_lib_team = (() => {
+
+// 팀 단위 사용: 감사팀원 목록과 '지금 쓰는 사람'을 두고, 자료마다 요청 감사인(requester)을 기록한다.
+//   state.team = { manager: { name, dept } | null, members: ['장재혁 회계사', …], me: '장재혁 회계사' }
+//   item.requester = '장재혁 회계사'
+// 데이터는 브라우저마다 따로 저장되므로, 같은 화면에서 사용자를 바꿔 보는 방식으로 팀 사용을 보여준다.
+
+const clean = (s) => String(s ?? '').trim().replace(/\s+/g, ' ');
+
+/** '장재혁', '회계사' → '장재혁 회계사' */
+function memberLabel(name, title) {
+  return [clean(name), clean(title)].filter(Boolean).join(' ');
+}
+
+/** '김서윤 회계사, 이서연 매니저\n박도윤' → ['김서윤 회계사', '이서연 매니저', '박도윤'] (중복 제거) */
+function parseMembers(text) {
+  return [...new Set(String(text ?? '').split(/[,\n]/).map(clean).filter(Boolean))];
+}
+
+/** 첫 화면의 감사인 정보 검증. 내 이름만 필수. */
+function validateTeam({ myName }) {
+  const errors = {};
+  if (!clean(myName)) errors.myName = '내 이름을 입력해 주세요. 요청 감사인과 메일 서명에 들어가요.';
+  return errors;
+}
+
+/**
+ * 첫 화면 입력 → state.team. 나는 항상 팀원 맨 앞, 매니저가 있으면 팀원에도 넣는다.
+ * @returns {{ manager, members, me }}
+ */
+function buildTeam({ myName, myTitle, members, manager }) {
+  const me = memberLabel(myName, myTitle);
+  const mgr = clean(manager);
+  const list = [...new Set([me, ...parseMembers(members), ...(mgr ? [mgr] : [])].filter(Boolean))];
+  return { manager: mgr ? { name: mgr, dept: '감사팀' } : null, members: list, me };
+}
+
+/** 팀원 목록. 예전 데이터처럼 팀 정보가 없으면 빈 목록. */
+function teamMembers(state) {
+  const t = state?.team || {};
+  const list = t.members?.length ? t.members : t.me ? [t.me] : [];
+  return [...list];
+}
+
+function currentUser(state) {
+  return state?.team?.me || '';
+}
+
+/** 담당 매니저 이름 (없으면 '') */
+function managerName(state) {
+  return state?.team?.manager?.name || '';
+}
+
+/** 지금 쓰는 사람이 담당 매니저인지. 매니저는 자료를 직접 요청하지 않고 팀 전체를 본다. */
+function isManager(state) {
+  const me = currentUser(state);
+  return Boolean(me) && me === managerName(state);
+}
+
+/** 요청 감사인이 될 수 있는 팀원: 매니저를 뺀 실무진 */
+function requesterMembers(state) {
+  const mgr = managerName(state);
+  return teamMembers(state).filter((m) => m !== mgr);
+}
+
+/** 새 자료의 요청 감사인 기본값: 지금 쓰는 사람이 실무진이면 그 사람, 매니저면 비워 둔다 */
+function defaultRequester(state) {
+  return isManager(state) ? '' : currentUser(state);
+}
+
+/**
+ * 실무진 후보 중에서 고른 사람: 후보에 있으면 그대로, 아니면 지금 쓰는 사람(실무진일 때), 그것도 아니면 첫 실무진.
+ * 팀 정보가 없으면 받은 이름을 그대로 둔다. (외부조회서 회신처 담당자 기본값 등에 쓴다)
+ */
+function pickRequester(state, name) {
+  const members = requesterMembers(state);
+  if (!members.length) return name || '';
+  if (members.includes(name)) return name;
+  return defaultRequester(state) || members[0];
+}
+
+/** 다른 팀원으로 바꾼 새 state (팀원 목록에 있는 사람만) */
+function switchUser(state, name) {
+  return teamMembers(state).includes(name) ? { ...state, team: { ...state.team, me: name } } : state;
+}
+
+/**
+ * 요청 감사인으로 거르기.
+ * who: 'all' | 'me' | 팀원 이름. 'me'는 지금 쓰는 사람.
+ */
+function filterByRequester(items, who, me) {
+  if (!who || who === 'all') return items;
+  const name = who === 'me' ? me : who;
+  return items.filter((x) => x.requester === name);
+}
+
+/**
+ * 감사인별 현황 (주간 보고). 팀원 순서대로, 요청 감사인이 비어 있는 자료는 '미지정'으로.
+ * @param rows 주간 보고 행(withDays가 적용된 상태·남은 날·위험도 포함) + requester
+ */
+function requesterSummary(rows, members) {
+  const names = [...members];
+  if (rows.some((r) => !r.requester)) names.push('');
+  return names.map((name) => {
+    const mine = rows.filter((r) => (r.requester || '') === name);
+    const open = mine.filter((r) => r.status !== 'done');
+    const nearest = [...open].sort((a, b) => a.left - b.left)[0];
+    return {
+      name: name || '미지정',
+      key: name,
+      total: mine.length,
+      open: open.length,
+      urgent: open.filter((r) => r.risk === 'late' || r.risk === 'high').length,
+      done: mine.length - open.length,
+      nearest: nearest ? { neededOn: nearest.neededOn, left: nearest.left } : null,
+    };
+  }).filter((r) => r.total > 0 || r.key);
+}
+
+/** 메일 서명 '[이름] 드림'을 보내는 사람 이름으로. 이름이 없으면 그대로 둔다. */
+function signMail(mail, signer) {
+  if (!signer) return mail;
+  const sign = (segs) => segs?.map((s) => (s.text.includes('[이름]') ? { ...s, text: s.text.replaceAll('[이름]', signer) } : s));
+  return {
+    ...mail,
+    ...(mail.segments && { segments: sign(mail.segments) }),
+    ...(mail.intro && { intro: sign(mail.intro) }),
+    ...(mail.outro && { outro: sign(mail.outro) }),
+  };
+}
+
+/**
+ * 일정 탭에 보일 범위. 회계사는 자기가 요청한(담당하는) 자료의 필요일과 자기 일정만,
+ * 매니저(또는 팀 정보가 없는 예전 데이터)는 전체.
+ * 사용자 일정: 만든 사람(by)이 나이거나, 내 자료에 연결된 일정이거나, 만든 사람이 없는 팀 공통 일정.
+ * @returns {{ items, events, scope: 'all'|'mine', me }}
+ */
+function calendarScope(state) {
+  const me = currentUser(state);
+  if (!me || isManager(state) || !teamMembers(state).length) {
+    return { items: state.items, events: state.events || [], scope: 'all', me };
+  }
+  const items = state.items.filter((x) => x.requester === me);
+  const mine = new Set(items.map((x) => x.id));
+  const events = (state.events || []).filter((e) => !e.by || e.by === me || (e.itemId && mine.has(e.itemId)));
+  return { items, events, scope: 'mine', me };
+}
+
+return { memberLabel, parseMembers, validateTeam, buildTeam, teamMembers, currentUser, managerName, isManager, requesterMembers, defaultRequester, pickRequester, switchUser, filterByRequester, requesterSummary, signMail, calendarScope };
 })();
 
 // ---- lib/timing.js
@@ -3748,6 +4442,163 @@ function sendTiming(clock, neededOn) {
 return { parseNow, clockOf, isOffHours, nextBusinessDay, sendTiming };
 })();
 
+// ---- scan.js
+const __m_scan = (() => {
+
+// 예시 첨부 문서를 스캔본처럼 그려 PNG Blob으로 만든다 (브라우저 전용, canvas).
+// 내용은 lib/sampleDocs.js. 미리 만든 이미지를 넣지 않아 배포 파일이 커지지 않는다.
+
+const W = 1240;           // A4 150dpi 폭
+const H = 1754;
+const M = 110;            // 좌우 여백
+const INK = '#23262b';
+const SERIF = "'Noto Serif KR', 'Noto Serif CJK KR', 'Batang', 'AppleMyungjo', serif";
+const SANS = "'Noto Sans KR', 'Noto Sans CJK KR', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif";
+
+// 같은 결과가 나오게 고정 시드 난수 (스캔 얼룩·점)
+function rng(seed) {
+  let s = seed;
+  return () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; };
+}
+
+function font(px, { bold = false, serif = true } = {}) {
+  return `${bold ? '700' : '400'} ${px}px ${serif ? SERIF : SANS}`;
+}
+
+function text(ctx, str, x, y, { px = 22, bold = false, align = 'left', color = INK, serif = true } = {}) {
+  ctx.font = font(px, { bold, serif });
+  ctx.fillStyle = color;
+  ctx.textAlign = align;
+  ctx.textBaseline = 'middle';
+  ctx.fillText(str, x, y);
+}
+
+// 칸 폭을 글자 길이에 맞춰 나눈다 (금액 칸은 오른쪽 정렬)
+function table(ctx, { cols, rows, total }, y) {
+  const all = [cols, ...rows, ...(total ? [total] : [])];
+  ctx.font = font(20);
+  const need = cols.map((_, i) => Math.max(...all.map((r) => ctx.measureText(String(r[i] ?? '')).width)) + 28);
+  const sum = need.reduce((a, b) => a + b, 0);
+  const width = W - M * 2;
+  const widths = need.map((n) => (n / sum) * width);
+  const rowH = 44;
+  const isNum = (v) => /^-?[\d,]+$/.test(String(v)) || /%$/.test(String(v));
+  ctx.strokeStyle = '#4b4f55';
+  ctx.lineWidth = 1.2;
+  all.forEach((r, ri) => {
+    const top = y + ri * rowH;
+    const head = ri === 0;
+    const foot = total && ri === all.length - 1;
+    if (head || foot) { ctx.fillStyle = 'rgba(60,64,70,0.07)'; ctx.fillRect(M, top, width, rowH); }
+    let x = M;
+    r.forEach((v, ci) => {
+      const s = String(v ?? '');
+      const right = !head && ci > 0 && isNum(s);
+      text(ctx, s, right ? x + widths[ci] - 14 : (head ? x + widths[ci] / 2 : x + 14), top + rowH / 2,
+        { px: 20, bold: head || foot, align: right ? 'right' : (head ? 'center' : 'left') });
+      ctx.strokeRect(x, top, widths[ci], rowH);
+      x += widths[ci];
+    });
+  });
+  ctx.lineWidth = 2;
+  ctx.strokeRect(M, y, width, all.length * rowH);
+  return y + all.length * rowH;
+}
+
+// 붉은 원형 직인
+function stamp(ctx, lines, cx, cy, r = 66) {
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(-0.12);
+  ctx.globalAlpha = 0.78;
+  ctx.strokeStyle = '#c8322b';
+  ctx.lineWidth = 5;
+  ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.stroke();
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(0, 0, r - 9, 0, Math.PI * 2); ctx.stroke();
+  const step = 25;
+  lines.forEach((l, i) => text(ctx, l, 0, (i - (lines.length - 1) / 2) * step, { px: l.length > 3 ? 18 : 21, bold: true, align: 'center', color: '#c8322b' }));
+  ctx.restore();
+}
+
+// 전자신고 접수 도장 (사각)
+function receipt(ctx, lines, x, y) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(0.04);
+  ctx.globalAlpha = 0.75;
+  ctx.strokeStyle = '#2f55a4';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(0, 0, 300, 112);
+  lines.forEach((l, i) => text(ctx, l, 150, 26 + i * 32, { px: i === 0 ? 24 : 18, bold: i === 0, align: 'center', color: '#2f55a4', serif: false }));
+  ctx.restore();
+}
+
+function drawDoc(ctx, doc) {
+  let y = 120;
+  if (doc.docNo) text(ctx, `No. ${doc.docNo}`, W - M, y - 30, { px: 18, align: 'right', color: '#5b6068', serif: false });
+  text(ctx, doc.title, W / 2, y + 20, { px: 40, bold: true, align: 'center' });
+  y += 70;
+  ctx.strokeStyle = INK; ctx.lineWidth = 2.5;
+  ctx.beginPath(); ctx.moveTo(M, y); ctx.lineTo(W - M, y); ctx.stroke();
+  y += 46;
+  if (doc.to) { text(ctx, doc.to, M, y, { px: 23, bold: true }); y += 50; }
+  for (const [k, v] of doc.meta) {
+    text(ctx, k, M + 6, y, { px: 21, color: '#4b4f55' });
+    text(ctx, `:  ${v}`, M + 210, y, { px: 21 });
+    y += 38;
+  }
+  y += 14;
+  if (doc.lead) { text(ctx, doc.lead, M, y, { px: 21 }); y += 52; }
+  for (const s of doc.sections) {
+    text(ctx, s.heading, M, y, { px: 22, bold: true });
+    y = table(ctx, s, y + 24) + 44;
+  }
+  if (doc.remark) { text(ctx, doc.remark, M, y, { px: 20, color: '#3a3e44' }); y += 70; }
+  const sy = Math.min(y + 90, H - 330);
+  text(ctx, doc.signed.date, W / 2, sy, { px: 23, align: 'center' });
+  text(ctx, doc.signed.org, W - M - 180, sy + 80, { px: 23, align: 'right', bold: true });
+  text(ctx, doc.signed.person, W - M - 180, sy + 124, { px: 22, align: 'right' });
+  if (doc.signed.stamp) stamp(ctx, doc.signed.stamp, W - M - 110, sy + 106);
+  if (doc.receipt) receipt(ctx, doc.receipt, W - M - 300, 210);
+}
+
+// 스캔 느낌: 누런 종이, 약간 기울어짐, 가장자리 그림자, 잡점
+function scanEffect(ctx, draw, seed) {
+  const rand = rng(seed);
+  ctx.fillStyle = '#f7f5ef';
+  ctx.fillRect(0, 0, W, H);
+  ctx.save();
+  ctx.translate(W / 2, H / 2);
+  ctx.rotate((rand() - 0.5) * 0.012);
+  ctx.translate(-W / 2, -H / 2);
+  draw();
+  ctx.restore();
+  for (let i = 0; i < 2600; i++) {
+    ctx.fillStyle = `rgba(40,40,40,${rand() * 0.18})`;
+    ctx.fillRect(rand() * W, rand() * H, rand() * 1.8 + 0.4, rand() * 1.8 + 0.4);
+  }
+  const g = ctx.createLinearGradient(0, 0, W, 0);
+  g.addColorStop(0, 'rgba(0,0,0,0.10)'); g.addColorStop(0.04, 'rgba(0,0,0,0)');
+  g.addColorStop(0.96, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,0.08)');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  // 시연용 표시 (작게)
+  text(ctx, 'PBC Mate 시연용 예시 문서 · 가공의 자료', W / 2, H - 34, { px: 15, align: 'center', color: 'rgba(90,90,90,0.75)', serif: false });
+}
+
+/** 문서 내용 → PNG Blob */
+async function renderScan(doc, seed = 7) {
+  try { await document.fonts?.ready; } catch { /* 글꼴 대기 실패는 무시 */ }
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  scanEffect(ctx, () => drawDoc(ctx, doc), seed);
+  return new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('toBlob failed'))), 'image/png'));
+}
+
+return { renderScan };
+})();
+
 // ---- store.js
 const __m_store = (() => {
 const { addDays } = __m_lib_dates;
@@ -3758,7 +4609,7 @@ const { transitionItem } = __m_lib_status;
 // state = {
 //   demoDate?: 'YYYY-MM-DD',   // 예시 자료일 때만. 이 날짜를 오늘로 보고 계산한다.
 //   client: { name, engagement, service? },           // service: audit | tax | deal | advisory (없으면 audit)
-//   team:   { manager: { name, dept } },              // 매니저 참조 메일의 CC
+//   team:   { manager: { name, dept }, members: [], me }, // 매니저 참조 메일의 CC · 감사팀원 · 지금 쓰는 사람 (lib/team.js)
 //   people: { [이름]: { dept, nudges, lastNudgedOn } },
 //   items:  [{ id, name, owner, requestedOn, neededOn, status, reason?,
 //              procedure?,                           // 이 자료를 쓰는 감사 절차
@@ -3772,8 +4623,11 @@ const { transitionItem } = __m_lib_status;
 
 const KEY = 'pbc-mate:v1';
 
-/** 심사·데모에서 첫 화면이 항상 같도록 예시 자료는 이 날짜 기준으로 고정한다. */
-const DEMO_DATE = '2026-10-01';
+/**
+ * 심사·데모에서 첫 화면이 항상 같도록 예시 자료는 이 날짜 기준으로 고정한다.
+ * 2026 기말감사의 현장 감사 기간(결산일 12/31 이후 1월)으로 잡아, 12/31 기준 외부조회·자료 요청과 날짜가 맞는다.
+ */
+const DEMO_DATE = '2027-01-14';
 
 function load() {
   try {
@@ -3806,27 +4660,65 @@ function baseDateOf(state, override, realToday) {
   return override || state?.demoDate || realToday;
 }
 
+/** 예시 첨부 파일 (load-sample 때 브라우저 저장소에 만든다). 내용은 예시 안내 문구뿐이다. */
+const SAMPLE_FILES = [
+  { id: 'sample-f1', name: '바다저축은행_은행조회서_회신_BK-002.png', itemId: 'c2' },
+  { id: 'sample-f2', name: '한결물류_재고보관_조회회신_IV-001.png', itemId: 'c7' },
+  { id: 'sample-f3', name: '2025_법인세_과세표준및세액신고서_사본.png', itemId: 'i6' },
+];
+
 /**
- * 예시 자료. 시연 기준일(DEMO_DATE) 기준 상대 날짜로 만든다.
- * PBC 자료 5건(4건은 표준 양식으로 요청, template·basisDate) + 외부조회 7건(kind: 'confirmation'). 외부조회는 조회처가 담당자(owner)이고,
- * 미회신·독촉 중·회신 기한 지남·회신 완료·후속 절차(미회수 확정, 금액 차이)가 고루 보이게 넣었다.
- * confirmSetup은 외부조회서 작성 화면의 공통 정보 기본값이다 (결산일 12/31 기준).
+ * 예전 버전에서 불러온 예시 자료의 첨부 정보(이름·형식)를 지금 예시로 맞춘다.
+ * 직접 올린 파일은 건드리지 않는다. 바뀐 첨부 id를 함께 돌려줘 저장된 파일 내용도 다시 만들게 한다.
+ * @returns {{ state, changed: string[] }}
+ */
+function upgradeSampleAttachments(state) {
+  if (!state?.items) return { state, changed: [] };
+  const current = new Map(sampleState().items.flatMap((x) => x.attachments || []).map((a) => [a.id, a]));
+  const changed = [];
+  const items = state.items.map((x) => {
+    if (!x.attachments?.some((a) => current.has(a.id) && current.get(a.id).name !== a.name)) return x;
+    return { ...x, attachments: x.attachments.map((a) => {
+      const now = current.get(a.id);
+      if (!now || now.name === a.name) return a;
+      changed.push(a.id);
+      return { ...a, name: now.name, size: now.size, type: now.type };
+    }) };
+  });
+  return changed.length ? { state: { ...state, items }, changed } : { state, changed };
+}
+
+/**
+ * 예시 자료. 시연 기준일(DEMO_DATE, 2027-01-14 목) 기준 상대 날짜로 만든다.
+ * 기능마다 보여줄 장면이 하나씩 있도록 구성했다.
+ *   PBC 6건  : 미회신·독촉 중(재고실사) / 묶음 독촉(김민지 대리 3건) / 일부 수령(특수관계자) /
+ *              보완 요청-기준일 상이(유형자산) / 완료+첨부(법인세) / 후속 절차에서 만든 증빙 요청(지급 내역)
+ *              4건은 표준 양식(template·basisDate)으로 요청
+ *   외부조회 8건: 은행 2(미회신·회수 완료) / 채권채무 4(기한 지남·미회수 대체적 절차·금액 차이 조정 중·조정 완료+서명) /
+ *              변호사 1(미회신) / 제3자보관재고 1(회수 완료+첨부)
+ *   커버리지: 미확인 잔액 약 4.8억원 > 수행중요성 1.8억원 → 주간 보고에서 경고가 보인다
+ *   팀: 장재혁(나)·김서윤 실무진이 나눠 요청, 이서연 매니저는 요청하지 않고 전체를 본다 (첫 화면 조회의 ㈜한빛전자 2026 기말감사와 같다)
+ *   필요일은 타임라인 박스가 겹치지 않게 며칠씩 띄워 두었다.
  */
 function sampleState() {
   const d = (n) => addDays(DEMO_DATE, n);
+  const ME = '장재혁 회계사';
+  const KIM = '김서윤 회계사';
+  const LEE = '이서연 매니저';
   return {
     demoDate: DEMO_DATE,
     client: { name: '㈜한빛전자', engagement: '2026 기말감사', service: 'audit' },
-    team: { manager: { name: '이서연 매니저', dept: '감사팀' } },
+    team: { manager: { name: LEE, dept: '감사팀' }, members: [ME, KIM, LEE], me: ME },
     people: {
       '박준호 과장': { dept: '재무팀', nudges: 0, lastNudgedOn: null },
       '김민지 대리': { dept: '재무팀', nudges: 2, lastNudgedOn: d(-2) },
-      '최도윤 차장': { dept: '관리팀', nudges: 2, lastNudgedOn: d(-5) },
-      '한빛은행 여의도지점': { dept: '금융기관', nudges: 1, lastNudgedOn: d(-2) },
+      '최도윤 차장': { dept: '관리팀', nudges: 1, lastNudgedOn: d(-5) },
+      '한빛은행 여의도지점': { dept: '금융기관', nudges: 1, lastNudgedOn: d(-1) },
       '바다저축은행 본점': { dept: '금융기관', nudges: 0, lastNudgedOn: null },
+      '세진물산㈜': { dept: '거래처', nudges: 2, lastNudgedOn: d(-1) },
+      '㈜오성테크': { dept: '거래처', nudges: 3, lastNudgedOn: d(-2) },
       '㈜대한부품': { dept: '거래처', nudges: 1, lastNudgedOn: d(-4) },
-      '세진물산㈜': { dept: '거래처', nudges: 2, lastNudgedOn: d(-2) },
-      '㈜오성테크': { dept: '거래처', nudges: 3, lastNudgedOn: d(-1) },
+      '한성정밀㈜': { dept: '거래처', nudges: 0, lastNudgedOn: null },
       '법무법인 정의': { dept: '법무법인', nudges: 0, lastNudgedOn: null },
       '㈜한결물류 평택센터': { dept: '보관처', nudges: 0, lastNudgedOn: null },
     },
@@ -3835,31 +4727,44 @@ function sampleState() {
     confirmSetup: {
       companyName: '㈜한빛전자', ceoName: '정한빛', companyAddress: '경기도 성남시 분당구 판교역로 1',
       auditorName: '삼일회계법인', auditorAddress: '서울특별시 용산구 한강대로 100 아모레퍼시픽빌딩',
-      contactName: '이서연 매니저', contactPhone: '02-0000-0000', contactEmail: '',
+      contactName: ME, contactPhone: '02-0000-0000', contactEmail: '',
       baseDate: '2026-12-31',
     },
+    events: [
+      // by: 만든 감사인 (일정 탭은 회계사마다 자기 일정만, 매니저는 전체). by가 없으면 팀 공통 일정
+      { id: 'e1', title: '재고실사 차이 원인 회사 미팅', date: d(-3), progress: 'done', by: ME },
+      { id: 'e2', title: '외부조회 회신 현황 매니저 리뷰', date: d(1), progress: 'planned' },
+      { id: 'e3', title: '채권 평가 조서 작성', date: d(18), progress: 'planned', by: ME },
+      { id: 'e4', title: '유형자산 재요청 자료 확인', date: d(2), progress: 'planned', by: KIM },
+    ],
     items: [
-      { id: 'i2', name: '유형자산 증감내역', owner: '최도윤 차장', requestedOn: d(-1), neededOn: d(7), status: 'fix', reason: '기준일 상이 · 12/31 기준 재요청 필요',
-        procedure: '유형자산 실증', nudges: [], template: 'ppe', basisDate: '2026-12-31',
-        received: { on: d(-1), basisDate: '2026-06-30' },
-        fix: { reason: 'date', requiredBasisDate: '2026-12-31',
-               details: { sign: '담당 임원 확인란', missing: '건설중인자산 대체 내역' } },
-        fixes: [{ on: d(-1), reason: 'date' }] },
-      { id: 'i3', name: '재고실사 결과표', owner: '김민지 대리', requestedOn: d(-5), neededOn: d(5), status: 'none',
-        procedure: '재고 실사 검토', nudges: [{ on: d(-2), tone: 'polite' }], template: 'inventory', basisDate: '2026-12-31' },
-      { id: 'i4', name: '특수관계자 거래내역', owner: '김민지 대리', requestedOn: d(-9), neededOn: d(9), status: 'part',
-        procedure: '특수관계자 검토', nudges: [{ on: d(-6), tone: 'angel' }, { on: d(-2), tone: 'polite' }], template: 'related', basisDate: '2026-12-31' },
-      { id: 'i5', name: '매출채권 연령분석표', owner: '김민지 대리', requestedOn: d(-11), neededOn: d(19), status: 'none',
-        procedure: '채권 평가', nudges: [{ on: d(-6), tone: 'angel' }, { on: d(-2), tone: 'polite' }], template: 'aging', basisDate: '2026-12-31' },
-      { id: 'i6', name: '법인세 신고서 사본', owner: '박준호 과장', requestedOn: d(-6), neededOn: d(3), status: 'done',
-        procedure: '법인세 검토', nudges: [] },
-      ...sampleConfirmations(d),
+      { id: 'i2', requester: KIM, name: '유형자산 증감내역', owner: '최도윤 차장', requestedOn: d(-9), neededOn: d(12), status: 'fix',
+        reason: '기준일 상이 · 12/31 기준 재요청 필요', procedure: '유형자산 실증', template: 'ppe', basisDate: '2026-12-31',
+        nudges: [{ on: d(-5), tone: 'polite' }],
+        received: { on: d(-3), basisDate: '2026-06-30' },
+        fix: { reason: 'date', requiredBasisDate: '2026-12-31', details: { sign: '담당 임원 확인란', missing: '건설중인자산 대체 내역' } },
+        fixes: [{ on: d(-3), reason: 'date' }] },
+      { id: 'i3', requester: ME, name: '재고실사 결과표', owner: '김민지 대리', requestedOn: d(-6), neededOn: d(8), status: 'none',
+        procedure: '재고 실사 검토', template: 'inventory', basisDate: '2026-12-31', nudges: [{ on: d(-2), tone: 'polite' }] },
+      { id: 'i4', requester: KIM, name: '특수관계자 거래내역', owner: '김민지 대리', requestedOn: d(-10), neededOn: d(16), status: 'part',
+        procedure: '특수관계자 검토', template: 'related', basisDate: '2026-12-31',
+        nudges: [{ on: d(-6), tone: 'angel' }, { on: d(-2), tone: 'polite' }], received: { on: d(-4) } },
+      { id: 'i5', requester: ME, name: '매출채권 연령분석표', owner: '김민지 대리', requestedOn: d(-11), neededOn: d(20), status: 'none',
+        procedure: '채권 평가', template: 'aging', basisDate: '2026-12-31',
+        nudges: [{ on: d(-6), tone: 'angel' }, { on: d(-2), tone: 'polite' }] },
+      { id: 'i6', requester: KIM, name: '법인세 신고서 사본', owner: '박준호 과장', requestedOn: d(-8), neededOn: d(-1), status: 'done',
+        procedure: '법인세 검토', nudges: [], received: { on: d(-6) },
+        attachments: [{ id: 'sample-f3', name: '2025_법인세_과세표준및세액신고서_사본.png', size: 572000, type: 'image/png', addedOn: d(-6) }] },
+      // ㈜오성테크 미회수 → 대체적 절차 증빙으로 만든 자료 요청 (후속 절차와 PBC가 이어지는 장면)
+      { id: 'i7', requester: KIM, name: '기준일 이후 지급 내역(통장 사본) (㈜오성테크)', owner: '박준호 과장', requestedOn: d(-1), neededOn: d(5), status: 'none',
+        procedure: '외부조회 대체적 절차', nudges: [], sourceId: 'c5' },
+      ...sampleConfirmations(d, { ME, KIM, LEE }),
     ],
   };
 }
 
-/** 예시 외부조회 건. 발송일 = 요청일, 회신 기한 = 필요일. */
-function sampleConfirmations(d) {
+/** 예시 외부조회 건. 발송일 = 요청일(대부분 1/4 월), 회신 기한 = 필요일. */
+function sampleConfirmations(d, { ME, KIM, LEE }) { // LEE: 매니저 (요청 감사인 아님, 서명 검토자)
   const conf = (id, confType, docNo, counterparty, extra) => {
     const label = { bank: '은행조회서', arap: '채권채무조회서', legal: '변호사조회서', inventory: '제3자보관재고자산조회서' }[confType];
     return {
@@ -3869,27 +4774,40 @@ function sampleConfirmations(d) {
       ...extra,
     };
   };
+  const SENT = d(-10);
   return [
-    conf('c1', 'bank', 'BK-001', '한빛은행 여의도지점', {
-      bookAmount: 4250000000, requestedOn: d(-9), neededOn: d(2), status: 'none',
-      nudges: [{ on: d(-2), tone: 'polite' }] }),
-    conf('c2', 'bank', 'BK-002', '바다저축은행 본점', {
-      bookAmount: 500000000, requestedOn: d(-9), neededOn: d(2), status: 'done', received: { on: d(-3) } }),
-    conf('c3', 'arap', 'AR-001', '㈜대한부품', {
-      receivable: 842000000, payable: 0, bookAmount: 842000000, requestedOn: d(-9), neededOn: d(2), status: 'follow',
+    // 은행: 금액과 무관하게 회수해야 하는 1건이 아직 남음
+    conf('c1', 'bank', 'BK-001', '한빛은행 여의도지점', { requester: ME,
+      bookAmount: 4250000000, requestedOn: SENT, neededOn: d(4), status: 'none', nudges: [{ on: d(-1), tone: 'polite' }] }),
+    conf('c2', 'bank', 'BK-002', '바다저축은행 본점', { requester: ME,
+      bookAmount: 500000000, requestedOn: SENT, neededOn: d(4), status: 'done', received: { on: d(-3) },
+      attachments: [{ id: 'sample-f1', name: '바다저축은행_은행조회서_회신_BK-002.png', size: 632000, type: 'image/png', addedOn: d(-3) }] }),
+    // 채권채무: 기한 지남 · 미회수 대체적 절차 · 금액 차이 조정 중 · 조정 완료(서명)
+    conf('c4', 'arap', 'AR-002', '세진물산㈜', { requester: ME,
+      receivable: 315500000, payable: 120000000, bookAmount: 435500000, requestedOn: SENT, neededOn: d(-2), status: 'none',
+      nudges: [{ on: d(-6), tone: 'polite' }, { on: d(-1), tone: 'firm' }] }),
+    conf('c5', 'arap', 'AR-003', '㈜오성테크', { requester: KIM,
+      receivable: 0, payable: 96300000, bookAmount: 96300000, blank: true, requestedOn: SENT, neededOn: d(-1), status: 'follow',
+      nudges: [{ on: d(-7), tone: 'polite' }, { on: d(-4), tone: 'firm' }, { on: d(-2), tone: 'cc' }],
+      follow: { type: 'noreply', startedOn: d(-1), requested: ['subsequentPay'], steps: { subsequentPay: true }, verified: 60000000 } }),
+    conf('c3', 'arap', 'AR-001', '㈜대한부품', { requester: ME,
+      receivable: 842000000, payable: 0, bookAmount: 842000000, requestedOn: SENT, neededOn: d(9), status: 'follow',
       nudges: [{ on: d(-4), tone: 'polite' }], received: { on: d(-1) },
+      // 송금 중 300만원이 아직 설명되지 않았고, 미착품은 인도조건 확인 전 → 시연에서 채워 완료하는 장면
       follow: { type: 'diff', startedOn: d(-1), requested: [],
         recon: { book: 842000000, confirmed: 830000000, lines: [{ cause: 'goods', amount: 9000000, note: '12/29 출고 · 1/2 거래처 입고분' }] } } }),
-    conf('c4', 'arap', 'AR-002', '세진물산㈜', {
-      receivable: 315500000, payable: 120000000, bookAmount: 435500000, requestedOn: d(-16), neededOn: d(-2), status: 'none',
-      nudges: [{ on: d(-6), tone: 'polite' }, { on: d(-2), tone: 'firm' }] }),
-    conf('c5', 'arap', 'AR-003', '㈜오성테크', {
-      receivable: 0, payable: 96300000, bookAmount: 96300000, blank: true, requestedOn: d(-16), neededOn: d(-2), status: 'follow',
-      nudges: [{ on: d(-9), tone: 'polite' }, { on: d(-5), tone: 'firm' }, { on: d(-1), tone: 'cc' }],
-      follow: { type: 'noreply', startedOn: d(0), requested: [], steps: { subsequentPay: true }, verified: 60000000 } }),
-    conf('c6', 'legal', 'LG-001', '법무법인 정의', { requestedOn: d(-9), neededOn: d(5), status: 'none' }),
-    conf('c7', 'inventory', 'IV-001', '㈜한결물류 평택센터', {
-      bookAmount: 1913000000, requestedOn: d(-9), neededOn: d(2), status: 'done', received: { on: d(-2) } }),
+    conf('c8', 'arap', 'AR-004', '한성정밀㈜', { requester: ME,
+      receivable: 512000000, payable: 0, bookAmount: 512000000, requestedOn: SENT, neededOn: d(7), status: 'done', received: { on: d(-5) },
+      follow: { type: 'diff', startedOn: d(-5), closedOn: d(-1), requested: [],
+        recon: { book: 512000000, confirmed: 505000000, lines: [{ cause: 'cash', amount: 7000000, note: '12/31 송금 · 1/2 입금' }] },
+        conclusion: '차이 7,000,000원은 시점 차이·조회처 오류로 모두 설명돼요. 왜곡표시는 없어요.',
+        signoff: { preparer: ME, reviewer: LEE } } }),
+    // 변호사: 일반 조회 · 미회신
+    conf('c6', 'legal', 'LG-001', '법무법인 정의', { requester: KIM, requestedOn: SENT, neededOn: d(13), status: 'none' }),
+    // 제3자 보관 재고: 회수 완료
+    conf('c7', 'inventory', 'IV-001', '㈜한결물류 평택센터', { requester: KIM,
+      bookAmount: 1913000000, requestedOn: SENT, neededOn: d(6), status: 'done', received: { on: d(-2) },
+      attachments: [{ id: 'sample-f2', name: '한결물류_재고보관_조회회신_IV-001.png', size: 617000, type: 'image/png', addedOn: d(-2) }] }),
   ];
 }
 
@@ -3974,10 +4892,10 @@ function addItems(state, values) {
 /**
  * 예시 자료 없이 직접 시작할 때의 빈 state. demoDate가 없어 실제 오늘(또는 ?today=) 기준으로 계산된다.
  */
-function createEmptyState({ clientName, engagement, service = 'audit' }) {
+function createEmptyState({ clientName, engagement, service = 'audit', team }) {
   return {
     client: { name: String(clientName).trim(), engagement: String(engagement).trim(), service },
-    team: { manager: null },
+    team: team || { manager: null },
     people: {},
     items: [],
   };
@@ -3994,7 +4912,7 @@ function updateItemStatus(state, itemId, change, on) {
   };
 }
 
-return { DEMO_DATE, load, save, clear, baseDateOf, sampleState, recordNudges, recordNudge, recordFix, copyAndRecord, copyAndRecordFix, addItems, createEmptyState, updateItemStatus };
+return { DEMO_DATE, load, save, clear, baseDateOf, SAMPLE_FILES, upgradeSampleAttachments, sampleState, recordNudges, recordNudge, recordFix, copyAndRecord, copyAndRecordFix, addItems, createEmptyState, updateItemStatus };
 })();
 
 // ---- views/html.js
@@ -4033,6 +4951,8 @@ const ICON = {
   arrow: svg('<path d="M3 8h10M9.5 4.5L13 8l-3.5 3.5"/>', 1.8),
   download: svg('<path d="M8 2.5v8M4.5 7L8 10.5 11.5 7M3 13h10"/>', 1.8),
   follow: svg('<path d="M2.5 8h5M7.5 8l3.5-3.5M7.5 8l3.5 3.5M11 4.5h2.5M11 11.5h2.5"/>', 1.8),
+  file: svg('<path d="M4 2h5.5L12 4.5V14H4z"/><path d="M9.5 2v2.5H12M6 8h4M6 10.5h4"/>', 1.6),
+  search: svg('<circle cx="7" cy="7" r="4.6"/><path d="M10.5 10.5L14 14"/>', 1.8),
   copy: svg('<rect x="5" y="5" width="9" height="9" rx="2"/><path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/>', 1.8),
 };
 
@@ -4048,6 +4968,7 @@ const __m_views_dashboard = (() => {
 const { addDays, formatMD, formatKoreanDay } = __m_lib_dates;
 const { withDays, isOpen, sortItems, groupByOwner, summarize, insight, leftText } = __m_lib_priority;
 const { isBundleEligible } = __m_lib_bundle;
+const { currentUser, requesterMembers, isManager, filterByRequester } = __m_lib_team;
 const { esc, ICON, RISK_LABEL, RISK_SHORT, STATUS_LABEL } = __m_views_html;
 const { termsOf } = __m_lib_terms;
 const { josa } = __m_lib_korean;
@@ -4067,18 +4988,36 @@ const MODE_TEXT = {
   },
 };
 
-function renderDashboard(state, { today, mode, isDemo }) {
-  const all = state.items.map((x) => withDays(x, today));
+function renderDashboard(state, { today, mode, isDemo, who = 'all' }) {
+  // 매니저는 자료를 직접 요청하지 않으므로 '내 요청' 없이 전체 / 실무진별로 거른다 (기본은 전체)
+  const manager = isManager(state);
+  const me = manager ? '' : currentUser(state);
+  const members = requesterMembers(state);
+  const scope = members.length && !(manager && who === 'me') ? who : 'all';
+  const everyOpen = state.items.filter((x) => x.status !== 'done');
+  const all = filterByRequester(state.items, scope, me).map((x) => withDays(x, today));
   const sorted = sortItems(all.filter(isOpen), mode);
   const done = all.filter((x) => !isOpen(x));
   const text = MODE_TEXT[mode];
   const t = termsOf(state.client.service);
+  const filter = members.length ? requesterFilter(scope, members, me, everyOpen) : '';
+
+  if (!sorted.length && scope !== 'all' && everyOpen.length) {
+    return `
+      <div class="page dashboard">
+        ${topbar(state.client, today, isDemo, 'dashboard', state.team)}
+        ${filter}
+        <section class="all-done">${ICON.done}<h1>${scope === 'me' ? '내가 요청 중인 자료가 없어요' : `${esc(scope)}님이 요청 중인 자료가 없어요`}</h1>
+          <p>‘전체’를 누르면 팀 전체 자료를 볼 수 있어요.</p></section>
+      </div>`;
+  }
 
   return `
     <div class="page dashboard">
-      ${topbar(state.client, today, isDemo, 'dashboard')}
+      ${topbar(state.client, today, isDemo, 'dashboard', state.team)}
       ${sorted.length ? `
         ${insightSection(insight(sorted[0], mode, t.schedule), summarize(all), t)}
+        ${filter}
         ${modeToggle(mode, text.hint(t), t)}
         ${timeline(sorted, today)}
         ${ownerCards(groupByOwner(sorted), state.people, done, text)}
@@ -4087,11 +5026,11 @@ function renderDashboard(state, { today, mode, isDemo }) {
     </div>`;
 }
 
-/** 상단바. active: 'dashboard' | 'report' — 주간 보고 화면도 같은 상단바를 쓴다. */
-function topbar(client, today, isDemo, active) {
+/** 상단바. active: 'dashboard' | 'report' — 주간 보고 화면도 같은 상단바를 쓴다. team이 있으면 지금 쓰는 사람을 고를 수 있다. */
+function topbar(client, today, isDemo, active, team) {
   return `
     <header class="topbar">
-      <div class="brand">PBC Mate<span class="brand-mark" aria-hidden="true"></span></div>
+      <a class="brand" href="#" title="대시보드로">PBC Mate<span class="brand-mark" aria-hidden="true"></span></a>
       <span class="chip">${esc(client.name)} · ${esc(client.engagement)}</span>
       <nav class="tabs">
         <a class="tab ${active === 'dashboard' ? 'is-active' : ''}" href="#">대시보드</a>
@@ -4102,10 +5041,24 @@ function topbar(client, today, isDemo, active) {
       </nav>
       ${isDemo ? `<span class="demo-date">시연 기준일 ${today.replaceAll('-', '.')}</span>` : ''}
       <div class="topbar-end">
+        ${userPicker(team)}
         <img class="org-logo desktop-only" src="data:image/png;base64,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" alt="삼일회계법인" width="150" height="29">
         <span class="today">${formatKoreanDay(today)}</span>
       </div>
     </header>`;
+}
+
+// 지금 쓰는 사람: 팀원끼리 같은 화면에서 바꿔 쓸 수 있다 (데이터는 브라우저마다 따로 저장)
+function userPicker(team) {
+  const members = team?.members?.length ? team.members : team?.me ? [team.me] : [];
+  if (!members.length) return '';
+  return `
+    <label class="me-picker" title="지금 쓰는 사람 · 요청 감사인과 메일 서명에 들어가요">
+      <span class="me-dot" aria-hidden="true">${esc((team.me || members[0]).slice(0, 1))}</span>
+      <select data-action-change="switch-user" aria-label="지금 쓰는 사람">
+        ${members.map((m) => `<option value="${esc(m)}" ${m === team.me ? 'selected' : ''}>${esc(m)}</option>`).join('')}
+      </select>
+    </label>`;
 }
 
 function insightSection(ins, sum, t) {
@@ -4130,6 +5083,26 @@ function insightSection(ins, sum, t) {
         <div><dt>보완 요청</dt><dd>${sum.needsFix}건</dd></div>
         <div><dt>미완료</dt><dd>${sum.open}건 <small>/ ${sum.total}</small></dd></div>
     </dl>`;
+}
+
+// 요청 감사인 필터: 전체 / 내 요청 / 팀원. 건수는 미완료 기준.
+function requesterFilter(who, members, me, openItems) {
+  const count = (name) => openItems.filter((x) => x.requester === name).length;
+  const btn = (value, caption, label) => `
+    <button type="button" data-action="set-who" data-who="${esc(value)}" aria-pressed="${who === value}">
+      <span class="seg-caption">${caption}</span><span class="seg-label">${label}</span>
+    </button>`;
+  const others = members.filter((m) => m !== me);
+  return `
+    <section class="mode-bar who-bar">
+      <div class="mode-title">요청 감사인</div>
+      <div class="segmented" role="group" aria-label="요청 감사인">
+        ${btn('all', '팀 전체', `전체 ${openItems.length}`)}
+        ${me ? btn('me', esc(me), `내 요청 ${count(me)}`) : ''}
+        ${others.map((m) => btn(m, '팀원', `${esc(m)} ${count(m)}`)).join('')}
+      </div>
+      <div class="mode-hint">${who === 'all' ? '팀 전체가 요청 중인 자료예요.' : '고른 감사인이 요청한 자료만 보여요.'}</div>
+    </section>`;
 }
 
 function modeToggle(mode, hint, t) {
@@ -4164,13 +5137,13 @@ function timeline(sorted, today) {
     const pos = Math.max(0, x.left) / span;
     const side = i % 2 === 0 ? 'above' : 'below';
     const anchor = pos > 0.85 ? 'end' : 'start';
-    const extra = x.status === 'fix' ? ' · 보완 요청' : '';
+    const extra = x.status === 'fix' ? ' · 보완 요청' : x.status === 'follow' ? ' · 후속 절차' : '';
     return `
       <div class="tl-mark risk-${x.risk} ${side} anchor-${anchor}" style="left:${pct(x.left)}">
         <span class="tl-stem"></span><span class="tl-dot"></span>
-        <span class="tl-label ${x.risk === 'high' || x.risk === 'late' ? 'is-urgent' : ''} ${x.status === 'fix' ? 'is-fix' : ''}">
+        <a class="tl-label ${x.risk === 'high' || x.risk === 'late' ? 'is-urgent' : ''} ${x.status === 'fix' ? 'is-fix' : ''}" href="${itemHref(x)}" title="${esc(x.name)} · ${esc(x.owner)} — 눌러서 열기">
           <b>${esc(x.name)}</b><span>${formatMD(x.neededOn)} · ${leftText(x.left)}${extra}</span>
-        </span>
+        </a>
       </div>`;
   }).join('');
 
@@ -4325,7 +5298,7 @@ function ownerCards(groups, people, done, text) {
   return `
     <section class="owners desktop-only">
       <div class="section-head">
-        <h2>담당자별로 묶어 재촉하기</h2>
+        <h2>담당자별(거래처별)로 묶어 재촉하기</h2>
         <div class="section-hint">같은 담당자에게는 메일 한 통으로 · ${text.group}</div>
       </div>
       <div class="cards">${cards}</div>
@@ -4372,23 +5345,27 @@ return { renderDashboard, topbar };
 
 // ---- views/empty.js
 const __m_views_empty = (() => {
-const { esc } = __m_views_html;
+const { engagementById } = __m_lib_engagements;
 const { SERVICES } = __m_lib_terms;
+const { esc, ICON } = __m_views_html;
 // 8. 빈 상태 · 첫 실행 — 레퍼런스 8
-// 예시 자료로 시작하거나, 부서·클라이언트명·프로젝트명을 넣고 직접 시작한다.
+// 예시 자료로 시작하거나, 업무 구분을 고르고 클라이언트를 조회해 계약을 고른 뒤 내 이름을 넣어 직접 시작한다.
 
 
 /**
- * @param form { clientName, engagement, service, errors }
+ * @param form { lookupOpen, query, results: 조회 결과 | null(조회 전), selectedId, service, myName, myTitle, errors }
+ *   lookupOpen: 클라이언트 조회 창이 열려 있음. 클라이언트명은 이 창에서만 입력한다.
+ *   service: 업무 구분 (audit | tax | deal | advisory). 메일 문구와 용어가 바뀐다 (lib/terms.js).
  */
-function renderEmpty({ clientName = '', engagement = '', service = 'audit', errors = {} } = {}) {
+function renderEmpty({ lookupOpen = false, query = '', results = null, selectedId = null, service = 'audit', myName = '', myTitle = '', errors = {} } = {}) {
+  const picked = engagementById(selectedId);
   const services = SERVICES.map((s) => `
     <label class="service-opt"><input type="radio" name="service" value="${s.key}" ${s.key === service ? 'checked' : ''}><span>${s.label}</span></label>`).join('');
   return `
     <div class="page empty">
       <header class="topbar">
         <div class="brand">PBC Mate<span class="brand-mark" aria-hidden="true"></span></div>
-        <span class="chip">클라이언트 이름을 정해주세요</span>
+        <span class="chip">${picked ? `${esc(picked.client)} · ${esc(picked.engagement)}` : '클라이언트를 조회해 주세요'}</span>
       </header>
 
       <main class="empty-main">
@@ -4409,15 +5386,24 @@ function renderEmpty({ clientName = '', engagement = '', service = 'audit', erro
             <span class="f-label">업무 구분 <small>메일 문구와 용어가 바뀌어요</small></span>
             <div class="service-opts" role="radiogroup" aria-label="업무 구분">${services}</div>
           </div>
-          <label class="f ${errors.clientName ? 'has-error' : ''}">
-            <span class="f-label">클라이언트명</span>
-            <input type="text" name="clientName" value="${esc(clientName)}" placeholder="예: ㈜한빛전자" autocomplete="organization">
-            ${errors.clientName ? `<span class="f-error">${esc(errors.clientName)}</span>` : ''}
+          <div class="f eng-lookup ${errors.client ? 'has-error' : ''}">
+            <span class="f-label">클라이언트명 <small>조회해서 고르면 감사명·팀원·담당 매니저가 채워져요</small></span>
+            <div class="eng-search">
+              <input type="text" class="eng-display" value="${picked ? esc(picked.client) : ''}" placeholder="조회하기를 눌러 클라이언트를 골라 주세요" readonly tabindex="-1" data-action="eng-open" aria-label="클라이언트명 (조회해서 선택)">
+              <button type="button" class="btn btn-sub" data-action="eng-open">${ICON.search}조회하기</button>
+            </div>
+            ${errors.client ? `<span class="f-error">${esc(errors.client)}</span>` : ''}
+          </div>
+          ${picked ? pickedCard(picked) : ''}
+
+          <label class="f ${errors.myName ? 'has-error' : ''}">
+            <span class="f-label">내 이름</span>
+            <input type="text" name="myName" value="${esc(myName)}" placeholder="예: 장재혁" autocomplete="name">
+            ${errors.myName ? `<span class="f-error">${esc(errors.myName)}</span>` : ''}
           </label>
-          <label class="f ${errors.engagement ? 'has-error' : ''}">
-            <span class="f-label">프로젝트명</span>
-            <input type="text" name="engagement" value="${esc(engagement)}" placeholder="예: 2026 기말감사 · 법인세 신고 · 재무실사" autocomplete="off">
-            ${errors.engagement ? `<span class="f-error">${esc(errors.engagement)}</span>` : ''}
+          <label class="f">
+            <span class="f-label">직급 <small>선택</small></span>
+            <input type="text" name="myTitle" value="${esc(myTitle)}" placeholder="예: 회계사" autocomplete="off">
           </label>
         </form>
 
@@ -4433,6 +5419,71 @@ function renderEmpty({ clientName = '', engagement = '', service = 'audit', erro
         ${step(2, '남은 날로 위험도 확인', '2일 이내 · 3~7일 · 8일 이상으로 나눠 보여드려요.')}
         ${step(3, '초안 복사해 아웃룩에', '담당자별로 묶고, 톤을 고른 뒤 복사만 하면 돼요.')}
       </section>
+      ${lookupOpen ? lookupModal(query, results) : ''}
+    </div>`;
+}
+
+// 클라이언트 조회 창: 클라이언트명 입력 → 감사 계약 목록 → 선택하면 첫 화면에 채워진다
+function lookupModal(query, results) {
+  return `
+    <div class="sheet-dim" data-action="eng-close"></div>
+    <div class="sheet eng-modal" role="dialog" aria-modal="true" aria-labelledby="eng-title">
+      <div class="sheet-head">
+        <div>
+          <div class="eyebrow">감사 계약 조회</div>
+          <h3 id="eng-title">클라이언트 조회</h3>
+        </div>
+        <button type="button" class="icon-btn btn-sub" data-action="eng-close" aria-label="닫기">${ICON.close}</button>
+      </div>
+      <div class="sheet-body">
+        <label class="f">
+          <span class="f-label">클라이언트명 <small>회사 이름의 일부만 넣어도 돼요</small></span>
+          <div class="eng-search">
+            <input type="text" name="engQuery" value="${esc(query)}" placeholder="예: 한빛전자" autocomplete="off" data-action-input="eng-query" data-enter="eng-search">
+            <button type="button" class="btn btn-cta" data-action="eng-search">조회</button>
+          </div>
+        </label>
+        <div class="eng-list">${lookupResults(results, query)}</div>
+      </div>
+      <footer class="sheet-foot">
+        <button type="button" class="btn btn-sub" data-action="eng-close">닫기</button>
+      </footer>
+    </div>`;
+}
+
+/** 조회 창의 결과 목록. 입력할 때 이 부분만 다시 그린다 (입력 포커스 유지). */
+function lookupResults(results, query) {
+  if (results === null) return '<div class="eng-results is-empty">클라이언트명을 입력하면 감사 계약이 나와요.</div>';
+  return resultList(results, query);
+}
+
+// 조회 결과: 감사 계약마다 감사명·매니저·팀원
+function resultList(results, query) {
+  if (results === null) return '';
+  if (!results.length) {
+    return `<div class="eng-results is-empty">‘${esc(query)}’로 조회된 감사 계약이 없어요. 회사 이름의 일부만 넣어 보세요.</div>`;
+  }
+  return `
+    <div class="eng-results" role="listbox" aria-label="조회된 감사 계약">
+      ${results.map((e) => `
+        <button type="button" class="eng-item" data-action="eng-pick" data-id="${esc(e.id)}" role="option">
+          <span class="eng-name"><b>${esc(e.client)}</b> · ${esc(e.engagement)}</span>
+          <small>담당 매니저 ${esc(e.manager)} · 팀원 ${e.members.map(esc).join(', ')}</small>
+        </button>`).join('')}
+    </div>`;
+}
+
+// 고른 감사 계약: 자동으로 채워진 값
+function pickedCard(e) {
+  return `
+    <div class="eng-picked">
+      <dl>
+        <div><dt>클라이언트</dt><dd>${esc(e.client)}</dd></div>
+        <div><dt>감사명</dt><dd>${esc(e.engagement)}</dd></div>
+        <div><dt>담당 매니저</dt><dd>${esc(e.manager)}</dd></div>
+        <div><dt>팀원</dt><dd>${e.members.map(esc).join(', ')}</dd></div>
+      </dl>
+      <button type="button" class="link" data-action="eng-open">다시 조회</button>
     </div>`;
 }
 
@@ -4444,7 +5495,7 @@ function step(n, title, desc) {
     </div>`;
 }
 
-return { renderEmpty };
+return { renderEmpty, lookupResults };
 })();
 
 // ---- views/timing.js
@@ -4496,9 +5547,10 @@ const DOW = ['일', '월', '화', '수', '목', '금', '토'];
 
 /**
  * @param state 앱 상태
- * @param opts  { today, isDemo, month: 'YYYY-MM', selected: 'YYYY-MM-DD', form: { title, errors }, filter: 'all'|'done'|'doing'|'planned' }
+ * @param opts  { today, isDemo, month: 'YYYY-MM', selected: 'YYYY-MM-DD', form: { title, errors }, filter: 'all'|'done'|'doing'|'planned', scopeNote }
+ *   scopeNote: 누구의 일정을 보여주는지 (회계사는 자기 자료만, 매니저는 전체)
  */
-function renderCalendar(state, { today, isDemo, month, selected, form, filter = 'all' }) {
+function renderCalendar(state, { today, isDemo, month, selected, form, filter = 'all', scopeNote = '' }) {
   const all = calendarEntries(state, today);
   const entries = filter === 'all' ? all : all.filter((e) => e.progress === filter);
   const grid = monthGrid(month);
@@ -4519,11 +5571,12 @@ function renderCalendar(state, { today, isDemo, month, selected, form, filter = 
 
   return `
     <div class="page calendar">
-      ${topbar(state.client, today, isDemo, 'calendar')}
+      ${topbar(state.client, today, isDemo, 'calendar', state.team)}
 
       <section class="cal-head">
         <div>
           <h1>${monthLabel(month)}</h1>
+          ${scopeNote ? `<div class="cal-scope">${ICON.help}${esc(scopeNote)}</div>` : ''}
           <p class="cal-sub">이번 달 필요일 ${inMonth.filter((e) => e.kind === 'need').length}건 · 일정 ${inMonth.filter((e) => e.kind === 'event').length}건 · 항목을 끌어 다른 날에 놓으면 날짜가 바뀌어요</p>
         </div>
         <div class="cal-nav">
@@ -4656,6 +5709,7 @@ const { timingChip, timingBanner } = __m_views_timing;
 const { mailDates } = __m_lib_calendar;
 const { mailField, mailDateDock } = __m_views_calendar;
 const { templateOf } = __m_lib_pbcTemplate;
+const { signMail, currentUser } = __m_lib_team;
 const { esc, ICON, RISK_LABEL, STATUS_LABEL } = __m_views_html;
 const { termsOf } = __m_lib_terms;
 // 2. 단건 독촉 — 레퍼런스 2 / 2-1 / 2-2 / 2-3 / 2-M
@@ -4672,7 +5726,7 @@ function renderCompose(state, { today, clock, itemId, tone, copied, toast }) {
   const history = item.nudges || [];
   const last = history[history.length - 1];
   const recommended = recommendTone(item);
-  const mail = buildMail({ item, person, client: state.client, manager: state.team?.manager, today, tone });
+  const mail = signMail(buildMail({ item, person, client: state.client, manager: state.team?.manager, today, tone }), currentUser(state));
   const timing = sendTiming(clock, item.neededOn);
   const dates = mailDates([item], today);
 
@@ -4861,6 +5915,7 @@ const { formatMD } = __m_lib_dates;
 const { leftText } = __m_lib_priority;
 const { TONES, toneIndex } = __m_lib_tone;
 const { buildBundleMail } = __m_lib_bundle;
+const { signMail, currentUser } = __m_lib_team;
 const { sendTiming } = __m_lib_timing;
 const { timingChip, timingBanner } = __m_views_timing;
 const { mailDates } = __m_lib_calendar;
@@ -4880,7 +5935,7 @@ function renderBundle(state, { sorted, clock, tone, copied, toast }) {
   const person = state.people[owner] || {};
   const count = sorted.length;
   const t = TONES[toneIndex(tone)];
-  const mail = buildBundleMail({ sorted, person, client: state.client, manager: state.team?.manager, tone });
+  const mail = signMail(buildBundleMail({ sorted, person, client: state.client, manager: state.team?.manager, tone }), currentUser(state));
   const timing = sendTiming(clock, top.neededOn);
   const dates = mailDates(sorted, clock.date);
   const nudged = person.nudges
@@ -5001,6 +6056,7 @@ const __m_views_fix = (() => {
 const { formatMD, formatMDW } = __m_lib_dates;
 const { withDays, leftText } = __m_lib_priority;
 const { FIX_REASONS, fixReasonLabel, fixDetail, buildFixMail } = __m_lib_fix;
+const { signMail, currentUser } = __m_lib_team;
 const { esc, ICON, STATUS_LABEL } = __m_views_html;
 const { termsOf } = __m_lib_terms;
 const { mailDates } = __m_lib_calendar;
@@ -5016,7 +6072,7 @@ const { mailField, mailDateDock } = __m_views_calendar;
 function renderFix(state, { today, itemId, reason, copied, toast }) {
   const item = withDays(state.items.find((x) => x.id === itemId), today);
   const person = state.people[item.owner] || {};
-  const mail = buildFixMail({ item, person, client: state.client, today, reason });
+  const mail = signMail(buildFixMail({ item, person, client: state.client, today, reason }), currentUser(state));
   const dates = mailDates([item], today, { replyBy: false });
   const label = fixReasonLabel(reason);
   const lastFix = (item.fixes || [])[item.fixes?.length - 1];
@@ -5139,6 +6195,7 @@ const { formatMD, formatMDW, daysBetween } = __m_lib_dates;
 const { riskOf, leftText } = __m_lib_priority;
 const { parsePaste, markDuplicates, rowErrorText, leftOf, normalizeDate } = __m_lib_add;
 const { PBC_TEMPLATES, TEMPLATE_ORDER, templateForName, defaultBasisDate } = __m_lib_pbcTemplate;
+const { requesterMembers, defaultRequester } = __m_lib_team;
 const { esc, ICON, RISK_LABEL } = __m_views_html;
 const { termsOf } = __m_lib_terms;
 const { josa } = __m_lib_korean;
@@ -5226,6 +6283,7 @@ function singleForm(state, today, form, errors) {
           ${owners.length ? `<div class="recent-owners"><span>최근 담당자</span>${chips}</div>` : ''}
         </div>
         ${field('요청일', 'requestedOn', form.requestedOn ?? today, { type: 'date', error: errors.requestedOn })}
+        ${requesterField(state, form)}
         <div class="need-note">새 자료는 ‘미회신’으로 시작해요. 받은 뒤에는 자료 화면에서 상태를 바꿔요.</div>
       </div>
 
@@ -5270,6 +6328,18 @@ function templatePreview(state, today, form, errors) {
       <div class="tpl-line"><span>확인 포인트</span>${t.checks.map(esc).join(' · ')}</div>
       <button type="button" class="btn btn-sub tpl-copy" data-action="copy-template">${ICON.copy}엑셀용 요청 양식 복사</button>
     </div>`;
+}
+
+// 요청 감사인: 지금 쓰는 사람이 기본값, 팀원 중에서 바꿀 수 있다
+function requesterField(state, form) {
+  const members = requesterMembers(state);
+  if (!members.length) return '';
+  const value = form.requester || defaultRequester(state) || members[0];
+  return `
+    <label class="f">
+      <span class="f-label">요청 감사인 <small>실무진 중에서 · 감사인별로 진행 상황을 볼 수 있어요</small></span>
+      <select name="requester">${members.map((m) => `<option value="${esc(m)}" ${m === value ? 'selected' : ''}>${esc(m)}</option>`).join('')}</select>
+    </label>`;
 }
 
 // 필요일을 고르면 남은 날과 위험도를 미리 보여준다.
@@ -5427,16 +6497,114 @@ function confirmOverview(o, materiality) {
 return { confirmOverview };
 })();
 
+// ---- views/attach.js
+const __m_views_attach = (() => {
+const { formatSize, MAX_FILE_BYTES } = __m_lib_attach;
+const { esc, ICON } = __m_views_html;
+// 완료 처리 후 뜨는 파일 첨부 창. 주간 보고의 '+ 첨부'로도 연다.
+
+
+/**
+ * @param item  첨부할 자료
+ * @param view  { pending: File[], rejected: { name, reason }[], justDone: boolean, saving: boolean }
+ */
+function renderAttach(item, { pending, rejected, justDone, saving }) {
+  const existing = item.attachments || [];
+  return `
+    <div class="sheet-dim" data-action="attach-close"></div>
+    <div class="sheet attach" role="dialog" aria-modal="true" aria-labelledby="attach-title">
+      <div class="sheet-head">
+        <div>
+          <div class="eyebrow">${justDone ? '완료 처리했어요 · 받은 파일을 남겨 두세요' : '첨부자료'}</div>
+          <h3 id="attach-title">${esc(item.name)}</h3>
+          <div class="sheet-current">${esc(item.owner)}${existing.length ? ` · 이미 ${existing.length}개 첨부` : ''}</div>
+        </div>
+        <button type="button" class="icon-btn btn-sub" data-action="attach-close" aria-label="닫기">${ICON.close}</button>
+      </div>
+
+      <div class="sheet-body">
+        <label class="attach-drop" for="attach-input">
+          ${ICON.download}
+          <b>파일을 끌어다 놓거나 눌러서 고르세요</b>
+          <small>여러 개 가능 · 한 파일 ${formatSize(MAX_FILE_BYTES)}까지 · PDF, 엑셀, 이미지 등</small>
+          <input id="attach-input" type="file" multiple data-action-change="attach-pick" hidden>
+        </label>
+
+        ${pending.length ? `
+          <ul class="attach-list">
+            ${pending.map((f, i) => `
+              <li><span class="attach-name">${esc(f.name)}</span><small>${formatSize(f.size)}</small>
+                <button type="button" class="icon-btn" data-action="attach-unpick" data-index="${i}" aria-label="${esc(f.name)} 빼기">${ICON.close}</button></li>`).join('')}
+          </ul>` : ''}
+        ${rejected.length ? `<div class="attach-rejected">${rejected.map((r) => `${esc(r.name)} — ${esc(r.reason)}`).join('<br>')}</div>` : ''}
+        <div class="sheet-note">파일은 이 브라우저에만 저장돼요. 주간 보고의 자료 목록 ‘첨부자료’ 칸에서 다시 열 수 있어요.</div>
+      </div>
+
+      <footer class="sheet-foot">
+        <button type="button" class="btn btn-sub" data-action="attach-close">${justDone ? '나중에 첨부' : '닫기'}</button>
+        <button type="button" class="btn btn-cta" data-action="attach-save" ${pending.length && !saving ? '' : 'disabled'}>${saving ? '저장 중…' : pending.length ? `${pending.length}개 첨부하기` : '첨부하기'}</button>
+      </footer>
+    </div>`;
+}
+
+/** 주간 보고 자료 목록의 '첨부자료' 칸 */
+function attachCell(row) {
+  const files = row.attachments || [];
+  const list = files.map((a) => `
+    <span class="att-file">
+      <button type="button" class="att-link" data-action="open-attachment" data-item="${esc(row.id)}" data-file="${esc(a.id)}" title="${esc(a.name)} · ${formatSize(a.size)} — 눌러서 미리보기">${ICON.file}<span>${esc(a.name)}</span></button>
+      <button type="button" class="att-remove" data-action="remove-attachment" data-item="${esc(row.id)}" data-file="${esc(a.id)}" aria-label="${esc(a.name)} 첨부 삭제">${ICON.close}</button>
+    </span>`).join('');
+  const add = row.status === 'done'
+    ? `<button type="button" class="att-add" data-action="attach-open" data-item="${esc(row.id)}">${ICON.plus}첨부</button>` : '';
+  return list || add ? `<div class="att-cell">${list}${add}</div>` : '—';
+}
+
+/**
+ * 첨부 파일 미리보기. 저장 버튼을 눌러야 내려받는다.
+ * @param p { name, size, kind: 'image'|'pdf'|'text'|'none', url, text, truncated, itemName }
+ */
+function renderPreview(p) {
+  let body;
+  if (p.kind === 'image') body = `<div class="pv-frame pv-image"><img src="${p.url}" alt="${esc(p.name)}"></div>`;
+  else if (p.kind === 'pdf') body = `<div class="pv-frame"><iframe src="${p.url}" title="${esc(p.name)} 미리보기"></iframe></div>`;
+  else if (p.kind === 'text') body = `<pre class="pv-frame pv-text">${esc(p.text)}${p.truncated ? '\n\n… (앞부분만 보여요. 전체는 저장해서 확인해 주세요)' : ''}</pre>`;
+  else if (p.kind === 'missing') body = `<div class="pv-frame pv-none">${ICON.high}<b>이 브라우저에서 파일을 찾지 못했어요</b><small>다른 브라우저나 기기에서 첨부했거나, 브라우저 저장 데이터가 지워졌을 수 있어요. 파일 목록에서 지우고 다시 첨부해 주세요.</small></div>`;
+  else body = `<div class="pv-frame pv-none">${ICON.download}<b>이 형식은 미리보기를 지원하지 않아요</b><small>저장한 뒤 엑셀·워드 등에서 열어 주세요.</small></div>`;
+  return `
+    <div class="sheet-dim" data-action="preview-close"></div>
+    <div class="sheet preview-sheet" role="dialog" aria-modal="true" aria-labelledby="pv-title">
+      <div class="sheet-head">
+        <div>
+          <div class="eyebrow">첨부자료 미리보기${p.itemName ? ` · ${esc(p.itemName)}` : ''}</div>
+          <h3 id="pv-title">${esc(p.name)}</h3>
+          <div class="sheet-current">${formatSize(p.size)}</div>
+        </div>
+        <button type="button" class="icon-btn btn-sub" data-action="preview-close" aria-label="닫기">${ICON.close}</button>
+      </div>
+      <div class="sheet-body">${body}</div>
+      <footer class="sheet-foot">
+        <button type="button" class="btn btn-sub" data-action="preview-close">닫기</button>
+        <button type="button" class="btn btn-cta" data-action="preview-save" ${p.kind === 'missing' ? 'disabled' : ''}>${ICON.download}저장</button>
+      </footer>
+    </div>`;
+}
+
+return { renderAttach, attachCell, renderPreview };
+})();
+
 // ---- views/report.js
 const __m_views_report = (() => {
 const { formatMD, formatMDW } = __m_lib_dates;
 const { leftText } = __m_lib_priority;
-const { weekLabel, summaryLines } = __m_lib_report;
+const { weekLabel, summaryLines, filterRows } = __m_lib_report;
 const { esc, ICON, STATUS_LABEL } = __m_views_html;
 const { topbar } = __m_views_dashboard;
 const { termsOf } = __m_lib_terms;
 const { confirmOverview } = __m_views_overview;
 const { trackOverview } = __m_lib_followup;
+const { attachCell } = __m_views_attach;
+const { requesterSummary, requesterMembers, currentUser } = __m_lib_team;
 // 7. 주간 현황 보고 — 레퍼런스 7
 // 대시보드와 같은 상단바 아래에 요약 카드(왼쪽)와 담당자별 현황·자료 목록(오른쪽)을 보여준다.
 
@@ -5444,15 +6612,15 @@ const { trackOverview } = __m_lib_followup;
 /**
  * @param state  앱 상태
  * @param report buildReport() 결과
- * @param opts   { today, isDemo }
+ * @param opts   { today, isDemo, query }  query: 자료 목록 검색어
  */
-function renderReport(state, report, { today, isDemo }) {
+function renderReport(state, report, { today, isDemo, query = '' }) {
   const { counts, received, owners, rows } = report;
   const lines = summaryLines(report);
 
   return `
     <div class="page report">
-      ${topbar(state.client, today, isDemo, 'report')}
+      ${topbar(state.client, today, isDemo, 'report', state.team)}
 
       <section class="report-head">
         <div>
@@ -5466,11 +6634,11 @@ function renderReport(state, report, { today, isDemo }) {
           </div>` : ''}
       </section>
 
-      ${counts.total ? body(report, lines, state) : empty()}
+      ${counts.total ? body(report, lines, state, query) : empty()}
     </div>`;
 }
 
-function body(report, lines, state) {
+function body(report, lines, state, query) {
   const { counts, received, owners, rows } = report;
   return `
     <div class="report-grid">
@@ -5498,12 +6666,12 @@ function body(report, lines, state) {
         ${confirmOverview(trackOverview(state.items, state.materiality?.performance), state.materiality)}
 
         <div class="report-block">
-          <h2>담당자별 현황</h2>
+          <h2>담당자별(거래처별) 현황 <span>· 담당자를 누르면 상세를 볼 수 있어요</span></h2>
           <div class="owner-table">
             <div class="ot-row ot-head"><div>담당자</div><div>미완료</div><div>긴급·지연</div><div>가장 가까운 필요일</div><div>최근 독촉</div></div>
             ${owners.map((o) => `
               <div class="ot-row">
-                <div class="ot-owner"><b>${esc(o.owner)}</b>${o.dept ? `<small>${esc(o.dept)}</small>` : ''}</div>
+                <div class="ot-owner"><a class="owner-link" href="#/owner/${encodeURIComponent(o.owner)}">${esc(o.owner)}${ICON.chevron}</a>${o.dept ? `<small>${esc(o.dept)}</small>` : ''}</div>
                 <div><b>${o.open}건</b></div>
                 <div class="${o.urgent ? 'is-urgent' : ''}">${o.urgent ? `${o.urgent}건` : '—'}</div>
                 <div>${formatMDW(o.nearest)} <small>· ${leftText(o.nearestLeft)}</small></div>
@@ -5512,23 +6680,60 @@ function body(report, lines, state) {
           </div>
         </div>
 
+        ${requesterBlock(report.rows, requesterMembers(state), currentUser(state))}
+
         <div class="report-block">
-          <h2>자료 목록 <span>· 필요일이 가까운 순 · 완료는 맨 아래</span></h2>
-          <div class="item-table">
-            <div class="it-row it-head"><div>자료명</div><div>담당자</div><div>상태</div><div>필요일</div><div>남은 날</div><div>최근 독촉</div></div>
+          <div class="it-headline">
+            <h2>자료 목록 <span>· 필요일이 가까운 순 · 완료는 맨 아래</span></h2>
+            <label class="it-search">
+              ${ICON.search}
+              <input type="search" data-action-input="report-search" value="${esc(query)}" placeholder="자료명 검색" aria-label="자료명 검색" autocomplete="off">
+            </label>
+          </div>
+          <div class="item-table">${itemTableBody(rows, query)}</div>
+        </div>
+      </section>
+    </div>`;
+}
+
+/** 감사인별 현황: 팀원마다 요청 중·긴급·완료. 이름을 누르면 대시보드를 그 감사인 자료로 좁혀 연다. */
+function requesterBlock(rows, members, me) {
+  if (!members.length) return '';
+  const list = requesterSummary(rows, members);
+  return `
+        <div class="report-block">
+          <h2>감사인별 현황 <span>· 이름을 누르면 대시보드를 그 감사인 자료로 좁혀 봐요</span></h2>
+          <div class="owner-table req-table">
+            <div class="ot-row ot-head"><div>요청 감사인</div><div>요청 중</div><div>긴급·지연</div><div>완료</div><div>가장 가까운 필요일</div></div>
+            ${list.map((r) => `
+              <div class="ot-row ${r.key && r.key === me ? 'is-me' : ''}">
+                <div class="ot-owner">${r.key ? `<button type="button" class="owner-link" data-action="show-requester" data-who="${esc(r.key)}">${esc(r.name)}${ICON.chevron}</button>` : `<b>${esc(r.name)}</b>`}${r.key && r.key === me ? '<span class="me-tag">나</span>' : ''}</div>
+                <div><b>${r.open}건</b></div>
+                <div class="${r.urgent ? 'is-urgent' : ''}">${r.urgent ? `${r.urgent}건` : '—'}</div>
+                <div>${r.done ? `${r.done}건` : '—'}</div>
+                <div>${r.nearest ? `${formatMDW(r.nearest.neededOn)} <small>· ${leftText(r.nearest.left)}</small>` : '—'}</div>
+              </div>`).join('')}
+          </div>
+        </div>`;
+}
+
+/** 자료 목록 표 내용. 검색어를 칠 때 이 부분만 다시 그린다 (입력 포커스 유지). */
+function itemTableBody(allRows, query) {
+  const rows = filterRows(allRows, query);
+  return `
+            <div class="it-row it-head"><div>자료명</div><div>담당자</div><div>상태</div><div>필요일</div><div>남은 날</div><div>최근 독촉</div><div>첨부자료</div></div>
+            ${query ? `<div class="it-count">‘${esc(query)}’ 검색 결과 ${rows.length}건 / 전체 ${allRows.length}건</div>` : ''}
+            ${rows.length ? '' : '<div class="it-empty">검색 결과가 없어요. 자료명의 일부만 입력해 보세요.</div>'}
             ${rows.map((r) => `
               <div class="it-row ${r.status === 'done' ? 'is-done' : ''}">
                 <div class="it-name">${esc(r.name)}${r.fixReason ? `<small>${esc(r.fixReason)}</small>` : ''}${r.signoff ? `<small>${esc(r.signoff)}</small>` : ''}</div>
-                <div>${esc(r.owner)}</div>
+                <div><a class="owner-link is-plain" href="#/owner/${encodeURIComponent(r.owner)}">${esc(r.owner)}</a>${r.requester ? `<small class="it-req">요청 ${esc(r.requester)}</small>` : ''}</div>
                 <div><span class="status status-${r.status}">${ICON[r.status]}${STATUS_LABEL[r.status]}</span></div>
                 <div>${formatMD(r.neededOn)}</div>
                 <div class="it-left">${r.status === 'done' ? '—' : `<b>${leftText(r.left)}</b><span class="risk risk-${r.risk}">${ICON[r.risk]}${r.riskLabel}</span>`}</div>
                 <div>${r.lastNudgedOn ? formatMD(r.lastNudgedOn) : '—'}</div>
-              </div>`).join('')}
-          </div>
-        </div>
-      </section>
-    </div>`;
+                <div class="it-att">${attachCell(r)}</div>
+              </div>`).join('')}`;
 }
 
 function stat(label, value, sub, cls = '') {
@@ -5551,7 +6756,105 @@ function empty() {
     </section>`;
 }
 
-return { renderReport };
+return { renderReport, itemTableBody };
+})();
+
+// ---- views/owner.js
+const __m_views_owner = (() => {
+const { formatMD, formatMDW } = __m_lib_dates;
+const { leftText } = __m_lib_priority;
+const { esc, ICON, STATUS_LABEL } = __m_views_html;
+const { topbar } = __m_views_dashboard;
+const { attachCell } = __m_views_attach;
+// 담당자 상세 — 주간 보고의 담당자별 현황에서 담당자를 누르면 연다 (#/owner/<담당자>).
+// 이 담당자에게 요청한 자료, 바로 할 일(독촉·보완·후속 절차), 독촉·수령 이력을 한 화면에.
+
+
+const won = (n) => `${Number(n).toLocaleString('ko-KR')}원`;
+const HISTORY_ICON = { nudge: 'mail', fix: 'fix', received: 'done', closed: 'done' };
+
+/**
+ * @param state  앱 상태
+ * @param detail ownerDetail() 결과
+ * @param opts   { today, isDemo }
+ */
+function renderOwner(state, detail, { today, isDemo }) {
+  const d = detail;
+  const back = `#/owner/${encodeURIComponent(d.owner)}`; // 패널을 닫으면 이 화면으로 돌아온다
+  const bundle = d.bundlable > 1
+    ? `<a class="btn btn-cta" href="#/bundle/${encodeURIComponent(d.owner)}" data-return="${esc(back)}">${ICON.mail}${d.bundlable}건 묶어서 독촉</a>` : '';
+
+  return `
+    <div class="page report owner-page">
+      ${topbar(state.client, today, isDemo, 'report', state.team)}
+
+      <section class="report-head">
+        <div>
+          <a class="owner-back" href="#/report">${ICON.back}주간 보고</a>
+          <h1>${esc(d.owner)} <span>· ${esc(d.dept || (d.isCounterparty ? '조회처' : '담당자'))}${d.isCounterparty ? ' · 외부조회 조회처' : ''}</span></h1>
+        </div>
+        ${bundle ? `<div class="report-actions">${bundle}</div>` : ''}
+      </section>
+
+      <div class="report-grid">
+        <aside class="report-side">
+          <div class="stat-grid">
+            ${stat('미완료', `${d.counts.open}건`, `전체 ${d.counts.total}건`)}
+            ${stat('긴급·지연', `${d.counts.urgent}건`, '지연 · 2일 이내', d.counts.urgent ? 'is-late' : '')}
+            ${stat('완료', `${d.counts.done}건`, '')}
+            ${stat('독촉', `${d.nudges}회`, d.lastNudgedOn ? `마지막 ${formatMD(d.lastNudgedOn)}` : '아직 없음')}
+          </div>
+          <div class="report-block owner-history">
+            <h2>이력 <span>· 최근 순</span></h2>
+            ${d.history.length ? `<ol class="oh-list">${d.history.map((h) => `
+              <li class="oh-${h.kind}">
+                <span class="oh-date">${formatMD(h.on)}</span>
+                <span class="oh-icon">${ICON[HISTORY_ICON[h.kind]]}</span>
+                <span class="oh-text"><b>${esc(h.text)}</b><small>${esc(h.itemName)}</small></span>
+              </li>`).join('')}</ol>` : '<p class="pp-empty">아직 기록된 이력이 없어요.</p>'}
+          </div>
+        </aside>
+
+        <section class="report-main">
+          <div class="report-block">
+            <h2>요청한 자료 <span>· 필요일이 가까운 순 · 완료는 맨 아래</span></h2>
+            <div class="item-table owner-items">
+              <div class="it-row it-head"><div>자료명</div><div>상태</div><div>필요일</div><div>남은 날</div><div>독촉</div><div>첨부자료</div><div></div></div>
+              ${d.rows.map((r) => `
+                <div class="it-row ${r.status === 'done' ? 'is-done' : ''}">
+                  <div class="it-name">${esc(r.name)}<small>${esc(r.kindLabel)}${r.bookAmount ? ` · 장부 ${won(r.bookAmount)}` : ''}${r.fixReason ? ` · ${esc(r.fixReason)}` : ''}</small>${r.signoff ? `<small>${esc(r.signoff)}</small>` : ''}</div>
+                  <div><span class="status status-${r.status}">${ICON[r.status]}${STATUS_LABEL[r.status]}</span></div>
+                  <div>${formatMDW(r.neededOn)}</div>
+                  <div class="it-left">${r.status === 'done' ? '—' : `<b>${leftText(r.left)}</b><span class="risk risk-${r.risk}">${ICON[r.risk]}${r.riskLabel}</span>`}</div>
+                  <div>${r.nudgeCount ? `${r.nudgeCount}회` : '—'}${r.lastNudgedOn ? `<small class="muted-text"> · ${formatMD(r.lastNudgedOn)}</small>` : ''}</div>
+                  <div class="it-att">${attachCell(r)}</div>
+                  <div class="it-go">${rowAction(r, back)}</div>
+                </div>`).join('')}
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>`;
+}
+
+function rowAction(r, back) {
+  const id = encodeURIComponent(r.id);
+  if (r.status === 'done') return '';
+  if (r.status === 'fix') return `<a class="btn btn-sub" href="#/fix/${id}" data-return="${esc(back)}">보완 재요청</a>`;
+  if (r.status === 'follow') return `<a class="btn btn-sub" href="#/follow/${id}" data-return="${esc(back)}">후속 절차</a>`;
+  return `<a class="btn btn-sub" href="#/compose/${id}" data-return="${esc(back)}">독촉하기</a>`;
+}
+
+function stat(label, value, sub, cls = '') {
+  return `
+    <div class="stat ${cls}">
+      <div class="stat-label">${label}</div>
+      <div class="stat-value">${value}</div>
+      ${sub ? `<div class="stat-sub">${sub}</div>` : ''}
+    </div>`;
+}
+
+return { renderOwner };
 })();
 
 // ---- views/status.js
@@ -5679,6 +6982,7 @@ const __m_views_confirm = (() => {
 const { CONF_TYPES, TYPE_ORDER, TRACK_LABEL, validateSetup, parseConfirmations, buildLetters, formatAmount, nextDocNo } = __m_lib_confirmation;
 const { esc, ICON } = __m_views_html;
 const { topbar } = __m_views_dashboard;
+const { requesterMembers } = __m_lib_team;
 // 외부조회서 작성 — 공통 정보 → 종류 선택 → 선정된 조회처 붙여넣기 → 검증 → 조회서 미리보기·인쇄 → 조회 목록 등록
 // 판단(검증·묶기·문안)은 lib/confirmation.js가 하고, 여기서는 그리기만 한다.
 
@@ -5692,7 +6996,7 @@ function renderConfirm(state, { today, isDemo, type, setup, setupErrors, pasteTe
   const t = CONF_TYPES[type];
   return `
     <div class="page confirm">
-      ${topbar(state.client, today, isDemo, 'confirm')}
+      ${topbar(state.client, today, isDemo, 'confirm', state.team)}
 
       <section class="report-head confirm-head">
         <div>
@@ -5707,7 +7011,7 @@ function renderConfirm(state, { today, isDemo, type, setup, setupErrors, pasteTe
 
       <div class="confirm-grid">
         <aside class="confirm-side">
-          ${setupForm(setup, setupErrors)}
+          ${setupForm(setup, setupErrors, requesterMembers(state))}
         </aside>
 
         <section class="confirm-main">
@@ -5758,7 +7062,18 @@ function field(label, name, value, { type = 'text', placeholder = '', error = ''
     </label>`;
 }
 
-function setupForm(s, e) {
+// 회신처 담당자: 자료 요청의 요청 감사인과 같은 후보(실무진) 중에서 고른다. 팀 정보가 없으면 직접 입력.
+function contactField(s, e, members) {
+  if (!members.length) return field('담당자', 'contactName', s.contactName, { placeholder: '장재혁 회계사', error: e.contactName });
+  return `
+    <label class="f ${e.contactName ? 'has-error' : ''}">
+      <span class="f-label">담당자 <small>실무진 중에서 · 등록한 조회서의 요청 감사인이 돼요</small></span>
+      <select name="contactName">${members.map((m) => `<option value="${esc(m)}" ${m === s.contactName ? 'selected' : ''}>${esc(m)}</option>`).join('')}</select>
+      ${e.contactName ? `<span class="f-error">${esc(e.contactName)}</span>` : ''}
+    </label>`;
+}
+
+function setupForm(s, e, members = []) {
   return `
     <form id="conf-setup" class="conf-setup" novalidate>
       <div class="report-block">
@@ -5771,7 +7086,7 @@ function setupForm(s, e) {
         <h2>회신처 <span>· 회신은 감사인에게 직접 와야 해요</span></h2>
         ${field('감사인', 'auditorName', s.auditorName, { error: e.auditorName })}
         ${field('감사인 주소', 'auditorAddress', s.auditorAddress, { error: e.auditorAddress })}
-        ${field('담당자', 'contactName', s.contactName, { placeholder: '장재혁 회계사', error: e.contactName })}
+        ${contactField(s, e, members)}
         <div class="owner-grid conf-two">
           ${field('전화', 'contactPhone', s.contactPhone, { placeholder: '02-0000-0000', error: e.contactPhone })}
           ${field('이메일', 'contactEmail', s.contactEmail, { type: 'email', hint: '선택', error: e.contactEmail })}
@@ -6162,23 +7477,30 @@ const { parseNow, clockOf } = __m_lib_timing;
 const { validateItem, parsePaste, markDuplicates, duplicateMessage, normalizeDate } = __m_lib_add;
 const { PBC_TEMPLATES, templateForName, templateOf, defaultBasisDate, requestSheetTsv, receiptSuggestion } = __m_lib_pbcTemplate;
 const { josa } = __m_lib_korean;
-const { buildReport, reportToText, reportToCsv, csvFileName } = __m_lib_report;
+const { buildReport, reportToText, reportToCsv, csvFileName, ownerDetail } = __m_lib_report;
 const { monthOf, shiftMonth, addEvent, removeEvent, moveEntry, setEventProgress, progressLabel } = __m_lib_calendar;
 const { formatMD } = __m_lib_dates;
 const { validateTransition, canTransition } = __m_lib_status;
-const { validateEngagement } = __m_lib_engagement;
-const { load, save, clear, sampleState, baseDateOf, copyAndRecord, copyAndRecordFix, addItems, updateItemStatus, createEmptyState } = __m_store;
+const { sampleDoc } = __m_lib_sampleDocs;
+const { renderScan } = __m_scan;
+const { currentUser, switchUser, signMail, defaultRequester, isManager, calendarScope, pickRequester, requesterMembers } = __m_lib_team;
+const { searchEngagements, engagementById, validateStart, teamFromEngagement } = __m_lib_engagements;
+const { SAMPLE_FILES, upgradeSampleAttachments, load, save, clear, sampleState, baseDateOf, copyAndRecord, copyAndRecordFix, addItems, updateItemStatus, createEmptyState } = __m_store;
 const { renderDashboard } = __m_views_dashboard;
-const { renderEmpty } = __m_views_empty;
+const { renderEmpty, lookupResults } = __m_views_empty;
 const { renderCompose } = __m_views_compose;
 const { renderBundle } = __m_views_bundle;
 const { renderFix } = __m_views_fix;
 const { renderAdd, pastePreview, pasteSubmit } = __m_views_add;
-const { renderReport } = __m_views_report;
+const { renderReport, itemTableBody } = __m_views_report;
+const { renderOwner } = __m_views_owner;
 const { renderStatusSheet } = __m_views_status;
 const { renderCalendar } = __m_views_calendar;
 const { renderConfirm, partiesPreview, outputSection } = __m_views_confirm;
 const { renderFollow } = __m_views_follow;
+const { renderAttach, renderPreview } = __m_views_attach;
+const { checkFiles, addAttachments, removeAttachment, newFileId, previewKind, TEXT_PREVIEW_LIMIT } = __m_lib_attach;
+const { putFile, getFile, deleteFile, clearFiles } = __m_files;
 const { startFollow, completeFollow, clampVerified, evidenceRequests, validateSignoff, FOLLOW_TYPES } = __m_lib_followup;
 const { CONF_TYPES, defaultSetup, validateSetup, parseConfirmations, buildLetters, toRegistryValues, nextDocNo } = __m_lib_confirmation;
 // 진입점: 상태를 불러와 화면을 그리고, data-action 클릭을 처리한다.
@@ -6195,16 +7517,31 @@ const todayParam = params.get('today') || nowParam?.date || null;
 
 const app = document.getElementById('app');
 let state = load();
+// 예전에 불러온 예시 첨부(텍스트)를 지금의 문서 이미지로 바꾼다
+{
+  const up = upgradeSampleAttachments(state);
+  if (up.changed.length) {
+    state = up.state;
+    save(state);
+    for (const id of up.changed) deleteFile(id).catch(() => {});
+  }
+}
 let mode = 'need';
 let compose = null; // 단건 독촉 화면 상태: { itemId, tone, copied, toast }
 let bundle = null;  // 묶음 독촉 화면 상태: { owner, tone, copied, toast }
 let fix = null;     // 보완 요청 화면 상태: { itemId, reason, copied, toast }
 let add = null;     // 자료 추가 화면 상태: { tab, form, errors, pasteText }
 let sheet = null;   // 상태 변경 시트: { itemId, status, reason, basisDate, requiredBasisDate, errors }
-let emptyForm = { clientName: '', engagement: '', service: 'audit', errors: {} }; // 첫 실행 화면 입력값
+const EMPTY_FORM = { lookupOpen: false, query: '', results: null, selectedId: null, service: 'audit', myName: '', myTitle: '', errors: {} };
+let emptyForm = { ...EMPTY_FORM }; // 첫 실행 화면 입력값
+let who = 'all';    // 대시보드 요청 감사인 필터: 'all' | 'me' | 팀원 이름
 let cal = null;     // 일정 탭 상태: { month, selected, form: { title, errors }, filter }
 let conf = null;    // 외부조회서 작성 상태: { type, setup, touched:Set, pasteText, bankBlank, resetArmed }
 let confResetTimer;
+let reportQuery = ''; // 주간 보고 자료 목록 검색어
+let drawerReturn = null; // 담당자 상세에서 연 패널을 닫으면 돌아갈 주소
+let preview = null; // 첨부 미리보기: { itemId, fileId, name, size, kind, url, text, truncated, itemName, blob }
+let att = null;     // 파일 첨부 창: { itemId, pending: File[], rejected, justDone, saving }
 let fu = null;      // 외부조회 후속 절차 패널: { itemId, owner, signoff: { preparer, completedOn, reviewer }, signoffErrors }
 
 function currentToday() {
@@ -6238,7 +7575,12 @@ function render() {
   if (location.hash === '#/calendar') {
     compose = bundle = fix = add = sheet = null;
     if (!cal) cal = { month: monthOf(today), selected: today, form: { title: '', errors: {} }, filter: 'all' };
-    app.innerHTML = renderCalendar(state, { today, isDemo, ...cal });
+    // 회계사는 자기가 요청한 자료의 일정만, 매니저는 팀 전체
+    const scoped = calendarScope(state);
+    const scopeNote = !scoped.me ? '' : scoped.scope === 'all'
+      ? (isManager(state) ? `매니저 화면 · 팀 전체 일정이 보여요` : '')
+      : `${scoped.me}${josa(scoped.me, '이', '가')} 요청한 자료와 내 일정만 보여요 · 팀 공통 일정 포함`;
+    app.innerHTML = renderCalendar({ ...state, items: scoped.items, events: scoped.events }, { today, isDemo, ...cal, scopeNote }) + attachOverlay();
     document.body.classList.remove('has-drawer');
     return;
   }
@@ -6251,8 +7593,10 @@ function render() {
         type: 'bank', touched: new Set(), pasteText: '', bankBlank: false,
         setup: { ...defaultSetup(state.client, today), ...(state.confirmSetup || {}), issuedOn: today, replyBy: defaultSetup(state.client, today).replyBy },
       };
+      // 회신처 담당자는 실무진 중 한 명. 처음 열 때는 상단바에서 고른 사람(매니저면 첫 실무진)으로 시작한다.
+      conf.setup.contactName = pickRequester(state, '');
     }
-    app.innerHTML = renderConfirm(state, { today, isDemo, ...conf, setupErrors: confSetupErrors(today) });
+    app.innerHTML = renderConfirm(state, { today, isDemo, ...conf, setupErrors: confSetupErrors(today) }) + attachOverlay();
     document.body.classList.remove('has-drawer');
     return;
   }
@@ -6260,12 +7604,24 @@ function render() {
   // 주간 현황은 대시보드 대신 그리는 전체 화면. 패널(독촉·보완·추가)은 대시보드 위에서만 연다.
   if (location.hash === '#/report') {
     compose = bundle = fix = add = sheet = null;
-    app.innerHTML = renderReport(state, buildReport(state, today), { today, isDemo });
+    app.innerHTML = renderReport(state, buildReport(state, today), { today, isDemo, query: reportQuery }) + attachOverlay();
     document.body.classList.remove('has-drawer');
     return;
   }
 
-  let html = renderDashboard(state, { today, mode, isDemo });
+  // 담당자 상세: 주간 보고에서 담당자를 누르면 여는 전체 화면
+  const ownerName = routeParam('owner');
+  if (ownerName) {
+    compose = bundle = fix = add = sheet = null;
+    const detail = ownerDetail(state, ownerName, today);
+    if (detail) {
+      app.innerHTML = renderOwner(state, detail, { today, isDemo }) + attachOverlay();
+      document.body.classList.remove('has-drawer');
+      return;
+    }
+  }
+
+  let html = renderDashboard(state, { today, mode, isDemo, who });
 
   const id = routeParam('compose');
   const item = id && state.items.find((x) => x.id === id && x.status !== 'done');
@@ -6332,7 +7688,7 @@ function render() {
 
   const focusedTone = document.activeElement?.dataset?.tone;
   const focusedReason = document.activeElement?.dataset?.reason;
-  app.innerHTML = html;
+  app.innerHTML = html + attachOverlay();
   document.body.classList.toggle('has-drawer', Boolean(item || b || fix || add || fu));
   // 톤·사유를 바꾼 뒤에도 키보드 포커스가 같은 버튼에 남도록 (데스크톱·모바일 중 보이는 쪽)
   if (focusedTone) {
@@ -6369,6 +7725,14 @@ async function copyText(text) {
 }
 
 function closeDrawer() {
+  // 담당자 상세에서 연 패널이면 그 화면으로 돌아간다
+  if (drawerReturn) {
+    const back = drawerReturn;
+    drawerReturn = null;
+    location.hash = back;
+    render();
+    return;
+  }
   // 샌드박스(iframe)에서는 pushState가 막힐 수 있어 해시를 비우는 방식으로 대신한다.
   try { history.pushState(null, '', location.pathname + location.search); }
   catch { location.hash = ''; }
@@ -6393,6 +7757,55 @@ async function copyForDrawer(view, { itemIds, text }, record) {
   render();
   clearTimeout(drawerToastTimer);
   drawerToastTimer = setTimeout(() => { view.toast = false; render(); }, 2800);
+}
+
+// ---------- 파일 첨부 ----------
+
+// 예시 자료의 첨부 파일을 브라우저 저장소에 만든다 (주간 보고 '첨부자료' 칸에서 열어 볼 수 있게).
+// 내용은 예시 안내 문구뿐이다. 저장소가 막힌 환경이면 조용히 넘어간다.
+// 예시 첨부: 스캔본처럼 그린 문서 이미지. 그리기에 실패하면 짧은 안내 텍스트로 대신한다.
+async function sampleFileBlob(f, item) {
+  const setup = { ...(state.confirmSetup || {}), contactName: item.requester || state.confirmSetup?.contactName || '' };
+  const doc = sampleDoc(f.id, item, setup);
+  if (doc) {
+    try { return await renderScan(doc, f.id.length * 31 + item.id.charCodeAt(1)); } catch { /* 아래 텍스트로 */ }
+  }
+  const text = `${f.name}\n\nPBC Mate 시연용 예시 첨부파일입니다. 실제 자료가 아닙니다.\n자료: ${item.name}\n담당: ${item.owner}\n`;
+  return new Blob([text], { type: 'text/plain' });
+}
+
+async function seedSampleFiles() {
+  for (const f of SAMPLE_FILES) {
+    const item = state.items.find((x) => x.id === f.itemId);
+    if (!item) continue;
+    try { await putFile(f.id, await sampleFileBlob(f, item)); } catch { return; }
+  }
+}
+
+function attachOverlay() {
+  if (preview) return renderPreview(preview);
+  const item = att && state?.items.find((x) => x.id === att.itemId);
+  if (!item) { att = null; return ''; }
+  return renderAttach(item, att);
+}
+
+function closePreview() {
+  if (preview?.url) URL.revokeObjectURL(preview.url);
+  preview = null;
+  render();
+}
+
+function openAttach(itemId, justDone) {
+  att = { itemId, pending: [], rejected: [], justDone, saving: false };
+  render();
+}
+
+function pickFiles(fileList) {
+  const item = state.items.find((x) => x.id === att.itemId);
+  const { ok, rejected } = checkFiles([...att.pending, ...fileList], item.attachments || []);
+  att.pending = ok;
+  att.rejected = rejected;
+  render();
 }
 
 // 외부조회서: 손댄 칸의 오류만 보여준다 (처음 열었을 때 빨간 칸이 가득하지 않게)
@@ -6442,23 +7855,60 @@ function setFollow(fn) {
 
 const actions = {
   'set-mode': (el) => { mode = el.dataset.mode; render(); },
-  'load-sample': () => { state = sampleState(); save(state); render(); },
+  'set-who': (el) => { who = el.dataset.who; render(); },
+  // 주간 보고 감사인별 현황 → 대시보드를 그 감사인 자료로
+  'show-requester': (el) => {
+    who = el.dataset.who === currentUser(state) ? 'me' : el.dataset.who;
+    location.hash = '';
+    render();
+  },
+  'load-sample': () => { state = sampleState(); save(state); who = 'all'; render(); seedSampleFiles(); },
 
   // 첫 실행: 클라이언트명·감사명을 넣고 빈 state로 시작 → 자료 추가 화면으로
   'start-blank': (el) => {
     const form = document.getElementById('engagement-form');
-    emptyForm = { clientName: form.clientName.value, engagement: form.engagement.value, service: form.service?.value || 'audit', errors: {} };
-    emptyForm.errors = validateEngagement(emptyForm);
+    readEmptyForm();
+    emptyForm.errors = validateStart(emptyForm);
     if (Object.keys(emptyForm.errors).length) {
       render();
       app.querySelector('.empty-form .has-error input')?.focus();
       return;
     }
-    state = createEmptyState(emptyForm);
+    const eng = engagementById(emptyForm.selectedId);
+    state = createEmptyState({ clientName: eng.client, engagement: eng.engagement, service: emptyForm.service, team: teamFromEngagement(eng, emptyForm.myName, emptyForm.myTitle) });
     save(state);
-    emptyForm = { clientName: '', engagement: '', service: 'audit', errors: {} };
+    emptyForm = { ...EMPTY_FORM };
+    who = 'all';
     location.hash = el.dataset.target === 'paste' ? '#/add/paste' : '#/add';
     render();
+  },
+
+  // 첫 화면: 클라이언트 조회 창 (클라이언트명은 이 창에서만 입력)
+  'eng-open': () => {
+    readEmptyForm();
+    emptyForm.lookupOpen = true;
+    emptyForm.results = emptyForm.query ? searchEngagements(emptyForm.query) : null;
+    render();
+    const input = app.querySelector('[name="engQuery"]');
+    input?.focus();
+    input?.setSelectionRange(input.value.length, input.value.length);
+  },
+  'eng-close': () => {
+    emptyForm.lookupOpen = false;
+    render();
+  },
+  'eng-search': () => {
+    emptyForm.query = app.querySelector('[name="engQuery"]')?.value ?? emptyForm.query;
+    emptyForm.results = searchEngagements(emptyForm.query);
+    app.querySelector('.eng-list').innerHTML = lookupResults(emptyForm.results, emptyForm.query);
+    app.querySelector('.eng-list .eng-item')?.focus();
+  },
+  'eng-pick': (el) => {
+    emptyForm.selectedId = el.dataset.id;
+    emptyForm.lookupOpen = false;
+    delete emptyForm.errors.client;
+    render();
+    app.querySelector('[name="myName"]')?.focus();
   },
 
   // 자료 상태 변경 시트
@@ -6531,6 +7981,7 @@ const actions = {
     const name = `‘${item.name}’${josa(item.name, '을', '를')}`;
     if (change.status === 'done') {
       closeDrawer();
+      openAttach(item.id, true);
       toast(`${name} 완료로 처리했어요.`);
     } else if (change.status === 'fix') {
       location.hash = `#/fix/${encodeURIComponent(item.id)}`;
@@ -6553,10 +8004,10 @@ const actions = {
   'copy-mail': () => {
     const today = currentToday();
     const item = withDays(state.items.find((x) => x.id === compose.itemId), today);
-    const mail = buildMail({
+    const mail = signMail(buildMail({
       item, person: state.people[item.owner], client: state.client,
       manager: state.team?.manager, today, tone: compose.tone,
-    });
+    }), currentUser(state));
     return copyForDrawer(compose, { itemIds: [item.id], text: mailToText(mail) });
   },
   'set-reason': (el) => { fix.reason = el.dataset.reason; fix.copied = false; render(); },
@@ -6618,7 +8069,8 @@ const actions = {
     const today = currentToday();
     const parsed = markDuplicates(parsePaste(add.pasteText, today), state.items);
     if (!parsed.rows.length || parsed.errorCount) return;
-    state = addItems(state, parsed.rows.map((r) => r.value));
+    const me = defaultRequester(state);
+    state = addItems(state, parsed.rows.map((r) => (me ? { ...r.value, item: { ...r.value.item, requester: me } } : r.value)));
     save(state);
     add = null;
     closeDrawer();
@@ -6627,7 +8079,7 @@ const actions = {
   'copy-fix': () => {
     const today = currentToday();
     const item = withDays(state.items.find((x) => x.id === fix.itemId), today);
-    const mail = buildFixMail({ item, person: state.people[item.owner], client: state.client, today, reason: fix.reason });
+    const mail = signMail(buildFixMail({ item, person: state.people[item.owner], client: state.client, today, reason: fix.reason }), currentUser(state));
     const reason = fix.reason;
     return copyForDrawer(fix, { text: fixMailToText(mail) },
       (s, on, text, copy) => copyAndRecordFix(s, { itemId: item.id, reason, on, text }, copy));
@@ -6663,7 +8115,9 @@ const actions = {
     if (!setup || !parsed.parties.length || parsed.errorCount) return;
     const letters = buildLetters(conf.type, parsed.parties, setup,
       { startNo: nextDocNo(state.items, conf.type), bankBlank: conf.bankBlank });
-    state = addItems(state, toRegistryValues(letters, setup));
+    // 요청 감사인 = 회신처 담당자(실무진 후보에서 고른 사람)
+    const requester = requesterMembers(state).includes(setup.contactName) ? setup.contactName : defaultRequester(state);
+    state = addItems(state, toRegistryValues(letters, setup).map((v) => (requester ? { ...v, item: { ...v.item, requester } } : v)));
     // 다음 작성 때 회사·감사인 정보를 다시 입력하지 않도록 기억한다 (날짜는 매번 새로)
     const { issuedOn, replyBy, ...keep } = setup;
     state = { ...state, confirmSetup: keep };
@@ -6733,14 +8187,92 @@ const actions = {
     save(state);
     fu = null;
     closeDrawer();
+    openAttach(item.id, true);
     toast(`${item.counterparty} 후속 절차를 완료했어요. ${done.follow.conclusion}`);
+  },
+  // 파일 첨부
+  'attach-open': (el) => openAttach(el.dataset.item, false),
+  'attach-close': () => { att = null; render(); },
+  'attach-unpick': (el) => { att.pending.splice(Number(el.dataset.index), 1); att.rejected = []; render(); },
+  'attach-save': async () => {
+    if (!att.pending.length || att.saving) return;
+    att.saving = true;
+    render();
+    const now = Date.now();
+    const metas = [];
+    try {
+      for (const [i, f] of att.pending.entries()) {
+        const id = newFileId(now, i);
+        await putFile(id, f);
+        metas.push({ id, name: f.name, size: f.size, type: f.type, addedOn: currentToday() });
+      }
+    } catch {
+      att.saving = false;
+      render();
+      toast('파일을 저장하지 못했어요. 브라우저 저장 공간이나 개인정보 보호 설정을 확인해 주세요.');
+      return;
+    }
+    setItem(att.itemId, (x) => addAttachments(x, metas));
+    att = null;
+    render();
+    toast(`${metas.length}개 파일을 첨부했어요. 주간 보고 자료 목록에서 열 수 있어요.`);
+  },
+  // 첨부 파일: 먼저 미리보기 창을 띄우고, 저장 버튼을 눌러야 내려받는다
+  'open-attachment': async (el) => {
+    const item = state.items.find((x) => x.id === el.dataset.item);
+    const meta = item?.attachments?.find((a) => a.id === el.dataset.file);
+    let blob;
+    try { blob = await getFile(el.dataset.file); } catch { blob = null; }
+    // 예시 첨부 파일이 저장소에 없으면(예전에 불러온 예시 등) 다시 만든다
+    const sample = SAMPLE_FILES.find((f) => f.id === el.dataset.file);
+    // 예전 버전의 예시 첨부(텍스트)가 남아 있으면 새 문서 이미지로 바꾼다
+    if (sample && blob && meta?.type && blob.type !== meta.type) blob = null;
+    if (!blob && sample) {
+      blob = await sampleFileBlob(sample, item);
+      putFile(sample.id, blob).catch(() => {});
+    }
+    const name = meta?.name || 'attachment';
+    if (!blob) {
+      // 파일 내용이 이 브라우저에 없을 때도 창을 띄워 이유를 알려 준다
+      preview = { itemId: item.id, fileId: el.dataset.file, name, size: meta?.size || 0, kind: 'missing', itemName: item.name };
+      render();
+      return;
+    }
+    const kind = previewKind(name, blob.type || meta?.type);
+    preview = { itemId: item.id, fileId: el.dataset.file, name, size: blob.size, kind, itemName: item.name, blob };
+    if (kind === 'image' || kind === 'pdf') preview.url = URL.createObjectURL(blob);
+    if (kind === 'text') {
+      const text = await blob.text();
+      preview.text = text.slice(0, TEXT_PREVIEW_LIMIT);
+      preview.truncated = text.length > TEXT_PREVIEW_LIMIT;
+    }
+    render();
+  },
+  'preview-close': closePreview,
+  'preview-save': () => {
+    if (!preview?.blob) return;
+    const url = URL.createObjectURL(preview.blob);
+    const a = Object.assign(document.createElement('a'), { href: url, download: preview.name });
+    document.body.append(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    toast(`‘${preview.name}’을(를) 저장했어요.`);
+  },
+  'remove-attachment': async (el) => {
+    const { item: itemId, file } = el.dataset;
+    const name = state.items.find((x) => x.id === itemId)?.attachments?.find((a) => a.id === file)?.name;
+    try { await deleteFile(file); } catch { /* 저장소에 없어도 목록에서는 뺀다 */ }
+    setItem(itemId, (x) => removeAttachment(x, file));
+    render();
+    toast(`‘${name}’ 첨부를 삭제했어요.`);
   },
   'copy-bundle': () => {
     const sorted = bundleItems(state.items, bundle.owner, currentToday());
-    const mail = buildBundleMail({
+    const mail = signMail(buildBundleMail({
       sorted, person: state.people[bundle.owner], client: state.client,
       manager: state.team?.manager, tone: bundle.tone,
-    });
+    }), currentUser(state));
     return copyForDrawer(bundle, { itemIds: sorted.map((x) => x.id), text: bundleMailToText(mail) });
   },
 };
@@ -6761,6 +8293,15 @@ function applyReceiptCheck() {
   render();
 }
 
+// 첫 화면 입력값을 상태에 옮겨 둔다 (다시 그려도 입력이 남도록)
+function readEmptyForm() {
+  const form = document.getElementById('engagement-form');
+  if (!form) return;
+  emptyForm.service = form.service?.value ?? emptyForm.service;
+  emptyForm.myName = form.myName?.value ?? emptyForm.myName;
+  emptyForm.myTitle = form.myTitle?.value ?? emptyForm.myTitle;
+}
+
 // 시트의 기준일 입력값을 상태에 옮겨 둔다 (다시 그려도 입력이 남도록)
 function readSheetDates() {
   const root = document.querySelector('.sheet');
@@ -6771,7 +8312,7 @@ function readSheetDates() {
 
 // 메일 속 날짜를 캘린더 일정으로 추가 (드롭·탭 공통)
 function addMailDate({ title, date, itemId }) {
-  const result = addEvent(state, { title, date, itemId: itemId || null });
+  const result = addEvent(state, { title, date, itemId: itemId || null, by: currentUser(state) });
   if (!result.added) { toast('이미 캘린더에 있는 일정이에요.'); return; }
   state = result.state;
   save(state);
@@ -6831,6 +8372,21 @@ app.addEventListener('drop', (e) => {
   }
 });
 
+// 파일 첨부 창: 파일을 끌어다 놓기
+app.addEventListener('dragover', (e) => {
+  const zone = e.target.closest?.('.attach-drop');
+  if (!zone || !e.dataTransfer?.types?.includes('Files')) return;
+  e.preventDefault();
+  zone.classList.add('is-over');
+});
+app.addEventListener('dragleave', (e) => e.target.closest?.('.attach-drop')?.classList.remove('is-over'));
+app.addEventListener('drop', (e) => {
+  const zone = e.target.closest?.('.attach-drop');
+  if (!zone || !e.dataTransfer?.files?.length) return;
+  e.preventDefault();
+  pickFiles(e.dataTransfer.files);
+});
+
 // 일정 패널의 날짜 입력으로 이동 (모바일·키보드)
 app.addEventListener('change', (e) => {
   if (e.target.dataset.actionChange === 'cal-move') moveCalendarEntry(e.target.dataset.entry, e.target.value);
@@ -6840,6 +8396,25 @@ app.addEventListener('change', (e) => {
     save(state);
     render();
     toast(value > 0 ? `수행중요성을 ${value.toLocaleString('ko-KR')}원으로 정했어요.` : '수행중요성을 지웠어요.');
+    return;
+  }
+  if (e.target.dataset.actionChange === 'switch-user') {
+    state = switchUser(state, e.target.value);
+    save(state);
+    if (isManager(state)) who = 'all';
+    else if (who === e.target.value) who = 'me';
+    // 담당자·요청 감사인 기본값도 바뀐 사람으로 맞춘다
+    if (conf) conf.setup.contactName = pickRequester(state, '');
+    if (add?.form) add.form.requester = pickRequester(state, '');
+    render();
+    const who2 = `${currentUser(state)}${josa(currentUser(state), '으로', '로')}`;
+    toast(isManager(state)
+      ? `${who2} 바꿨어요. 매니저 화면은 팀 전체 자료로 시작하고, 실무진별로 거를 수 있어요.`
+      : `지금 쓰는 사람을 ${who2} 바꿨어요. 새 요청과 메일 서명에 이 이름이 들어가요.`);
+    return;
+  }
+  if (e.target.dataset.actionChange === 'attach-pick') {
+    pickFiles(e.target.files);
     return;
   }
   const fuAction = e.target.dataset.actionChange;
@@ -6874,7 +8449,7 @@ app.addEventListener('change', (e) => {
     conf.touched.add(e.target.name);
     const errors = confSetupErrors(currentToday());
     for (const label of app.querySelectorAll('#conf-setup .f')) {
-      const name = label.querySelector('input')?.name;
+      const name = label.querySelector('input, select')?.name;
       if (!conf.touched.has(name)) continue;
       label.classList.toggle('has-error', Boolean(errors[name]));
       label.querySelector('.f-error')?.remove();
@@ -6886,7 +8461,7 @@ app.addEventListener('change', (e) => {
 function readAddForm() {
   const form = document.getElementById('add-form');
   if (!form) return add?.form || {};
-  return Object.fromEntries(['name', 'ownerName', 'ownerTitle', 'dept', 'requestedOn', 'neededOn', 'procedure', 'basisDate', 'template']
+  return Object.fromEntries(['name', 'ownerName', 'ownerTitle', 'dept', 'requestedOn', 'neededOn', 'procedure', 'basisDate', 'template', 'requester']
     .map((k) => [k, form[k]?.value ?? '']));
 }
 
@@ -6901,7 +8476,7 @@ app.addEventListener('submit', (e) => {
     app.querySelector('.cal-add input')?.focus();
     return;
   }
-  const result = addEvent(state, { title, date: cal.selected });
+  const result = addEvent(state, { title, date: cal.selected, by: currentUser(state) });
   if (result.added) { state = result.state; save(state); }
   cal.form = { title: '', errors: {} };
   render();
@@ -6925,6 +8500,8 @@ app.addEventListener('submit', (e) => {
   }
   const source = add.source;
   if (source) value.item.sourceId = source.itemId; // 어느 외부조회 건의 증빙인지
+  const requester = add.form.requester || defaultRequester(state);
+  if (requester) value.item.requester = requester;
   const tpl = PBC_TEMPLATES[add.form.template] || templateForName(value.item.name);
   if (tpl) {
     value.item.template = tpl.key;
@@ -6947,6 +8524,18 @@ app.addEventListener('submit', (e) => {
 
 // 붙여넣기: 입력할 때마다 미리보기와 저장 버튼만 갱신한다 (textarea 포커스 유지).
 app.addEventListener('input', (e) => {
+  // 클라이언트 조회 창: 입력할 때마다 목록을 거른다
+  if (e.target.dataset.actionInput === 'eng-query') {
+    emptyForm.query = e.target.value;
+    emptyForm.results = emptyForm.query.trim() ? searchEngagements(emptyForm.query) : null;
+    app.querySelector('.eng-list').innerHTML = lookupResults(emptyForm.results, emptyForm.query);
+    return;
+  }
+  if (e.target.dataset.actionInput === 'report-search') {
+    reportQuery = e.target.value;
+    app.querySelector('.item-table').innerHTML = itemTableBody(buildReport(state, currentToday()).rows, reportQuery);
+    return;
+  }
   if (e.target.dataset.actionInput === 'follow-signoff') {
     fu.signoff[e.target.dataset.field] = e.target.value;
     return;
@@ -6979,6 +8568,10 @@ app.addEventListener('input', (e) => {
 });
 
 app.addEventListener('click', (e) => {
+  // 담당자 상세의 '독촉하기' 등: 패널을 닫으면 이 화면으로 돌아오도록 기억한다
+  const ret = e.target.closest('[data-return]');
+  if (ret) drawerReturn = ret.dataset.return;
+  else if (e.target.closest('a[href^="#"]')) drawerReturn = null;
   const el = e.target.closest('[data-action]');
   if (!el) return;
   e.preventDefault();
@@ -6988,13 +8581,22 @@ app.addEventListener('click', (e) => {
 window.addEventListener('hashchange', render);
 window.addEventListener('popstate', render);
 document.addEventListener('keydown', (e) => {
+  // 첫 화면 클라이언트명에서 Enter → 조회
+  if (e.key === 'Enter' && e.target.dataset?.enter === 'eng-search') {
+    e.preventDefault();
+    actions['eng-search']();
+    return;
+  }
   if (e.key !== 'Escape') return;
+  if (!state && emptyForm.lookupOpen) { actions['eng-close'](); return; }
+  if (preview) { closePreview(); return; }
+  if (att) { att = null; render(); return; }
   if (sheet) { sheet = null; render(); return; }
   if (compose || bundle || fix || add || fu) actions['close-drawer']();
 });
 
 // 개발용: 콘솔에서 pbc.reset() 하면 첫 실행 화면으로 돌아간다.
-window.pbc = { reset() { clear(); state = null; compose = bundle = fix = add = sheet = cal = conf = fu = null; render(); } };
+window.pbc = { reset() { clear(); clearFiles().catch(() => {}); state = null; compose = bundle = fix = add = sheet = cal = conf = fu = att = null; render(); } };
 
 render();
 

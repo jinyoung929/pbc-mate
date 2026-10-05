@@ -4,8 +4,8 @@ import {
   isBundleEligible, bundleItems, bundleTone, buildBundleMail, bundleMailToText,
 } from '../src/js/lib/bundle.js';
 import { recommendTone } from '../src/js/lib/tone.js';
-import { DEMO_DATE, copyAndRecord, recordNudges } from '../src/js/store.js';
-import { sampleState } from './fixtures.js';
+import { copyAndRecord, recordNudges } from '../src/js/store.js';
+import { sampleState, DEMO_DATE } from './fixtures.js';
 
 const state = sampleState();
 const names = (list) => list.map((x) => x.name);

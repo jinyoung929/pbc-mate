@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import {
   weekRange, weekLabel, buildReport, summaryLines, reportToText, reportToCsv, csvFileName,
 } from '../src/js/lib/report.js';
-import { baseDateOf, DEMO_DATE } from '../src/js/store.js';
-import { sampleState } from './fixtures.js';
+import { baseDateOf } from '../src/js/store.js';
+import { sampleState, DEMO_DATE } from './fixtures.js';
 import { summarize, withDays } from '../src/js/lib/priority.js';
 
 const state = sampleState();
@@ -86,7 +86,7 @@ test('현황 복사 텍스트', () => {
     '긴급·지연 1건',
     '보완 요청 1건',
     '',
-    '담당자별',
+    '담당자별(거래처별)',
     '- 박준호 과장: 1건 (긴급·지연 1)',
     '- 김민지 대리: 3건',
     '- 최도윤 차장: 1건',
@@ -130,4 +130,40 @@ test('주간 보고: 상태 칸 합계가 전체 건수와 같다 (외부조회 
   const c = r.counts;
   assert.equal(c.done + c.none + c.part + c.fix + c.follow, c.total);
   assert.equal(c.follow, 2);
+});
+
+test('자료 목록 검색: 자료명으로, 띄어쓰기·대소문자 무시', async () => {
+  const { filterRows } = await import('../src/js/lib/report.js');
+  const rows = buildReport(sampleState(), DEMO_DATE).rows;
+  assert.deepEqual(filterRows(rows, '재고 실사').map((r) => r.name), ['재고실사 결과표']);
+  assert.equal(filterRows(rows, '').length, rows.length);
+  assert.equal(filterRows(rows, '없는자료').length, 0);
+});
+
+test('담당자 상세: 자료·건수·묶음 독촉 가능 건수·이력(최근 순)', async () => {
+  const { ownerDetail } = await import('../src/js/lib/report.js');
+  const s = sampleState();
+  const d = ownerDetail(s, '김민지 대리', DEMO_DATE);
+  assert.equal(d.dept, '재무팀');
+  assert.equal(d.isCounterparty, false);
+  assert.deepEqual(d.counts, { total: 3, open: 3, urgent: 0, done: 0 });
+  assert.equal(d.bundlable, 3);
+  assert.deepEqual(d.rows.map((r) => r.name), ['재고실사 결과표', '특수관계자 거래내역', '매출채권 연령분석표']);
+  assert.equal(d.rows[0].kindLabel, 'PBC 자료');
+  assert.equal(d.rows[1].nudgeCount, 2);
+  const dates = d.history.map((h) => h.on);
+  assert.deepEqual(dates, [...dates].sort().reverse(), '최근 순');
+  assert.ok(d.history.some((h) => h.text === '독촉 메일 · 정중'));
+  assert.equal(ownerDetail(s, '없는 사람', DEMO_DATE), null);
+});
+
+test('담당자 상세: 외부조회 조회처는 조회서 종류와 장부금액', async () => {
+  const { ownerDetail } = await import('../src/js/lib/report.js');
+  const { sampleState: appSample } = await import('../src/js/store.js');
+  const d = ownerDetail(appSample(), '㈜대한부품', '2026-10-01');
+  assert.equal(d.isCounterparty, true);
+  assert.equal(d.rows[0].kindLabel, '채권채무조회서');
+  assert.equal(d.rows[0].bookAmount, 842000000);
+  assert.equal(d.bundlable, 0, '후속 절차 건은 묶음 독촉 대상 아님');
+  assert.ok(d.history.some((h) => h.kind === 'received'));
 });

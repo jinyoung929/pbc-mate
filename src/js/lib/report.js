@@ -84,6 +84,8 @@ export function buildReport(state, today) {
     riskLabel: isOpen(x) ? RISK[x.risk] : '',
     lastNudgedOn: lastOf(x.nudges)?.on ?? null,
     fixReason: x.status === 'fix' && x.fix?.reason ? fixReasonLabel(x.fix.reason) : null,
+    attachments: x.attachments || [], // 완료한 자료에 첨부한 파일 목록
+    requester: x.requester || '',     // 요청 감사인 (lib/team.js)
     // 외부조회 후속 절차를 마친 건: 수행자·검토자 (감사기준서 230)
     signoff: x.follow?.signoff
       ? `수행 ${x.follow.signoff.preparer}${x.follow.signoff.reviewer ? ` · 검토 ${x.follow.signoff.reviewer}` : ' · 검토 전'}`
@@ -146,7 +148,7 @@ export function reportToText(report) {
     `보완 요청 ${counts.fix}건`,
   ];
   if (owners.length) {
-    lines.push('', '담당자별');
+    lines.push('', '담당자별(거래처별)');
     for (const o of owners) lines.push(`- ${o.owner}: ${o.open}건${o.urgent ? ` (긴급·지연 ${o.urgent})` : ''}`);
   }
   if (urgentItems.length) {
@@ -173,4 +175,73 @@ export function reportToCsv(report) {
 
 export function csvFileName(report) {
   return `pbc-현황-${report.today}.csv`;
+}
+
+// ---------- 자료 목록 검색 ----------
+
+const normText = (s) => String(s ?? '').replace(/\s+/g, '').toLowerCase();
+
+/** 자료명으로 거르기 (띄어쓰기·대소문자 무시). 검색어가 비면 그대로. */
+export function filterRows(rows, query) {
+  const q = normText(query);
+  return q ? rows.filter((r) => normText(r.name).includes(q)) : rows;
+}
+
+// ---------- 담당자 상세 ----------
+
+const TONE_NAME = { angel: '천사', polite: '정중', firm: '단호', cc: '매니저 참조' };
+const FIX_NAME = { date: '기준일 상이', sign: '서명 누락', missing: '일부 항목 누락', file: '파일 오류' };
+const CONF_NAME = { bank: '은행조회서', arap: '채권채무조회서', legal: '변호사조회서', inventory: '제3자보관재고자산조회서' };
+
+/**
+ * 한 담당자(회사 담당자 또는 외부조회 조회처)의 상세.
+ * @returns {null | {
+ *   owner, dept, isCounterparty,
+ *   counts: { total, open, urgent, done },
+ *   nudges, lastNudgedOn, bundlable,           // 묶음 독촉 가능한 건수
+ *   rows: 주간 보고 행 + { nudgeCount, kindLabel, bookAmount }[],  // 미완료(필요일순) → 완료
+ *   history: { on, kind: 'nudge'|'fix'|'received'|'closed', text, itemName }[]  // 최근 순
+ * }}
+ */
+export function ownerDetail(state, owner, today) {
+  const items = state.items.filter((x) => x.owner === owner);
+  if (!items.length) return null;
+  const byId = new Map(items.map((x) => [x.id, x]));
+  const rows = buildReport(state, today).rows.filter((r) => r.owner === owner).map((r) => {
+    const x = byId.get(r.id);
+    return {
+      ...r,
+      nudgeCount: (x.nudges || []).length,
+      kindLabel: x.kind === 'confirmation' ? CONF_NAME[x.confType] : 'PBC 자료',
+      bookAmount: x.bookAmount ?? null,
+    };
+  });
+  const open = rows.filter((r) => r.status !== 'done');
+
+  const history = [];
+  for (const x of items) {
+    for (const n of x.nudges || []) history.push({ on: n.on, kind: 'nudge', text: `독촉 메일 · ${TONE_NAME[n.tone] || n.tone}`, itemName: x.name });
+    for (const f of x.fixes || []) history.push({ on: f.on, kind: 'fix', text: `보완 요청 · ${FIX_NAME[f.reason] || f.reason}`, itemName: x.name });
+    if (x.received?.on) history.push({ on: x.received.on, kind: 'received', text: '자료 수령', itemName: x.name });
+    if (x.follow?.closedOn) history.push({ on: x.follow.closedOn, kind: 'closed', text: '후속 절차 완료', itemName: x.name });
+  }
+  history.sort((a, b) => (a.on < b.on ? 1 : a.on > b.on ? -1 : 0));
+
+  const person = state.people[owner] || {};
+  return {
+    owner,
+    dept: person.dept || '',
+    isCounterparty: items.some((x) => x.kind === 'confirmation'),
+    counts: {
+      total: rows.length,
+      open: open.length,
+      urgent: open.filter((r) => r.risk === 'late' || r.risk === 'high').length,
+      done: rows.length - open.length,
+    },
+    nudges: person.nudges || 0,
+    lastNudgedOn: person.lastNudgedOn ?? null,
+    bundlable: items.filter((x) => x.status !== 'done' && x.status !== 'fix' && x.status !== 'follow').length,
+    rows,
+    history,
+  };
 }

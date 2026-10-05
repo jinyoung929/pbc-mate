@@ -4,6 +4,7 @@
 import { formatMD, formatMDW } from '../lib/dates.js';
 import { withDays, leftText } from '../lib/priority.js';
 import { FIX_REASONS, fixReasonLabel, fixDetail, buildFixMail } from '../lib/fix.js';
+import { signMail, currentUser } from '../lib/team.js';
 import { esc, ICON, STATUS_LABEL } from './html.js';
 import { termsOf } from '../lib/terms.js';
 import { mailDates } from '../lib/calendar.js';
@@ -16,7 +17,7 @@ import { mailField, mailDateDock } from './calendar.js';
 export function renderFix(state, { today, itemId, reason, copied, toast }) {
   const item = withDays(state.items.find((x) => x.id === itemId), today);
   const person = state.people[item.owner] || {};
-  const mail = buildFixMail({ item, person, client: state.client, today, reason });
+  const mail = signMail(buildFixMail({ item, person, client: state.client, today, reason }), currentUser(state));
   const dates = mailDates([item], today, { replyBy: false });
   const label = fixReasonLabel(reason);
   const lastFix = (item.fixes || [])[item.fixes?.length - 1];

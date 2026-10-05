@@ -5,7 +5,7 @@ import { buildMail } from '../src/js/lib/mail.js';
 import { buildBundleMail, bundleItems } from '../src/js/lib/bundle.js';
 import { buildFixMail } from '../src/js/lib/fix.js';
 import { insight, withDays } from '../src/js/lib/priority.js';
-import { sampleState, DEMO_DATE } from '../src/js/store.js';
+import { sampleState, DEMO_DATE } from './fixtures.js';
 
 const state = sampleState();
 const inv = withDays(state.items.find((x) => x.id === 'i3'), DEMO_DATE); // 재고실사 결과표 · 10/6 필요

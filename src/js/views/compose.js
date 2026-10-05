@@ -10,6 +10,7 @@ import { timingChip, timingBanner } from './timing.js';
 import { mailDates } from '../lib/calendar.js';
 import { mailField, mailDateDock } from './calendar.js';
 import { templateOf } from '../lib/pbcTemplate.js';
+import { signMail, currentUser } from '../lib/team.js';
 import { esc, ICON, RISK_LABEL, STATUS_LABEL } from './html.js';
 import { termsOf } from '../lib/terms.js';
 
@@ -23,7 +24,7 @@ export function renderCompose(state, { today, clock, itemId, tone, copied, toast
   const history = item.nudges || [];
   const last = history[history.length - 1];
   const recommended = recommendTone(item);
-  const mail = buildMail({ item, person, client: state.client, manager: state.team?.manager, today, tone });
+  const mail = signMail(buildMail({ item, person, client: state.client, manager: state.team?.manager, today, tone }), currentUser(state));
   const timing = sendTiming(clock, item.neededOn);
   const dates = mailDates([item], today);
 
