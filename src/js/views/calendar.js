@@ -11,9 +11,10 @@ const DOW = ['일', '월', '화', '수', '목', '금', '토'];
 
 /**
  * @param state 앱 상태
- * @param opts  { today, isDemo, month: 'YYYY-MM', selected: 'YYYY-MM-DD', form: { title, errors }, filter: 'all'|'done'|'doing'|'planned' }
+ * @param opts  { today, isDemo, month: 'YYYY-MM', selected: 'YYYY-MM-DD', form: { title, errors }, filter: 'all'|'done'|'doing'|'planned', scopeNote }
+ *   scopeNote: 누구의 일정을 보여주는지 (회계사는 자기 자료만, 매니저는 전체)
  */
-export function renderCalendar(state, { today, isDemo, month, selected, form, filter = 'all' }) {
+export function renderCalendar(state, { today, isDemo, month, selected, form, filter = 'all', scopeNote = '' }) {
   const all = calendarEntries(state, today);
   const entries = filter === 'all' ? all : all.filter((e) => e.progress === filter);
   const grid = monthGrid(month);
@@ -34,11 +35,12 @@ export function renderCalendar(state, { today, isDemo, month, selected, form, fi
 
   return `
     <div class="page calendar">
-      ${topbar(state.client, today, isDemo, 'calendar')}
+      ${topbar(state.client, today, isDemo, 'calendar', state.team)}
 
       <section class="cal-head">
         <div>
           <h1>${monthLabel(month)}</h1>
+          ${scopeNote ? `<div class="cal-scope">${ICON.help}${esc(scopeNote)}</div>` : ''}
           <p class="cal-sub">이번 달 필요일 ${inMonth.filter((e) => e.kind === 'need').length}건 · 일정 ${inMonth.filter((e) => e.kind === 'event').length}건 · 항목을 끌어 다른 날에 놓으면 날짜가 바뀌어요</p>
         </div>
         <div class="cal-nav">

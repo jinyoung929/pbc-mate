@@ -8,8 +8,8 @@ import { isBundleEligible, bundleItems } from '../src/js/lib/bundle.js';
 import { buildMail } from '../src/js/lib/mail.js';
 import { withDays, isOpen, summarize, groupByOwner, sortItems } from '../src/js/lib/priority.js';
 import { buildReport } from '../src/js/lib/report.js';
-import { updateItemStatus, DEMO_DATE } from '../src/js/store.js';
-import { sampleState } from './fixtures.js';
+import { updateItemStatus } from '../src/js/store.js';
+import { sampleState, DEMO_DATE } from './fixtures.js';
 
 const state = sampleState();
 const bank = state.items.find((x) => x.id === 'i1'); // 미회신

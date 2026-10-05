@@ -6,6 +6,7 @@ import {
 } from '../lib/confirmation.js';
 import { esc, ICON } from './html.js';
 import { topbar } from './dashboard.js';
+import { requesterMembers } from '../lib/team.js';
 
 /**
  * @param state 앱 상태
@@ -16,7 +17,7 @@ export function renderConfirm(state, { today, isDemo, type, setup, setupErrors, 
   const t = CONF_TYPES[type];
   return `
     <div class="page confirm">
-      ${topbar(state.client, today, isDemo, 'confirm')}
+      ${topbar(state.client, today, isDemo, 'confirm', state.team)}
 
       <section class="report-head confirm-head">
         <div>
@@ -31,7 +32,7 @@ export function renderConfirm(state, { today, isDemo, type, setup, setupErrors, 
 
       <div class="confirm-grid">
         <aside class="confirm-side">
-          ${setupForm(setup, setupErrors)}
+          ${setupForm(setup, setupErrors, requesterMembers(state))}
         </aside>
 
         <section class="confirm-main">
@@ -82,7 +83,18 @@ function field(label, name, value, { type = 'text', placeholder = '', error = ''
     </label>`;
 }
 
-function setupForm(s, e) {
+// 회신처 담당자: 자료 요청의 요청 감사인과 같은 후보(실무진) 중에서 고른다. 팀 정보가 없으면 직접 입력.
+function contactField(s, e, members) {
+  if (!members.length) return field('담당자', 'contactName', s.contactName, { placeholder: '장재혁 회계사', error: e.contactName });
+  return `
+    <label class="f ${e.contactName ? 'has-error' : ''}">
+      <span class="f-label">담당자 <small>실무진 중에서 · 등록한 조회서의 요청 감사인이 돼요</small></span>
+      <select name="contactName">${members.map((m) => `<option value="${esc(m)}" ${m === s.contactName ? 'selected' : ''}>${esc(m)}</option>`).join('')}</select>
+      ${e.contactName ? `<span class="f-error">${esc(e.contactName)}</span>` : ''}
+    </label>`;
+}
+
+function setupForm(s, e, members = []) {
   return `
     <form id="conf-setup" class="conf-setup" novalidate>
       <div class="report-block">
@@ -95,7 +107,7 @@ function setupForm(s, e) {
         <h2>회신처 <span>· 회신은 감사인에게 직접 와야 해요</span></h2>
         ${field('감사인', 'auditorName', s.auditorName, { error: e.auditorName })}
         ${field('감사인 주소', 'auditorAddress', s.auditorAddress, { error: e.auditorAddress })}
-        ${field('담당자', 'contactName', s.contactName, { placeholder: '장재혁 회계사', error: e.contactName })}
+        ${contactField(s, e, members)}
         <div class="owner-grid conf-two">
           ${field('전화', 'contactPhone', s.contactPhone, { placeholder: '02-0000-0000', error: e.contactPhone })}
           ${field('이메일', 'contactEmail', s.contactEmail, { type: 'email', hint: '선택', error: e.contactEmail })}

@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import {
   normalizeDate, ownerName, validateItem, parsePaste, rowErrorText,
 } from '../src/js/lib/add.js';
-import { addItems, baseDateOf, DEMO_DATE } from '../src/js/store.js';
-import { sampleState } from './fixtures.js';
+import { addItems, baseDateOf } from '../src/js/store.js';
+import { sampleState, DEMO_DATE } from './fixtures.js';
 import { withDays, isOpen, sortItems, groupByOwner, riskOf } from '../src/js/lib/priority.js';
 import { buildMail } from '../src/js/lib/mail.js';
 

@@ -5,6 +5,7 @@ import { formatMD } from '../lib/dates.js';
 import { leftText } from '../lib/priority.js';
 import { TONES, toneIndex } from '../lib/tone.js';
 import { buildBundleMail } from '../lib/bundle.js';
+import { signMail, currentUser } from '../lib/team.js';
 import { sendTiming } from '../lib/timing.js';
 import { timingChip, timingBanner } from './timing.js';
 import { mailDates } from '../lib/calendar.js';
@@ -21,7 +22,7 @@ export function renderBundle(state, { sorted, clock, tone, copied, toast }) {
   const person = state.people[owner] || {};
   const count = sorted.length;
   const t = TONES[toneIndex(tone)];
-  const mail = buildBundleMail({ sorted, person, client: state.client, manager: state.team?.manager, tone });
+  const mail = signMail(buildBundleMail({ sorted, person, client: state.client, manager: state.team?.manager, tone }), currentUser(state));
   const timing = sendTiming(clock, top.neededOn);
   const dates = mailDates(sorted, clock.date);
   const nudged = person.nudges

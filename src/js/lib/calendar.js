@@ -1,6 +1,6 @@
 // 일정: 자료 필요일(자동) + 사용자가 만든 일정(events)을 한 달력에서 관리한다.
 //
-// state.events = [{ id, title, date, itemId?, note?, progress? }]   // 사용자가 만든 일정
+// state.events = [{ id, title, date, itemId?, note?, progress?, by? }]   // 사용자가 만든 일정 (by: 만든 감사인, 없으면 팀 공통)
 //   progress: 'planned'(진행예정, 기본) | 'doing'(진행중) | 'done'(완료)
 // 달력 항목(entry)은 두 종류:
 //   need:<itemId>  — 자료의 필요일. 옮기면 item.neededOn이 바뀐다.
@@ -103,12 +103,12 @@ function nextEventId(state) {
 }
 
 /** 사용자 일정 추가. 같은 자료·같은 날짜·같은 제목이 이미 있으면 그대로 둔다(중복 방지). */
-export function addEvent(state, { title, date, itemId = null, note = '' }) {
+export function addEvent(state, { title, date, itemId = null, note = '', by = '' }) {
   const t = String(title ?? '').trim();
   if (!t || !date) return { state, added: false };
   const dup = (state.events || []).some((e) => e.title === t && e.date === date && (e.itemId || null) === itemId);
   if (dup) return { state, added: false };
-  const event = { id: nextEventId(state), title: t, date, ...(itemId && { itemId }), ...(note && { note }) };
+  const event = { id: nextEventId(state), title: t, date, ...(itemId && { itemId }), ...(note && { note }), ...(by && { by }) };
   return { state: { ...state, events: [...(state.events || []), event] }, added: true, event };
 }
 
