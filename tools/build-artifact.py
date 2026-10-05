@@ -78,7 +78,7 @@ def main():
     bundle = re.sub(r'src="(assets/[^"]+)"', inline_asset, bundle)
     css = (ROOT / 'src' / 'styles.css').read_text(encoding='utf-8')
 
-    fragment = f"""<title>PBC Mate</title>
+    fragment = f"""<title>PwC Mate</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap">
 <style>
 /* Artifact 단일 파일 빌드 — 원본은 src/styles.css. 호스트 테마와 무관하게 밝은 문서형 화면으로 고정한다. */

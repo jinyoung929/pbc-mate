@@ -13,7 +13,7 @@ export function renderEmpty({ lookupOpen = false, query = '', results = null, se
   return `
     <div class="page empty">
       <header class="topbar">
-        <div class="brand">PBC Mate<span class="brand-mark" aria-hidden="true"></span></div>
+        <div class="brand">PwC Mate<span class="brand-mark" aria-hidden="true"></span></div>
         <span class="chip">${picked ? `${esc(picked.client)} · ${esc(picked.engagement)}` : '클라이언트를 조회해 주세요'}</span>
       </header>
 

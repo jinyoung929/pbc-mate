@@ -1,4 +1,4 @@
-# PBC Mate — 작업 지침
+# PwC Mate — 작업 지침
 
 삼일 연수 과제용 독립 프로젝트. 다른 프로젝트(예: accounting-data-ai-portfolio)의
 파일·설정·코드를 가져오지 않는다.

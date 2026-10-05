@@ -1,4 +1,4 @@
-/* PBC Mate — 삼일회계법인 맞춤 사내 업무도구 스타일 (PwC 계열 컬러·블록 모티프, 공식 로고는 쓰지 않음).
+/* PwC Mate — 삼일회계법인 맞춤 사내 업무도구 스타일 (PwC 계열 컬러·블록 모티프, 공식 로고는 쓰지 않음).
    정보 구조는 reference/pbc-mate-ui-reference.html 기준. */
 
 /* ---------- 디자인 토큰 ---------- */
@@ -1573,7 +1573,7 @@ a.tl-label:hover b, a.tl-label:focus-visible b { max-width: none; }
 .req-table .ot-owner { display: flex; align-items: center; gap: 6px; flex-direction: row; }
 .me-tag { font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 3px; background: var(--orange); color: #fff; }
 
-/* 왼쪽 위 PBC Mate: 누르면 대시보드 */
+/* 왼쪽 위 PwC Mate: 누르면 대시보드 */
 a.brand { color: inherit; text-decoration: none; }
 a.brand:hover { color: var(--orange-dark); }
 

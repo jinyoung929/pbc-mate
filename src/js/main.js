@@ -303,7 +303,7 @@ async function sampleFileBlob(f, item) {
   if (doc) {
     try { return await renderScan(doc, f.id.length * 31 + item.id.charCodeAt(1)); } catch { /* 아래 텍스트로 */ }
   }
-  const text = `${f.name}\n\nPBC Mate 시연용 예시 첨부파일입니다. 실제 자료가 아닙니다.\n자료: ${item.name}\n담당: ${item.owner}\n`;
+  const text = `${f.name}\n\nPwC Mate 시연용 예시 첨부파일입니다. 실제 자료가 아닙니다.\n자료: ${item.name}\n담당: ${item.owner}\n`;
   return new Blob([text], { type: 'text/plain' });
 }
 

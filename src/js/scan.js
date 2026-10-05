@@ -136,7 +136,7 @@ function scanEffect(ctx, draw, seed) {
   g.addColorStop(0.96, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,0.08)');
   ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
   // 시연용 표시 (작게)
-  text(ctx, 'PBC Mate 시연용 예시 문서 · 가공의 자료', W / 2, H - 34, { px: 15, align: 'center', color: 'rgba(90,90,90,0.75)', serif: false });
+  text(ctx, 'PwC Mate 시연용 예시 문서 · 가공의 자료', W / 2, H - 34, { px: 15, align: 'center', color: 'rgba(90,90,90,0.75)', serif: false });
 }
 
 /** 문서 내용 → PNG Blob */

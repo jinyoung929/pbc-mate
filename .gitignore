@@ -18,3 +18,4 @@ tmp/
 
 # Artifact 빌드 결과물 (tools/build-artifact.py로 재생성)
 dist/
+.vercel

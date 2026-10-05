@@ -1,4 +1,4 @@
-# PBC Mate
+# PwC Mate
 
 삼일 연수 과제용 MVP. 회계감사 PBC(Prepared By Client) 자료 요청을 추적하고,
 미제출 건에 대한 독촉·보완 요청 메일 문안을 만들어 주는 웹 도구.
