@@ -1,19 +1,15 @@
 // 8. 빈 상태 · 첫 실행 — 레퍼런스 8
-// 예시 자료로 시작하거나, 업무 구분을 고르고 클라이언트를 조회해 계약을 고른 뒤 내 이름을 넣어 직접 시작한다.
+// 예시 자료로 시작하거나, 클라이언트를 조회해 감사 계약을 고르고 내 이름을 넣어 직접 시작한다.
 
 import { engagementById } from '../lib/engagements.js';
-import { SERVICES } from '../lib/terms.js';
 import { esc, ICON } from './html.js';
 
 /**
- * @param form { lookupOpen, query, results: 조회 결과 | null(조회 전), selectedId, service, myName, myTitle, errors }
+ * @param form { lookupOpen, query, results: 조회 결과 | null(조회 전), selectedId, myName, myTitle, errors }
  *   lookupOpen: 클라이언트 조회 창이 열려 있음. 클라이언트명은 이 창에서만 입력한다.
- *   service: 업무 구분 (audit | tax | deal | advisory). 메일 문구와 용어가 바뀐다 (lib/terms.js).
  */
-export function renderEmpty({ lookupOpen = false, query = '', results = null, selectedId = null, service = 'audit', myName = '', myTitle = '', errors = {} } = {}) {
+export function renderEmpty({ lookupOpen = false, query = '', results = null, selectedId = null, myName = '', myTitle = '', errors = {} } = {}) {
   const picked = engagementById(selectedId);
-  const services = SERVICES.map((s) => `
-    <label class="service-opt"><input type="radio" name="service" value="${s.key}" ${s.key === service ? 'checked' : ''}><span>${s.label}</span></label>`).join('');
   return `
     <div class="page empty">
       <header class="topbar">
@@ -35,10 +31,6 @@ export function renderEmpty({ lookupOpen = false, query = '', results = null, se
         <p>자료마다 필요일을 넣으면 남은 날로 급한 순서를 정하고, 재촉 메일 초안까지 만들어요.</p>
 
         <form class="empty-form" id="engagement-form" novalidate>
-          <div class="f service-field">
-            <span class="f-label">업무 구분 <small>메일 문구와 용어가 바뀌어요</small></span>
-            <div class="service-opts" role="radiogroup" aria-label="업무 구분">${services}</div>
-          </div>
           <div class="f eng-lookup ${errors.client ? 'has-error' : ''}">
             <span class="f-label">클라이언트명 <small>조회해서 고르면 감사명·팀원·담당 매니저가 채워져요</small></span>
             <div class="eng-search">
@@ -68,7 +60,7 @@ export function renderEmpty({ lookupOpen = false, query = '', results = null, se
       </main>
 
       <section class="steps">
-        ${step(1, '자료와 필요일 넣기', '자료를 쓰기 시작하는 날이 필요일이 돼요.')}
+        ${step(1, '자료와 필요일 넣기', '감사 절차를 연결하면 그 시작일이 필요일이 돼요.')}
         ${step(2, '남은 날로 위험도 확인', '2일 이내 · 3~7일 · 8일 이상으로 나눠 보여드려요.')}
         ${step(3, '초안 복사해 아웃룩에', '담당자별로 묶고, 톤을 고른 뒤 복사만 하면 돼요.')}
       </section>

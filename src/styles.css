@@ -97,7 +97,7 @@ a { color: inherit; }
 .tab.is-active::after { content: ''; position: absolute; left: 12px; right: 12px; bottom: -1px; height: 3px; background: var(--orange); }
 .topbar-end { margin-left: auto; display: flex; align-items: center; gap: 12px; }
 /* 탭(외부조회서)이 늘어도 상단바 글자가 두 줄로 꺾이지 않게 */
-.topbar .brand, .topbar .chip, .topbar .tab, .topbar .demo-date, .topbar .today, .topbar .org-label, .topbar .btn { white-space: nowrap; }
+.topbar .brand, .topbar .chip, .topbar .tab, .topbar .demo-date, .topbar .today, .topbar .org-logo, .topbar .btn { white-space: nowrap; }
 .topbar .tab { padding: 0 10px; }
 .topbar .tab.is-active::after { left: 10px; right: 10px; }
 .today { font-size: 13px; color: var(--ink-3); }
@@ -352,13 +352,6 @@ a { color: inherit; }
 .step-title { font-size: 14px; font-weight: 700; color: var(--ink); }
 .step-desc { font-size: 13px; color: var(--ink-3); margin-top: 2px; }
 .empty-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 560px; max-width: 100%; text-align: left; margin-top: 8px; }
-.service-field { grid-column: 1 / -1; }
-.service-opts { display: flex; flex-wrap: wrap; gap: 6px; }
-.service-opt { position: relative; }
-.service-opt input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
-.service-opt span { display: inline-flex; align-items: center; height: 34px; padding: 0 14px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; font-size: 13.5px; font-weight: 600; color: var(--ink-2); cursor: pointer; }
-.service-opt input:checked + span { background: var(--ink); border-color: var(--ink); color: #fff; }
-.service-opt input:focus-visible + span { outline: 2px solid var(--orange); outline-offset: 1px; }
 
 /* ---------- 대시보드 → 상세 연결 ---------- */
 a.btn { text-decoration: none; }
@@ -1519,7 +1512,7 @@ button.owner-link { border: 0; background: none; padding: 0; font: inherit; font
 
 /* 상단바 폭: 사용자·처음으로 버튼이 늘어 좁은 화면에서는 덜 중요한 것부터 줄인다 */
 .topbar .chip { max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; line-height: 22px; }
-@media (max-width: 1500px) { .topbar .org-label { display: none; } }
+@media (max-width: 1500px) { .topbar .org-logo { display: none; } }
 @media (max-width: 1380px) { .topbar .today { display: none; } .me-picker select { max-width: 120px; } .topbar .chip { max-width: 170px; } }
 @media (max-width: 1240px) { .topbar .tab { padding: 0 7px; } .topbar .tab.is-active::after { left: 7px; right: 7px; } .demo-date { font-size: 11px; } }
 @media (max-width: 1120px) { .topbar .chip { display: none; } }

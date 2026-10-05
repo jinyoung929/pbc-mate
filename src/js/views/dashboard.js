@@ -7,17 +7,15 @@ import {
 import { isBundleEligible } from '../lib/bundle.js';
 import { currentUser, requesterMembers, isManager, filterByRequester } from '../lib/team.js';
 import { esc, ICON, RISK_LABEL, RISK_SHORT, STATUS_LABEL } from './html.js';
-import { termsOf } from '../lib/terms.js';
-import { josa } from '../lib/korean.js';
 
 const MODE_TEXT = {
   need: {
-    hint: (t) => `${t.schedule}에 영향이 큰 자료부터 보여드려요.`,
+    hint: '감사 일정에 영향이 큰 자료부터 보여드려요.',
     group: '가장 급한 자료가 있는 담당자부터',
     top: '가장 급함',
   },
   elapsed: {
-    hint: () => '요청한 지 오래된 자료부터 보여드려요.',
+    hint: '요청한 지 오래된 자료부터 보여드려요.',
     group: '가장 오래 기다린 자료가 있는 담당자부터',
     top: '가장 오래됨',
   },
@@ -34,7 +32,6 @@ export function renderDashboard(state, { today, mode, isDemo, who = 'all' }) {
   const sorted = sortItems(all.filter(isOpen), mode);
   const done = all.filter((x) => !isOpen(x));
   const text = MODE_TEXT[mode];
-  const t = termsOf(state.client.service);
   const filter = members.length ? requesterFilter(scope, members, me, everyOpen) : '';
 
   if (!sorted.length && scope !== 'all' && everyOpen.length) {
@@ -51,9 +48,9 @@ export function renderDashboard(state, { today, mode, isDemo, who = 'all' }) {
     <div class="page dashboard">
       ${topbar(state.client, today, isDemo, 'dashboard', state.team)}
       ${sorted.length ? `
-        ${insightSection(insight(sorted[0], mode, t.schedule), summarize(all), t)}
+        ${insightSection(insight(sorted[0], mode), summarize(all))}
         ${filter}
-        ${modeToggle(mode, text.hint(t), t)}
+        ${modeToggle(mode, text.hint)}
         ${timeline(sorted, today)}
         ${ownerCards(groupByOwner(sorted), state.people, done, text)}
         ${mobileList(sorted, text.top)}
@@ -96,7 +93,7 @@ function userPicker(team) {
     </label>`;
 }
 
-function insightSection(ins, sum, t) {
+function insightSection(ins, sum) {
   const headline = sum.urgent
     ? `오늘 먼저 챙길 자료가 ${sum.urgent}건 있어요`
     : '오늘 당장 급한 자료는 없어요';
@@ -104,7 +101,7 @@ function insightSection(ins, sum, t) {
     <section class="hero">
       <div class="hero-text">
         <h1>${headline}</h1>
-        <p class="hero-sub">${t.heroSub}</p>
+        <p class="hero-sub">감사 일정에 맞춰 급한 자료부터 정리했어요.</p>
         <div class="hero-insight"><span class="eyebrow">${ins.eyebrow}</span><b>${esc(ins.title)}</b><span>${ins.sub}</span></div>
       </div>
       <div class="hero-deco" aria-hidden="true"><span></span><span></span></div>
@@ -140,7 +137,7 @@ function requesterFilter(who, members, me, openItems) {
     </section>`;
 }
 
-function modeToggle(mode, hint, t) {
+function modeToggle(mode, hint) {
   const btn = (value, caption, label) => `
     <button type="button" data-action="set-mode" data-mode="${value}" aria-pressed="${mode === value}">
       <span class="seg-caption">${caption}</span><span class="seg-label">${label}</span>
@@ -149,16 +146,16 @@ function modeToggle(mode, hint, t) {
     <section class="mode-bar">
       <div class="mode-title">우선순위 기준</div>
       <div class="segmented" role="group" aria-label="우선순위 기준">
-        ${btn('need', `${t.schedule} 기준`, '필요일순')}
+        ${btn('need', '감사 일정 기준', '필요일순')}
         ${btn('elapsed', '요청 경과 기준', '경과일순')}
       </div>
       <div class="mode-hint">${hint}</div>
       <span class="tip">
         <button type="button" class="tip-btn">${ICON.help}필요일이란?</button>
-        <span class="tip-box" role="tooltip"><b>필요일</b> = ${t.needDef}<br>
-          <span class="muted">자료를 추가할 때 ${t.procedure}${josa(t.procedure, '을', '를')} 적어 두면 메일 근거 문장에 들어가요.</span></span>
+        <span class="tip-box" role="tooltip"><b>필요일</b> = 해당 자료를 실제 감사 절차에 사용하기 시작하는 날<br>
+          <span class="muted">자료를 추가할 때 감사 절차를 고르면 자동으로 설정돼요.</span></span>
       </span>
-      <div class="mode-def mobile-only">필요일 = ${t.needDef}</div>
+      <div class="mode-def mobile-only">필요일 = 해당 자료를 실제 감사 절차에 사용하기 시작하는 날</div>
     </section>`;
 }
 

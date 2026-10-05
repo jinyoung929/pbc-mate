@@ -65,7 +65,7 @@ let bundle = null;  // 묶음 독촉 화면 상태: { owner, tone, copied, toast
 let fix = null;     // 보완 요청 화면 상태: { itemId, reason, copied, toast }
 let add = null;     // 자료 추가 화면 상태: { tab, form, errors, pasteText }
 let sheet = null;   // 상태 변경 시트: { itemId, status, reason, basisDate, requiredBasisDate, errors }
-const EMPTY_FORM = { lookupOpen: false, query: '', results: null, selectedId: null, service: 'audit', myName: '', myTitle: '', errors: {} };
+const EMPTY_FORM = { lookupOpen: false, query: '', results: null, selectedId: null, myName: '', myTitle: '', errors: {} };
 let emptyForm = { ...EMPTY_FORM }; // 첫 실행 화면 입력값
 let who = 'all';    // 대시보드 요청 감사인 필터: 'all' | 'me' | 팀원 이름
 let cal = null;     // 일정 탭 상태: { month, selected, form: { title, errors }, filter }
@@ -408,7 +408,7 @@ const actions = {
       return;
     }
     const eng = engagementById(emptyForm.selectedId);
-    state = createEmptyState({ clientName: eng.client, engagement: eng.engagement, service: emptyForm.service, team: teamFromEngagement(eng, emptyForm.myName, emptyForm.myTitle) });
+    state = createEmptyState({ clientName: eng.client, engagement: eng.engagement, team: teamFromEngagement(eng, emptyForm.myName, emptyForm.myTitle) });
     save(state);
     emptyForm = { ...EMPTY_FORM };
     who = 'all';
@@ -830,7 +830,6 @@ function applyReceiptCheck() {
 function readEmptyForm() {
   const form = document.getElementById('engagement-form');
   if (!form) return;
-  emptyForm.service = form.service?.value ?? emptyForm.service;
   emptyForm.myName = form.myName?.value ?? emptyForm.myName;
   emptyForm.myTitle = form.myTitle?.value ?? emptyForm.myTitle;
 }

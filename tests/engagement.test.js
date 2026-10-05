@@ -9,19 +9,17 @@ import { buildReport, summaryLines } from '../src/js/lib/report.js';
 
 test('필수값 누락 검증', () => {
   assert.deepEqual(validateEngagement({ clientName: '', engagement: '' }),
-    { clientName: '클라이언트명을 입력해 주세요.', engagement: '프로젝트명을 입력해 주세요.' });
+    { clientName: '클라이언트명을 입력해 주세요.', engagement: '감사명을 입력해 주세요.' });
   assert.deepEqual(validateEngagement({ clientName: ' ㈜한빛전자 ', engagement: '2026 기말감사' }), {});
   assert.equal(Object.keys(validateEngagement({ clientName: '㈜한빛전자', engagement: '  ' })).join(), 'engagement');
 });
 
 test('빈 state: client·engagement 저장, demoDate 없음, 기존 구조와 호환', () => {
   const s = createEmptyState({ clientName: ' ㈜한빛전자 ', engagement: '2026 기말감사' });
-  assert.deepEqual(s.client, { name: '㈜한빛전자', engagement: '2026 기말감사', service: 'audit' });
+  assert.deepEqual(s.client, { name: '㈜한빛전자', engagement: '2026 기말감사' });
   assert.deepEqual(s.people, {});
   assert.deepEqual(s.items, []);
   assert.equal('demoDate' in s, false);
-  assert.equal(s.client.service, 'audit', '기본 업무 구분은 감사');
-  assert.equal(createEmptyState({ clientName: 'A', engagement: 'B', service: 'tax' }).client.service, 'tax');
   assert.equal(s.team.manager, null);
   // 실제 오늘(또는 ?today=) 기준
   assert.equal(baseDateOf(s, null, '2026-10-03'), '2026-10-03');

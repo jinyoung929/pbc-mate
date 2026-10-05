@@ -6,7 +6,6 @@ import { withDays, leftText } from '../lib/priority.js';
 import { FIX_REASONS, fixReasonLabel, fixDetail, buildFixMail } from '../lib/fix.js';
 import { signMail, currentUser } from '../lib/team.js';
 import { esc, ICON, STATUS_LABEL } from './html.js';
-import { termsOf } from '../lib/terms.js';
 import { mailDates } from '../lib/calendar.js';
 import { mailField, mailDateDock } from './calendar.js';
 
@@ -59,7 +58,7 @@ export function renderFix(state, { today, itemId, reason, copied, toast }) {
       <div class="drawer-body">
         <div class="compose-head">
           <div class="compose-who">
-            <div class="eyebrow desktop-only">받은 자료 확인 · ${termsOf(state.client.service).fitQuestion}</div>
+            <div class="eyebrow desktop-only">받은 자료 확인 · 감사에 그대로 쓸 수 있나요?</div>
             <h2 id="fix-title">${esc(item.name)}</h2>
             <div class="fix-sub">${esc(item.owner)}${person.dept ? ` · ${esc(person.dept)}` : ''} · ${formatMDW(item.neededOn)} 필요 · ${leftText(item.left)}</div>
           </div>

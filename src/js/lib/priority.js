@@ -65,7 +65,7 @@ export function leftText(left) {
 }
 
 /** 대시보드 상단의 1순위 안내 문구 */
-export function insight(top, mode, schedule = '감사 일정') {
+export function insight(top, mode) {
   const quoted = `‘${top.name}’${josa(top.name, '이', '가')}`;
   const sub = `필요일 ${formatMD(top.neededOn)} · ${leftText(top.left)}`;
 
@@ -84,7 +84,7 @@ export function insight(top, mode, schedule = '감사 일정') {
   else when = `${top.left}일 뒤 필요한`;
 
   return {
-    eyebrow: `${schedule} 기준 1순위`,
+    eyebrow: '감사 일정 기준 1순위',
     title: `${when} ${quoted} 가장 급해요.`,
     sub,
   };
